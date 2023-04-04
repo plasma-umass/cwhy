@@ -92,7 +92,7 @@ class context(object):
         # Go through the compiler output and build up a list of code locations.
         line = 0
         while line < len(diagnostic_lines):
-            match = re.search(r'^([^:]+):([0-9]+):([0-9]+)', diagnostic_lines[line])
+            match = re.search(r'^([^:->]+):([0-9]+):([0-9]+)', diagnostic_lines[line])
 
             line += 1
 
