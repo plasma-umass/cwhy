@@ -20,9 +20,9 @@ classifiers = [
 ]
 
 [project.scripts]
-c-why = "c-why.__main__:main"
+cwhy = "cwhy.__main__:main"
 
 
 [project.urls]
-"Homepage" = "https://github.com/plasma-umass/c-why"
-"Bug Tracker" = "https://github.com/plasma-umass/c-why"
+"Homepage" = "https://github.com/plasma-umass/cwhy"
+"Bug Tracker" = "https://github.com/plasma-umass/cwhy"
