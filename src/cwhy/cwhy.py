@@ -3,9 +3,9 @@ import asyncio
 import io
 import openai
 import openai_async
+import re
 import sys
 import textwrap
-import re
 
 def word_wrap_except_code_blocks(text: str) -> str:
     """Wraps text except for code blocks.
@@ -145,21 +145,34 @@ async def complete(user_prompt):
         pass
     return text
 
-def cwhy_prompt():
+def cwhy_prompt(fix):
     with io.open(sys.stdin.fileno(), "rb", closefd=False) as stdin:
         ctx = context(stdin)
 
-        user_prompt = f"""
-        This is my code:
+        if fix:
+            user_prompt = f"""
+            This is my code:
 
-        {ctx.code}
+            {ctx.code}
 
-        This is my error:
+            This is my error:
 
-        {ctx.abridged_diagnostic}
+            {ctx.abridged_diagnostic}
 
-        What's the problem?
-        """
+            Suggest code to fix the problem. Surround the code in backticks (```).
+            """
+        else:
+            user_prompt = f"""
+            This is my code:
+
+            {ctx.code}
+
+            This is my error:
+
+            {ctx.abridged_diagnostic}
+
+            What's the problem?
+            """
 
         return user_prompt
 
