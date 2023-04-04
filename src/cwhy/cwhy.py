@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 import asyncio
+import httpx
 import io
 import openai
 import openai_async
