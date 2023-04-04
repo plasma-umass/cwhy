@@ -51,22 +51,6 @@ def word_wrap_except_code_blocks(text: str) -> str:
     wrapped_text = '\n\n'.join(wrapped_paragraphs)
     return wrapped_text
 
-
-with io.open(sys.stdin.fileno(), "rb", closefd=False) as stdin:
-     the_error = ' '.join([line.decode() for line in stdin.readlines()])
-
-"""
-    This is my code:
-{the_code}
-"""
-
-user_prompt=f"""
-This is my error:
-{the_error}
-
-What's the problem?
-"""
-
 async def complete(user_prompt):
     try:
         completion = await openai_async.chat_complete(openai.api_key, timeout=30, payload={'model': 'gpt-3.5-turbo', 'messages': [{'role': 'user', 'content': user_prompt}]})
@@ -84,8 +68,20 @@ async def complete(user_prompt):
         pass
     return text
 
-text = asyncio.run(complete(user_prompt))
-print('\n'.join(textwrap.wrap(text, width=70)))
+def cwhy_prompt():
+    with io.open(sys.stdin.fileno(), "rb", closefd=False) as stdin:
+         the_error = ' '.join([line.decode() for line in stdin.readlines()])
 
+    """
+        This is my code:
+    {the_code}
+    """
 
-    
+    user_prompt=f"""
+    This is my error:
+    {the_error}
+
+    What's the problem?
+    """
+    return user_prompt
+
