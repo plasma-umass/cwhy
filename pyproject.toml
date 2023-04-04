@@ -21,7 +21,6 @@ classifiers = [
 
 [project.scripts]
 c-why = "c-why.__main__:main"
-c++-why = "c-why.__main__:main"
 
 
 [project.urls]
