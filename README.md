@@ -12,6 +12,15 @@ Explains and suggest fixes for C/C++/Rust compiler error messages.
 python3 -m pip install cwhy
 ```
 
+*NOTE*: To use cwhy, you must first set up an OpenAI API key. If you
+already have an API key, you can set it as an environment variable
+called `OPENAI_API_KEY`. If you do not have one yet,
+you can get a key here: https://openai.com/api/.
+
+```
+export OPENAI_API_KEY=<your-api-key>
+```
+
 ## Usage
 
 Just pipe your compiler's output to `cwhy`. `cwhy` will by default provide an explanation. If you'd like a suggested fix, add `--fix`.
