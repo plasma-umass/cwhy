@@ -149,7 +149,9 @@ async def complete(user_prompt):
 def cwhy_prompt(fix):
     with io.open(sys.stdin.fileno(), "rb", closefd=False) as stdin:
         ctx = context(stdin)
-
+        if not ctx.code.strip():
+            # Fail silently if stdin was empty
+            return ""
         if fix:
             user_prompt = f"""
             This is my code:
