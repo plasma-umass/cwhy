@@ -174,7 +174,7 @@ def cwhy_prompt(fix):
         {ctx.abridged_diagnostic}
         """
         if fix:
-            user_prompt = f"""
+            user_prompt += f"""
 
             Suggest code to fix the problem. Surround the code in backticks (```).
             """
