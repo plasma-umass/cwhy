@@ -6,6 +6,7 @@ import openai
 import openai_async
 import re
 import sys
+import traceback
 import textwrap
 
 def word_wrap_except_code_blocks(text: str) -> str:
@@ -132,18 +133,15 @@ class context(object):
 async def complete(user_prompt):
     try:
         completion = await openai_async.chat_complete(openai.api_key, timeout=30, payload={'model': 'gpt-3.5-turbo', 'messages': [{'role': 'user', 'content': user_prompt}]})
-        json_payload = completion.json()
-        text = json_payload['choices'][0]['message']['content']
-    except (openai.error.AuthenticationError, httpx.LocalProtocolError, KeyError):
-        # Something went wrong.
-        print()
-        print('You need a valid OpenAI key to use ChatDBG. You can get a key here: https://openai.com/api/')
+        completion.raise_for_status()
+        text = completion.json()['choices'][0]['message']['content']
+    except (openai.error.AuthenticationError, httpx.LocalProtocolError, httpx.HTTPStatusError):
+        print(traceback.format_exc())
+        print('You need an OpenAI key to use this tool.')
+        print('You can get a key here: https://platform.openai.com/account/api-keys')
         print('Set the environment variable OPENAI_API_KEY to your key value.')
-        import sys
+        print('If OPENAI_API_KEY is already correctly set, you may have exceeded your usage or rate limit.')
         sys.exit(1)
-    except Exception as e:
-        print(f'EXCEPTION {e}, {type(e)}')
-        pass
     return text
 
 def cwhy_prompt(fix):
