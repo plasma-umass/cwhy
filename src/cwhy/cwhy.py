@@ -90,9 +90,10 @@ class context(object):
         # This is just to prevent overwhelming OpenAI.
         max_code_locations = 10
 
-        # Go through the compiler output and build up a list of code locations.
+        # Go through the diagnostic and build up a list of code locations.
         line = 0
         while line < len(diagnostic_lines):
+            # This pattern works for some C++ compilers (GCC, Clang) and Rust.
             match = re.search(r'^([^:->]+):([0-9]+):([0-9]+)', diagnostic_lines[line])
 
             line += 1
@@ -115,8 +116,13 @@ class context(object):
               self.code_locations[(file_name, line_start, line_end)] = abridged_code
               max_code_locations -= 1
 
+        # If the diagnostic didn't come from a context that we know about and
+        # handle in the above loop, we should make sure it's not too long.
+        if not self.code_locations and line == len(diagnostic_lines) - 1:
+            line = min(line, 50)
+
         self.unabridged_diagnostic = '\n'.join(diagnostic_lines) + '\n'
-        self.abridged_diagnostic = '\n'.join(diagnostic_lines[0:line]) + '\n'
+        self.abridged_diagnostic = '```\n' + '\n'.join(diagnostic_lines[0:line]) + '\n```\n'
 
         def format_code_location(code_location):
             ((file_name, line_start, line_end), abridged_code) = code_location
@@ -149,32 +155,28 @@ async def complete(user_prompt):
 def cwhy_prompt(fix):
     with io.open(sys.stdin.fileno(), "rb", closefd=False) as stdin:
         ctx = context(stdin)
-        if not ctx.code.strip():
+
+        if not ctx.unabridged_diagnostic.strip():
             # Fail silently if stdin was empty
             return ""
+
+        user_prompt = str()
+        if ctx.code:
+            user_prompt += f"""
+            This is my code:
+
+            {ctx.code}
+
+            """
+        user_prompt += f"""
+        This is my error:
+
+        {ctx.abridged_diagnostic}
+        """
         if fix:
             user_prompt = f"""
-            This is my code:
-
-            {ctx.code}
-
-            This is my error:
-
-            {ctx.abridged_diagnostic}
 
             Suggest code to fix the problem. Surround the code in backticks (```).
-            """
-        else:
-            user_prompt = f"""
-            This is my code:
-
-            {ctx.code}
-
-            This is my error:
-
-            {ctx.abridged_diagnostic}
-
-            What's the problem?
             """
 
         return user_prompt
