@@ -122,7 +122,7 @@ class context(object):
             line = min(line, 50)
 
         self.unabridged_diagnostic = '\n'.join(diagnostic_lines) + '\n'
-        self.abridged_diagnostic = '```\n' + '\n'.join(diagnostic_lines[0:line]) + '\n```\n'
+        self.abridged_diagnostic = '```\n' + '\n'.join(diagnostic_lines[:line]) + '\n```\n'
 
         def format_code_location(code_location):
             ((file_name, line_start, line_end), abridged_code) = code_location
