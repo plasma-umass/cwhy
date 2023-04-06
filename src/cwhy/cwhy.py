@@ -160,7 +160,7 @@ def cwhy_prompt(fix):
             # Fail silently if stdin was empty
             return ""
 
-        user_prompt = str()
+        user_prompt = ""
         if ctx.code:
             user_prompt += f"""
             This is my code:
