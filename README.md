@@ -38,85 +38,114 @@ e.g.,
 
 ### C++
 
+This highlighted example is [missing-hash.cpp](test/c++/missing-hash.cpp), which is one of the first cases we experimented with.
+
 <details>
 <summary>
 Expand to see the original (pretty obscure) error message:
 </summary>
 
 ```
-In file included from test/test.cpp:1:
-In file included from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_set:391:
-In file included from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/is_transparent.h:14:
-/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/type_traits:1838:38: error: implicit instantiation of undefined template 'std::hash<Q>'
-    : public integral_constant<bool, __is_empty(_Tp)> {};
-                                     ^
-/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/compressed_pair.h:34:15: note: in instantiation of template class 'std::is_empty<std::hash<Q> >' requested here
-              is_empty<_Tp>::value && !__libcpp_is_final<_Tp>::value>
-              ^
-/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/compressed_pair.h:110:35: note: in instantiation of default argument for '__compressed_pair_elem<std::hash<Q>, 1>' required here
-                          private __compressed_pair_elem<_T2, 1> {
-                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:961:59: note: in instantiation of template class 'std::__compressed_pair<unsigned long, std::hash<Q> >' requested here
-    __compressed_pair<size_type, hasher>                  __p2_;
-                                                          ^
-/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_set:428:13: note: in instantiation of template class 'std::__hash_table<Q, std::hash<Q>, std::equal_to<Q>, std::allocator<Q> >' requested here
-    __table __table_;
-            ^
-test/test.cpp:3:30: note: in instantiation of template class 'std::unordered_set<Q>' requested here
-static std::unordered_set<Q> set;
-                             ^
-/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/shared_ptr.h:1710:50: note: template is declared here
-template <class _Tp> struct _LIBCPP_TEMPLATE_VIS hash;
-                                                 ^
-1 error generated.
+% clang++ --std=c++20 -c missing-hash.cpp
+missing-hash.cpp:13:45: error: call to implicitly-deleted default constructor of 'std::unordered_set<std::pair<int, int>>'
+    std::unordered_set<std::pair<int, int>> visited;
+                                            ^
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/unordered_set.h:135:7: note: explicitly defaulted function was implicitly deleted here
+      unordered_set() = default;
+      ^
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/unordered_set.h:100:18: note: default constructor of 'unordered_set<std::pair<int, int>>' is implicitly deleted because field '_M_h' has a deleted default constructor
+      _Hashtable _M_h;
+                 ^
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable.h:451:7: note: explicitly defaulted function was implicitly deleted here
+      _Hashtable() = default;
+      ^
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable.h:174:7: note: default constructor of '_Hashtable<std::pair<int, int>, std::pair<int, int>, std::allocator<std::pair<int, int>>, std::__detail::_Identity, std::equal_to<std::pair<int, int>>, std::hash<std::pair<int, int>>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, true, true>>' is implicitly deleted because base class '__detail::_Hashtable_base<pair<int, int>, pair<int, int>, _Identity, equal_to<pair<int, int>>, hash<pair<int, int>>, _Mod_range_hashing, _Default_ranged_hash, _Hashtable_traits<true, true, true>>' has a deleted default constructor
+    : public __detail::_Hashtable_base<_Key, _Value, _ExtractKey, _Equal,
+      ^
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable_policy.h:1791:5: note: explicitly defaulted function was implicitly deleted here
+    _Hashtable_base() = default;
+    ^
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable_policy.h:1726:5: note: default constructor of '_Hashtable_base<std::pair<int, int>, std::pair<int, int>, std::__detail::_Identity, std::equal_to<std::pair<int, int>>, std::hash<std::pair<int, int>>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Hashtable_traits<true, true, true>>' is implicitly deleted because base class '_Hash_code_base<pair<int, int>, pair<int, int>, _Identity, hash<pair<int, int>>, _Mod_range_hashing, _Default_ranged_hash, _Hashtable_traits<true, true, true>::__hash_cached::value>' has a deleted default constructor
+  : public _Hash_code_base<_Key, _Value, _ExtractKey, _H1, _H2, _Hash,
+    ^
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable_policy.h:1368:7: note: explicitly defaulted function was implicitly deleted here
+      _Hash_code_base() = default;
+      ^
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable_policy.h:1344:7: note: default constructor of '_Hash_code_base<std::pair<int, int>, std::pair<int, int>, std::__detail::_Identity, std::hash<std::pair<int, int>>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, true>' is implicitly deleted because base class '_Hashtable_ebo_helper<1, hash<pair<int, int>>>' has a deleted default constructor
+      private _Hashtable_ebo_helper<1, _H1>,
+      ^
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable_policy.h:1112:7: note: explicitly defaulted function was implicitly deleted here
+      _Hashtable_ebo_helper() = default;
+      ^
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable_policy.h:1110:7: note: default constructor of '_Hashtable_ebo_helper<1, std::hash<std::pair<int, int>>, true>' is implicitly deleted because base class 'std::hash<std::pair<int, int>>' has a deleted default constructor
+    : private _Tp
+      ^
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/functional_hash.h:101:19: note: default constructor of 'hash<std::pair<int, int>>' is implicitly deleted because base class '__hash_enum<pair<int, int>>' has no default constructor
+    struct hash : __hash_enum<_Tp>
+                  ^
+In file included from missing-hash.cpp:1:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/functional:61:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/unordered_map:46:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable.h:35:
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable_policy.h:1377:2: error: static assertion failed due to requirement 'std::__is_invocable<const std::hash<std::pair<int, int>> &, const std::pair<int, int> &>{}': hash function must be invocable with an argument of key type
+        static_assert(__is_invocable<const _H1&, const _Key&>{},
+        ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable.h:1675:29: note: in instantiation of member function 'std::__detail::_Hash_code_base<std::pair<int, int>, std::pair<int, int>, std::__detail::_Identity, std::hash<std::pair<int, int>>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, true>::_M_hash_code' requested here
+        __hash_code __code = this->_M_hash_code(__k);
+                                   ^
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable.h:788:11: note: in instantiation of function template specialization 'std::_Hashtable<std::pair<int, int>, std::pair<int, int>, std::allocator<std::pair<int, int>>, std::__detail::_Identity, std::equal_to<std::pair<int, int>>, std::hash<std::pair<int, int>>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, true, true>>::_M_emplace<const std::pair<int, int> &>' requested here
+        { return _M_emplace(__unique_keys(), std::forward<_Args>(__args)...); }
+                 ^
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/unordered_set.h:377:16: note: in instantiation of function template specialization 'std::_Hashtable<std::pair<int, int>, std::pair<int, int>, std::allocator<std::pair<int, int>>, std::__detail::_Identity, std::equal_to<std::pair<int, int>>, std::hash<std::pair<int, int>>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, true, true>>::emplace<const std::pair<int, int> &>' requested here
+        { return _M_h.emplace(std::forward<_Args>(__args)...); }
+                      ^
+missing-hash.cpp:20:44: note: in instantiation of function template specialization 'std::unordered_set<std::pair<int, int>>::emplace<const std::pair<int, int> &>' requested here
+        const auto [_, inserted] = visited.emplace(n->position);
+                                           ^
+In file included from missing-hash.cpp:1:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/functional:61:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/unordered_map:46:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable.h:35:
+/usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/10/bits/hashtable_policy.h:1379:9: error: type 'const std::hash<std::pair<int, int>>' does not provide a call operator
+        return _M_h1()(__k);
+               ^~~~~~~
+3 errors generated.
 ```
 </details>
 
-And here's the English-language explanation from <tt>cwhy</tt>:
+And here's the English-language explanation from `cwhy`:
 
-```
-% clang++ -g test/test.cpp |& cwhy
-The error is caused by an implicit instantiation of an undefined
-template 'std::hash<Q>'. It seems that the code is trying to use an
-unordered_set with a custom type 'Q', but the standard library does
-not know how to hash this type. The code needs to provide a hash
-function for type 'Q' or specialize the 'std::hash' template for this
-type.
-```
+````
+% clang++ --std=c++20 -c missing-hash.cpp |& cwhy
+The problem is that you are attempting to use `std::unordered_set`
+with `std::pair<int, int>` as the key type. However, the standard
+library does not provide a hash function specialization for
+`std::pair` out of the box, so the default constructor of the
+unordered set is deleted.
 
-And a proposed fix:
+To resolve this, you'll need to provide a custom hash function for
+`std::pair<int, int>`. Here's an example of how you can define one:
 
-```
-% clang++ test/test.cpp |& cwhy fix
-The problem is that `std::hash<Q>` is not defined, so it cannot be
-implicitly instantiated. To fix the issue, define a hash function for
-the `Q` struct. Here's an example:
-
-    ```
-    #include <unordered_set>
-
-    struct Q {};
-
-    namespace std {
-        template<>
-        struct hash<Q> {
-            std::size_t operator()(const Q& q) const {
-                return std::hash<const void*>{}(&q);
-            }
-        };
+```cpp
+struct PairHash {
+    template <typename T1, typename T2>
+    std::size_t operator()(const std::pair<T1, T2>& pair) const {
+        std::hash<T1> hash1;
+        std::hash<T2> hash2;
+        return hash1(pair.first) ^ (hash2(pair.second) << 1);
     }
-
-    static std::unordered_set<Q> set;
-    ```
-
-This code explicitly specializes the `std::hash` template for type
-`Q`, and provides a `std::size_t operator()` implementation for the
-hash function. In this implementation, we use the `std::hash<const
-void*>` hash function to compute the hash value of the address of the
-`Q` object. This is a reasonable, albeit not very efficient, way to
-compute a hash value for an object.
+};
 ```
 
+Then, when instantiating the `std::unordered_set`, you can specify the
+custom hash function:
+
+```cpp
+std::unordered_set<std::pair<int, int>, PairHash> visited;
+```
+
+With this change, the code should now compile and work as expected.
+````
 
 
 ### Rust
