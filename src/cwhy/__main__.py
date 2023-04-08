@@ -12,16 +12,18 @@ def evaluate_prompt(ctx, prompt, wrap = True):
         print("===================== Prompt =====================")
         print(prompt)
         print("==================================================")
-    text = asyncio.run(cwhy.complete(prompt))
+    text = asyncio.run(cwhy.complete(ctx.obj['llm'], prompt))
     if wrap: text = cwhy.word_wrap_except_code_blocks(text)
     print(text)
 
 @click.group(invoke_without_command = True)
 @click.option('--show-prompt', is_flag = True, help = "Print the prompt before sending it to OpenAI for debugging.", required = False, default = False)
+@click.option('--llm', type = click.Choice(['gpt-4', 'gpt-3.5-turbo']), required = False, default = 'gpt-3.5-turbo')
 @click.pass_context
-def main(ctx, show_prompt):
+def main(ctx, show_prompt, llm):
     ctx.ensure_object(dict)
     ctx.obj['show-prompt'] = show_prompt
+    ctx.obj['llm'] = llm
 
     if ctx.invoked_subcommand is None:
         ctx.invoke(explain)
