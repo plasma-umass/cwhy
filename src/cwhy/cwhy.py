@@ -136,8 +136,8 @@ class explain_context(object):
         if not self.code_locations and line == len(diagnostic_lines) - 1:
             line = min(line, 50)
 
-        self.unabridged_diagnostic = '\n'.join(diagnostic_lines) + '\n'
-        self.abridged_diagnostic = '```\n' + '\n'.join(diagnostic_lines[:line]) + '\n```\n'
+        self.unabridged_diagnostic = ''.join(diagnostic_lines) + '\n'
+        self.abridged_diagnostic = '```\n' + ''.join(diagnostic_lines[:line]) + '```\n'
 
         def format_code_location(code_location):
             ((file_name, line_start, line_end), abridged_code) = code_location
@@ -150,36 +150,30 @@ class explain_context(object):
 
         self.code = '\n'.join([format_code_location(cl) for cl in self.code_locations.items()]) + '\n'
 
-def explain_prompt():
+def base_prompt():
     with io.open(sys.stdin.fileno(), "rb", closefd=False) as stdin:
         ctx = explain_context(stdin)
 
-        if not ctx.unabridged_diagnostic.strip():
-            # Fail silently if stdin was empty
-            return ""
+    if not ctx.unabridged_diagnostic.strip():
+        # Fail silently if stdin was empty
+        return ""
 
-        user_prompt = ""
-        if ctx.code:
-            user_prompt += f"""
-            This is my code:
+    user_prompt = ""
+    if ctx.code:
+        user_prompt += "This is my code:\n\n"
+        user_prompt += ctx.code
+        user_prompt += "\n"
+    user_prompt += "This is my error:\n\n"
+    user_prompt += ctx.abridged_diagnostic
+    user_prompt += "\n\n"
 
-            {ctx.code}
+    return user_prompt
 
-            """
-        user_prompt += f"""
-        This is my error:
-
-        {ctx.abridged_diagnostic}
-        """
-
-        return user_prompt
+def explain_prompt():
+    return base_prompt() + "What's the problem?"
 
 def fix_prompt():
-    addendum = f"""
-
-    Suggest code to fix the problem. Surround the code in backticks (```).
-    """
-    return explain_prompt() + addendum
+    return base_prompt() + "Suggest code to fix the problem. Surround the code in backticks (```)."
 
 class extract_sources_context(object):
     def __init__(self, diagnostic):
@@ -195,16 +189,15 @@ def extract_sources_prompt():
     with io.open(sys.stdin.fileno(), "rb", closefd=False) as stdin:
         ctx = extract_sources_context(stdin)
 
-        if not ctx.unabridged_diagnostic.strip():
-            # Fail silently if stdin was empty
-            return ""
+    if not ctx.unabridged_diagnostic.strip():
+        # Fail silently if stdin was empty
+        return ""
 
-        user_prompt = str()
-        user_prompt += "Respond only in the CSV format with no header row.\n"
-        user_prompt += "Identify all of the file paths and associated line numbers.\n"
-        user_prompt += "Output each file path and associated line number.\n"
-        user_prompt += "\n"
-        user_prompt += ctx.abridged_diagnostic
+    user_prompt = "Respond only in the CSV format with no header row.\n"
+    user_prompt += "Identify all of the file paths and associated line numbers.\n"
+    user_prompt += "Output each file path and associated line number.\n"
+    user_prompt += "\n"
+    user_prompt += ctx.abridged_diagnostic
 
-        return user_prompt
+    return user_prompt
 
