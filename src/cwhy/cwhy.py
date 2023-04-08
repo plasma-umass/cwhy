@@ -80,7 +80,21 @@ def read_lines(file_path: str, start_line: int, end_line: int) -> (str, int):
     # return the requested lines as a list
     return ('\n'.join(lines[start_line:end_line]) + '\n', start_line, end_line)
 
-class context(object):
+async def complete(user_prompt):
+    try:
+        completion = await openai_async.chat_complete(openai.api_key, timeout=30, payload={'model': 'gpt-3.5-turbo', 'messages': [{'role': 'user', 'content': user_prompt}]})
+        completion.raise_for_status()
+        text = completion.json()['choices'][0]['message']['content']
+    except (openai.error.AuthenticationError, httpx.LocalProtocolError, httpx.HTTPStatusError):
+        print(traceback.format_exc())
+        print('You need an OpenAI key to use this tool.')
+        print('You can get a key here: https://platform.openai.com/account/api-keys')
+        print('Set the environment variable OPENAI_API_KEY to your key value.')
+        print('If OPENAI_API_KEY is already correctly set, you may have exceeded your usage or rate limit.')
+        sys.exit(1)
+    return text
+
+class explain_context(object):
     def __init__(self, diagnostic):
         diagnostic_lines = diagnostic.readlines()
         diagnostic_lines = [line.decode() for line in diagnostic_lines]
@@ -136,23 +150,9 @@ class context(object):
 
         self.code = '\n'.join([format_code_location(cl) for cl in self.code_locations.items()]) + '\n'
 
-async def complete(user_prompt):
-    try:
-        completion = await openai_async.chat_complete(openai.api_key, timeout=30, payload={'model': 'gpt-3.5-turbo', 'messages': [{'role': 'user', 'content': user_prompt}]})
-        completion.raise_for_status()
-        text = completion.json()['choices'][0]['message']['content']
-    except (openai.error.AuthenticationError, httpx.LocalProtocolError, httpx.HTTPStatusError):
-        print(traceback.format_exc())
-        print('You need an OpenAI key to use this tool.')
-        print('You can get a key here: https://platform.openai.com/account/api-keys')
-        print('Set the environment variable OPENAI_API_KEY to your key value.')
-        print('If OPENAI_API_KEY is already correctly set, you may have exceeded your usage or rate limit.')
-        sys.exit(1)
-    return text
-
-def cwhy_prompt(fix):
+def explain_prompt():
     with io.open(sys.stdin.fileno(), "rb", closefd=False) as stdin:
-        ctx = context(stdin)
+        ctx = explain_context(stdin)
 
         if not ctx.unabridged_diagnostic.strip():
             # Fail silently if stdin was empty
@@ -171,11 +171,40 @@ def cwhy_prompt(fix):
 
         {ctx.abridged_diagnostic}
         """
-        if fix:
-            user_prompt += f"""
 
-            Suggest code to fix the problem. Surround the code in backticks (```).
-            """
+        return user_prompt
+
+def fix_prompt():
+    addendum = f"""
+
+    Suggest code to fix the problem. Surround the code in backticks (```).
+    """
+    return explain_prompt() + addendum
+
+class extract_sources_context(object):
+    def __init__(self, diagnostic):
+        diagnostic_lines = diagnostic.readlines()
+        diagnostic_lines = [line.decode() for line in diagnostic_lines]
+
+        line = min(len(diagnostic_lines) - 1, 50)
+
+        self.unabridged_diagnostic = '\n'.join(diagnostic_lines) + '\n'
+        self.abridged_diagnostic = '```\n' + '\n'.join(diagnostic_lines[:line]) + '\n```\n'
+
+def extract_sources_prompt():
+    with io.open(sys.stdin.fileno(), "rb", closefd=False) as stdin:
+        ctx = extract_sources_context(stdin)
+
+        if not ctx.unabridged_diagnostic.strip():
+            # Fail silently if stdin was empty
+            return ""
+
+        user_prompt = str()
+        user_prompt += "Respond only in the CSV format with no header row.\n"
+        user_prompt += "Identify all of the file paths and associated line numbers.\n"
+        user_prompt += "Output each file path and associated line number.\n"
+        user_prompt += "\n"
+        user_prompt += ctx.abridged_diagnostic
 
         return user_prompt
 

@@ -25,13 +25,13 @@ export OPENAI_API_KEY=<your-api-key>
 
 ## Usage
 
-Just pipe your compiler's output to `cwhy`. `cwhy` will by default provide an explanation. If you'd like a suggested fix, add `--fix`.
+Just pipe your compiler's output to `cwhy`. `cwhy` will by default provide an explanation. If you'd like a suggested fix, add `fix`.
 
 e.g.,
 
 ```
-% clang++ -g mycode.cpp |& cwhy         # explanation only
-% clang++ -g mycode.cpp |& cwhy --fix   # to see a suggested fix
+% clang++ -g mycode.cpp |& cwhy     # explanation only
+% clang++ -g mycode.cpp |& cwhy fix # to see a suggested fix
 ```
 
 ## Examples
@@ -87,7 +87,7 @@ type.
 And a proposed fix:
 
 ```
-% clang++ test/test.cpp |& cwhy --fix
+% clang++ test/test.cpp |& cwhy fix
 The problem is that `std::hash<Q>` is not defined, so it cannot be
 implicitly instantiated. To fix the issue, define a hash function for
 the `Q` struct. Here's an example:
