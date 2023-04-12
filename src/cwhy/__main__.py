@@ -25,7 +25,7 @@ def evaluate_prompt(ctx, prompt, wrap = True):
 @click.pass_context
 def main(ctx, llm, timeout, version, show_prompt):
     if version:
-        print(f"cwhy version {importlib.metadata.metadata('ChatDBG')['Version']}")
+        print(f"cwhy version {importlib.metadata.metadata('cwhy')['Version']}")
         return
     ctx.ensure_object(dict)
     ctx.obj['llm'] = llm
