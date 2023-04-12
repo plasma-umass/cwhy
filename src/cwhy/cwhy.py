@@ -85,6 +85,9 @@ async def complete(ctx, user_prompt):
         completion = await openai_async.chat_complete(openai.api_key, timeout=ctx.obj['timeout'], payload={'model': ctx.obj['llm'], 'messages': [{'role': 'user', 'content': user_prompt}]})
         completion.raise_for_status()
         text = completion.json()['choices'][0]['message']['content']
+    except httpx.ReadTimeout:
+        print('The OpenAI API timed out. You can try increasing the timeout with the --timeout option.')
+        sys.exit(1)
     except (openai.error.AuthenticationError, httpx.LocalProtocolError, httpx.HTTPStatusError):
         print(traceback.format_exc())
         print('You need an OpenAI key to use this tool.')
