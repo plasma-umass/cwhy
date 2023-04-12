@@ -80,9 +80,9 @@ def read_lines(file_path: str, start_line: int, end_line: int) -> (str, int):
     # return the requested lines as a list
     return ('\n'.join(lines[start_line:end_line]) + '\n', start_line, end_line)
 
-async def complete(llm, user_prompt):
+async def complete(ctx, user_prompt):
     try:
-        completion = await openai_async.chat_complete(openai.api_key, timeout=60, payload={'model': llm, 'messages': [{'role': 'user', 'content': user_prompt}]})
+        completion = await openai_async.chat_complete(openai.api_key, timeout=ctx.obj['timeout'], payload={'model': ctx.obj['llm'], 'messages': [{'role': 'user', 'content': user_prompt}]})
         completion.raise_for_status()
         text = completion.json()['choices'][0]['message']['content']
     except (openai.error.AuthenticationError, httpx.LocalProtocolError, httpx.HTTPStatusError):
