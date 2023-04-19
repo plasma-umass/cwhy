@@ -1,0 +1,7 @@
+ColumnLimit: 120
+IndentWidth: 4
+PointerAlignment: Left
+SpaceAfterCStyleCast: true
+BreakBeforeBinaryOperators: All
+AllowShortFunctionsOnASingleLine: Empty
+AlwaysBreakTemplateDeclarations: Yes

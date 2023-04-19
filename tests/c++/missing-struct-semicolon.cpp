@@ -1,4 +1,6 @@
-struct A {}
+struct A {
+}
 
 template <typename T>
-void f() {}
+void f() {
+}

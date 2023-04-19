@@ -1,6 +1,11 @@
-void f(void*) { }
-void f(char*) { }
+void f(void*) {}
+void f(char*) {}
 
-template <typename T> auto g(T t) -> decltype(f(t)) { return f(t); }
+template <typename T>
+auto g(T t) -> decltype(f(t)) {
+    return f(t);
+}
 
-int main() { g(nullptr); }
+int main() {
+    g(nullptr);
+}
