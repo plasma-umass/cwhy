@@ -43,13 +43,13 @@ async def evaluate_verifications(args, prompts):
     )
 
     successes = 0
-    for i in range(len(completions)):
-        text = completions[i].choices[0].message.content
+    for prompt, completion in zip(prompts, completions):
+        text = completion.choices[0].message.content
         if len(text) < 10 and re.search(r"true", text, re.IGNORECASE):
             successes += 1
         else:
             print(f"{'=' * 34} Fail {'=' * 34}")
-            print(prompts[i])
+            print(prompt)
             print("-" * 74)
             print(text)
             print("=" * 74)
