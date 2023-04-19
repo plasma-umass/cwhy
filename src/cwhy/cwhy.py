@@ -77,11 +77,11 @@ def read_lines(file_path: str, start_line: int, end_line: int) -> (str, int):
     # return the requested lines as a list
     return ('\n'.join(lines[start_line:end_line]) + '\n', start_line, end_line)
 
-def complete(ctx, user_prompt):
+def complete(args, user_prompt):
     try:
         completion = openai.ChatCompletion.create(
-            model=ctx.obj['llm'],
-            request_timeout=ctx.obj['timeout'],
+            model=args['llm'],
+            request_timeout=args['timeout'],
             messages=[{'role': 'user', 'content': user_prompt}])
         return completion.choices[0].message.content
     except openai.error.AuthenticationError:

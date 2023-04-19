@@ -4,15 +4,15 @@ import importlib.metadata
 
 from . import cwhy
 
-def evaluate_prompt(ctx, prompt, wrap = True):
+def evaluate_prompt(args, prompt, wrap = True):
     if not prompt:
         # Do nothing if nothing was sent to stdin
         return
-    if ctx.obj['show-prompt']:
+    if args['show-prompt']:
         print("===================== Prompt =====================")
         print(prompt)
         print("==================================================")
-    text = cwhy.complete(ctx, prompt)
+    text = cwhy.complete(args, prompt)
     if wrap: text = cwhy.word_wrap_except_code_blocks(text)
     print(text)
 
@@ -37,15 +37,15 @@ def main(ctx, llm, timeout, version, show_prompt):
 @main.command(short_help = 'Explain the diagnostic.')
 @click.pass_context
 def explain(ctx):
-    evaluate_prompt(ctx, cwhy.explain_prompt())
+    evaluate_prompt(ctx.obj, cwhy.explain_prompt())
 
 @main.command(short_help = 'Propose a fix for the diagnostic.')
 @click.pass_context
 def fix(ctx):
-    evaluate_prompt(ctx, cwhy.fix_prompt())
+    evaluate_prompt(ctx.obj, cwhy.fix_prompt())
 
 @main.command(short_help = 'Extract the source locations from the diagnostic as CSV.')
 @click.pass_context
 def extract_sources(ctx):
-    evaluate_prompt(ctx, cwhy.extract_sources_prompt(), wrap = False)
+    evaluate_prompt(ctx.obj, cwhy.extract_sources_prompt(), wrap = False)
 
