@@ -1,3 +1,33 @@
+/*
+The problem is that you are attempting to use `std::unordered_set`
+with `std::pair<int, int>` as the key type. However, the standard
+library does not provide a hash function specialization for
+`std::pair` out of the box, so the default constructor of the
+unordered set is deleted.
+
+To resolve this, you'll need to provide a custom hash function for
+`std::pair<int, int>`. Here's an example of how you can define one:
+
+```cpp
+struct PairHash {
+    template <typename T1, typename T2>
+    std::size_t operator()(const std::pair<T1, T2>& pair) const {
+        std::hash<T1> hash1;
+        std::hash<T2> hash2;
+        return hash1(pair.first) ^ (hash2(pair.second) << 1);
+    }
+};
+```
+
+Then, when instantiating the `std::unordered_set`, you can specify the
+custom hash function:
+
+```cpp
+std::unordered_set<std::pair<int, int>, PairHash> visited;
+```
+
+With this change, the code should now compile and work as expected.
+*/
 #include <functional>
 #include <queue>
 #include <unordered_set>
