@@ -1,13 +1,10 @@
 #! /usr/bin/env python3
-import asyncio
-import httpx
 import io
-import openai
-import openai_async
 import re
 import sys
-import traceback
 import textwrap
+
+import openai
 
 def word_wrap_except_code_blocks(text: str) -> str:
     """Wraps text except for code blocks.
@@ -80,22 +77,22 @@ def read_lines(file_path: str, start_line: int, end_line: int) -> (str, int):
     # return the requested lines as a list
     return ('\n'.join(lines[start_line:end_line]) + '\n', start_line, end_line)
 
-async def complete(ctx, user_prompt):
+def complete(ctx, user_prompt):
     try:
-        completion = await openai_async.chat_complete(openai.api_key, timeout=ctx.obj['timeout'], payload={'model': ctx.obj['llm'], 'messages': [{'role': 'user', 'content': user_prompt}]})
-        completion.raise_for_status()
-        text = completion.json()['choices'][0]['message']['content']
-    except httpx.ReadTimeout:
-        print('The OpenAI API timed out. You can try increasing the timeout with the --timeout option.')
-        sys.exit(1)
-    except (openai.error.AuthenticationError, httpx.LocalProtocolError, httpx.HTTPStatusError):
-        print(traceback.format_exc())
+        completion = openai.ChatCompletion.create(
+            model=ctx.obj['llm'],
+            request_timeout=ctx.obj['timeout'],
+            messages=[{'role': 'user', 'content': user_prompt}])
+        return completion.choices[0].message.content
+    except openai.error.AuthenticationError:
         print('You need an OpenAI key to use this tool.')
         print('You can get a key here: https://platform.openai.com/account/api-keys')
         print('Set the environment variable OPENAI_API_KEY to your key value.')
         print('If OPENAI_API_KEY is already correctly set, you may have exceeded your usage or rate limit.')
-        sys.exit(1)
-    return text
+    except openai.error.Timeout:
+        print('The OpenAI API timed out. You can try increasing the timeout with the --timeout option.')
+
+    sys.exit(1)
 
 class explain_context(object):
     def __init__(self, diagnostic):

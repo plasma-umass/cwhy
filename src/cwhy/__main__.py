@@ -1,5 +1,4 @@
 #! /usr/bin/env python3
-import asyncio
 import click
 import importlib.metadata
 
@@ -13,7 +12,7 @@ def evaluate_prompt(ctx, prompt, wrap = True):
         print("===================== Prompt =====================")
         print(prompt)
         print("==================================================")
-    text = asyncio.run(cwhy.complete(ctx, prompt))
+    text = cwhy.complete(ctx, prompt)
     if wrap: text = cwhy.word_wrap_except_code_blocks(text)
     print(text)
 
