@@ -102,10 +102,9 @@ def complete(args, user_prompt):
     sys.exit(1)
 
 
-class explain_context(object):
+class explain_context:
     def __init__(self, diagnostic):
-        diagnostic_lines = diagnostic.readlines()
-        diagnostic_lines = [line.decode() for line in diagnostic_lines]
+        diagnostic_lines = diagnostic.splitlines()
 
         self.code_locations = {}
 
@@ -146,8 +145,10 @@ class explain_context(object):
         if not self.code_locations and line == len(diagnostic_lines) - 1:
             line = min(line, 50)
 
-        self.unabridged_diagnostic = "".join(diagnostic_lines) + "\n"
-        self.abridged_diagnostic = "```\n" + "".join(diagnostic_lines[:line]) + "```\n"
+        self.unabridged_diagnostic = "\n".join(diagnostic_lines) + "\n"
+        self.abridged_diagnostic = (
+            "```\n" + "\n".join(diagnostic_lines[:line]) + "```\n"
+        )
 
         def format_code_location(code_location):
             ((file_name, line_start, line_end), abridged_code) = code_location
@@ -164,9 +165,8 @@ class explain_context(object):
         )
 
 
-def base_prompt():
-    with io.open(sys.stdin.fileno(), "rb", closefd=False) as stdin:
-        ctx = explain_context(stdin)
+def base_prompt(diagnostic):
+    ctx = explain_context(diagnostic)
 
     if not ctx.unabridged_diagnostic.strip():
         # Fail silently if stdin was empty
@@ -184,21 +184,20 @@ def base_prompt():
     return user_prompt
 
 
-def explain_prompt():
-    return base_prompt() + "What's the problem?"
+def explain_prompt(diagnostic):
+    return base_prompt(diagnostic) + "What's the problem?"
 
 
-def fix_prompt():
+def fix_prompt(diagnostic):
     return (
-        base_prompt()
+        base_prompt(diagnostic)
         + "Suggest code to fix the problem. Surround the code in backticks (```)."
     )
 
 
-class extract_sources_context(object):
+class extract_sources_context:
     def __init__(self, diagnostic):
-        diagnostic_lines = diagnostic.readlines()
-        diagnostic_lines = [line.decode() for line in diagnostic_lines]
+        diagnostic_lines = diagnostic.splitlines()
 
         line = min(len(diagnostic_lines) - 1, 50)
 
@@ -208,9 +207,8 @@ class extract_sources_context(object):
         )
 
 
-def extract_sources_prompt():
-    with io.open(sys.stdin.fileno(), "rb", closefd=False) as stdin:
-        ctx = extract_sources_context(stdin)
+def extract_sources_prompt(diagnostic):
+    ctx = extract_sources_context(diagnostic)
 
     if not ctx.unabridged_diagnostic.strip():
         # Fail silently if stdin was empty

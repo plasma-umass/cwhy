@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 import importlib.metadata
+import sys
 
 import click
 
@@ -65,16 +66,20 @@ def main(ctx, llm, timeout, version, show_prompt):
 @main.command(short_help="Explain the diagnostic.")
 @click.pass_context
 def explain(ctx):
-    evaluate_prompt(ctx.obj, cwhy.explain_prompt())
+    evaluate_prompt(ctx.obj, cwhy.explain_prompt(sys.stdin.read()))
 
 
 @main.command(short_help="Propose a fix for the diagnostic.")
 @click.pass_context
 def fix(ctx):
-    evaluate_prompt(ctx.obj, cwhy.fix_prompt())
+    evaluate_prompt(ctx.obj, cwhy.fix_prompt(sys.stdin.read()))
 
 
 @main.command(short_help="Extract the source locations from the diagnostic as CSV.")
 @click.pass_context
 def extract_sources(ctx):
-    evaluate_prompt(ctx.obj, cwhy.extract_sources_prompt(), wrap=False)
+    evaluate_prompt(
+        ctx.obj,
+        cwhy.extract_sources_prompt(sys.stdin.read()),
+        wrap=False,
+    )
