@@ -102,6 +102,20 @@ def complete(args, user_prompt):
     sys.exit(1)
 
 
+def evaluate_prompt(args, prompt, wrap=True):
+    if not prompt:
+        # Do nothing if nothing was sent to stdin
+        return
+    if args["show-prompt"]:
+        print("===================== Prompt =====================")
+        print(prompt)
+        print("==================================================")
+    text = complete(args, prompt)
+    if wrap:
+        text = word_wrap_except_code_blocks(text)
+    print(text)
+
+
 class explain_context:
     def __init__(self, diagnostic):
         diagnostic_lines = diagnostic.splitlines()
