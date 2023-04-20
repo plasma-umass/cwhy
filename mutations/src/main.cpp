@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <random>
@@ -11,6 +12,8 @@
 #include <clang/ASTMatchers/ASTMatchers.h>
 #include <clang/Frontend/ASTUnit.h>
 #include <clang/Lex/Lexer.h>
+#include <clang/Rewrite/Core/Rewriter.h>
+#include <clang/Tooling/Core/Replacement.h>
 #include <clang/Tooling/JSONCompilationDatabase.h>
 #include <clang/Tooling/Tooling.h>
 
@@ -90,8 +93,11 @@ int main(int argc, char** argv) {
     }
 
     assert(ASTs.size() == 1);
+    auto& sm = ASTs[0]->getSourceManager();
+    const auto& lo = ASTs[0]->getLangOpts();
 
-    const auto candidates = getAllFunctionDeclarations(ASTs[0]->getASTContext());
+    auto candidates = getAllFunctionDeclarations(ASTs[0]->getASTContext());
+    std::shuffle(candidates.begin(), candidates.end(), std::random_device());
 
     for (const auto& function : candidates) {
         if (function->getNumParams() < 2) {
@@ -111,10 +117,39 @@ int main(int argc, char** argv) {
 
         const auto second = *getRandom(options.begin(), options.end());
 
-        std::cout << function->getNameAsString() << std::endl;
-        std::cout << function->getParamDecl(first)->getType().getAsString() << " "
-                  << function->getParamDecl(first)->getNameAsString() << std::endl;
-        std::cout << function->getParamDecl(second)->getType().getAsString() << " "
-                  << function->getParamDecl(second)->getNameAsString() << std::endl;
+        const auto firstSourceRange
+            = clang::CharSourceRange::getTokenRange(function->getParamDecl(first)->getSourceRange());
+        const auto secondSourceRange
+            = clang::CharSourceRange::getTokenRange(function->getParamDecl(second)->getSourceRange());
+
+        const auto firstSourceText = clang::Lexer::getSourceText(firstSourceRange, sm, lo);
+        const auto secondSourceText = clang::Lexer::getSourceText(secondSourceRange, sm, lo);
+
+        clang::tooling::Replacements replacements;
+        // const clang::tooling::Replacement(sm, firstSourceRange, secondSourceText, lo);
+        // const clang::tooling::Replacement(sm, secondSourceRange, firstSourceText, lo);
+
+        if (auto error = replacements.add(clang::tooling::Replacement(sm, firstSourceRange, secondSourceText, lo))) {
+            llvm::errs() << "Error: " << error;
+            return 1;
+        }
+
+        if (auto error = replacements.add(clang::tooling::Replacement(sm, secondSourceRange, firstSourceText, lo))) {
+            llvm::errs() << "Error: " << error;
+            return 1;
+        }
+
+        clang::Rewriter rewriter(sm, lo);
+        if (!clang::tooling::applyAllReplacements(replacements, rewriter)) {
+            std::cerr << "Error: could not apply replacements." << std::endl;
+            return 1;
+        }
+
+        rewriter.overwriteChangedFiles();
+
+        return 0;
     }
+
+    std::cout << "Could not find any suitable candidates." << std::endl;
+    return 1;
 }
