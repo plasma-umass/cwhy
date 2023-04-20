@@ -6,11 +6,18 @@ project(CWhyMutations)
 
 set(CMAKE_CXX_STANDARD 20)
 
-find_package(Boost COMPONENTS program_options REQUIRED)
-
 find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
-message(STATUS "Found LLVM/Clang ${LLVM_PACKAGE_VERSION}.")
+message(STATUS "Found LLVM/Clang ${LLVM_PACKAGE_VERSION}")
+
+FetchContent_Declare(
+    boost
+    GIT_REPOSITORY https://github.com/boostorg/boost.git
+    GIT_TAG b6928ae5c92e21a04bbe17a558e6e066dbe632f6 # boost-1.82.0
+)
+
+message(STATUS "Downloading and configuring Boost")
+FetchContent_MakeAvailable(boost)
 
 FetchContent_Declare(
     fmt
