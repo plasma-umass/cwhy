@@ -14,6 +14,8 @@
 #include <clang/Tooling/JSONCompilationDatabase.h>
 #include <clang/Tooling/Tooling.h>
 
+#include <range/v3/all.hpp>
+
 size_t getRandom(size_t max) {
     std::random_device generator;
     return std::uniform_int_distribution<size_t>(0, max - 1)(generator);
@@ -27,7 +29,7 @@ Iterator getRandom(Iterator begin, Iterator end) {
 
 std::vector<const clang::FunctionDecl*> getAllFunctionDeclarations(clang::ASTContext& context) {
     using namespace clang::ast_matchers;
-    const auto matcher = functionDecl(isExpansionInMainFile(), unless(isImplicit())).bind("root");
+    const auto matcher = functionDecl(isExpansionInMainFile(), isDefinition(), unless(isImplicit())).bind("root");
     const auto matches = match(matcher, context);
 
     std::vector<const clang::FunctionDecl*> declarations;
@@ -96,10 +98,23 @@ int main(int argc, char** argv) {
             continue;
         }
 
-        std::cout << function->getNameAsString() << std::endl;
-        for (size_t i = 0; i < function->getNumParams(); ++i) {
-            std::cout << function->getParamDecl(i)->getType().getAsString() << " "
-                      << function->getParamDecl(i)->getNameAsString() << std::endl;
+        const auto first = getRandom(function->getNumParams());
+        const auto options
+            = ranges::views::iota(0u, function->getNumParams()) | ranges::views::filter([&](auto index) {
+                  return function->getParamDecl(index)->getType() != function->getParamDecl(first)->getType();
+              })
+              | ranges::to<std::vector>();
+
+        if (options.empty()) {
+            continue;
         }
+
+        const auto second = *getRandom(options.begin(), options.end());
+
+        std::cout << function->getNameAsString() << std::endl;
+        std::cout << function->getParamDecl(first)->getType().getAsString() << " "
+                  << function->getParamDecl(first)->getNameAsString() << std::endl;
+        std::cout << function->getParamDecl(second)->getType().getAsString() << " "
+                  << function->getParamDecl(second)->getNameAsString() << std::endl;
     }
 }
