@@ -1,7 +1,11 @@
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <iostream>
+#include <iterator>
+#include <memory>
 #include <random>
+#include <string>
 #include <utility>
 #include <vector>
 
