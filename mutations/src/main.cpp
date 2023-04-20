@@ -126,9 +126,6 @@ int main(int argc, char** argv) {
         const auto secondSourceText = clang::Lexer::getSourceText(secondSourceRange, sm, lo);
 
         clang::tooling::Replacements replacements;
-        // const clang::tooling::Replacement(sm, firstSourceRange, secondSourceText, lo);
-        // const clang::tooling::Replacement(sm, secondSourceRange, firstSourceText, lo);
-
         if (auto error = replacements.add(clang::tooling::Replacement(sm, firstSourceRange, secondSourceText, lo))) {
             llvm::errs() << "Error: " << error;
             return 1;
