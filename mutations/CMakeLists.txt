@@ -21,15 +21,6 @@ message(STATUS "Downloading and configuring Boost")
 FetchContent_MakeAvailable(boost)
 
 FetchContent_Declare(
-    fmt
-    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-    GIT_TAG a33701196adfad74917046096bf5a2aa0ab0bb50 # 9.1.0
-)
-
-message(STATUS "Downloading and configuring {fmt}")
-FetchContent_MakeAvailable(fmt)
-
-FetchContent_Declare(
   range-v3
   GIT_REPOSITORY https://github.com/ericniebler/range-v3.git
   GIT_TAG a81477931a8aa2ad025c6bda0609f38e09e4d7ec # 0.12.0
@@ -43,7 +34,6 @@ target_compile_options(mutations PRIVATE -Wall -Wextra -Wpedantic -Werror)
 target_include_directories(mutations SYSTEM PRIVATE ${CLANG_INCLUDE_DIRS})
 target_link_libraries(mutations PRIVATE Boost::program_options)
 target_link_libraries(mutations PRIVATE clangAST clangASTMatchers clangFrontend clangTooling)
-target_link_libraries(mutations PRIVATE fmt)
 target_link_libraries(mutations PRIVATE range-v3)
 
 check_ipo_supported(RESULT IPO_SUPPORTED)
