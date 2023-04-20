@@ -1,6 +1,7 @@
-#include <algorithm>
+#include <cassert>
 #include <iostream>
-#include <ranges>
+#include <random>
+#include <utility>
 #include <vector>
 
 #include <boost/program_options.hpp>
@@ -13,14 +14,29 @@
 #include <clang/Tooling/JSONCompilationDatabase.h>
 #include <clang/Tooling/Tooling.h>
 
-std::vector<const clang::FunctionDecl*> getAllFunctionsInFile(clang::ASTContext& context) {
+size_t getRandom(size_t max) {
+    std::random_device generator;
+    return std::uniform_int_distribution<size_t>(0, max - 1)(generator);
+}
+
+template <typename Iterator>
+Iterator getRandom(Iterator begin, Iterator end) {
+    std::advance(begin, getRandom(std::distance(begin, end)));
+    return begin;
+}
+
+std::vector<const clang::FunctionDecl*> getAllFunctionDeclarations(clang::ASTContext& context) {
     using namespace clang::ast_matchers;
     const auto matcher = functionDecl(isExpansionInMainFile(), unless(isImplicit())).bind("root");
     const auto matches = match(matcher, context);
 
     std::vector<const clang::FunctionDecl*> declarations;
-    std::transform(matches.begin(), matches.end(), std::back_inserter(declarations),
-                   [](const auto& match) { return match.template getNodeAs<clang::FunctionDecl>("root"); });
+
+    for (const auto& match : matches) {
+        const auto* function = match.getNodeAs<clang::FunctionDecl>("root");
+        declarations.push_back(function);
+    }
+
     return declarations;
 }
 
@@ -73,8 +89,17 @@ int main(int argc, char** argv) {
 
     assert(ASTs.size() == 1);
 
-    const auto functions = getAllFunctionsInFile(ASTs[0]->getASTContext());
-    for (const auto& function : functions) {
+    const auto candidates = getAllFunctionDeclarations(ASTs[0]->getASTContext());
+
+    for (const auto& function : candidates) {
+        if (function->getNumParams() < 2) {
+            continue;
+        }
+
         std::cout << function->getNameAsString() << std::endl;
+        for (size_t i = 0; i < function->getNumParams(); ++i) {
+            std::cout << function->getParamDecl(i)->getType().getAsString() << " "
+                      << function->getParamDecl(i)->getNameAsString() << std::endl;
+        }
     }
 }
