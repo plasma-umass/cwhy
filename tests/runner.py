@@ -1,7 +1,6 @@
 import argparse
 import asyncio
 import os
-import re
 import subprocess
 import tempfile
 
@@ -26,7 +25,7 @@ def verify_prompt(answer, choice):
     prompt += "The second model gave this output.\n"
     prompt += "````\n" + choice + "\n````\n"
     prompt += "Would you say the the second model's answer is correct and matches with the first model's?\n"
-    prompt += "Please only respond with 'true' or 'false' and nothing else."
+    prompt += "Start your answer with 'true' or 'false'."
     return prompt
 
 
@@ -45,7 +44,7 @@ async def evaluate_verifications(args, prompts):
     successes = 0
     for prompt, completion in zip(prompts, completions):
         text = completion.choices[0].message.content
-        if len(text) < 10 and re.search(r"true", text, re.IGNORECASE):
+        if text.lower().startswith("true"):
             successes += 1
         else:
             print(f"{'=' * 34} Fail {'=' * 34}")
