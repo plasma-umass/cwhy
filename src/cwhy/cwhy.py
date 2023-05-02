@@ -66,17 +66,21 @@ def read_lines(file_path: str, start_line: int, end_line: int) -> (str, int):
 
     """
     # open the file for reading
-    with open(file_path.lstrip(), "r") as f:
-        # read all the lines from the file
-        lines = f.readlines()
-        # remove trailing newline characters
-        lines = [line.rstrip() for line in lines]
-    # convert start_line to 0-based indexing and ensure it's in range
-    start_line = max(0, start_line - 1)
-    # ensure end_line is within range
-    end_line = min(len(lines), end_line)
-    # return the requested lines as a list
-    return ("\n".join(lines[start_line:end_line]) + "\n", start_line, end_line)
+    try:
+        with open(file_path.lstrip(), "r") as f:
+            # read all the lines from the file
+            lines = f.readlines()
+            # remove trailing newline characters
+            lines = [line.rstrip() for line in lines]
+        # convert start_line to 0-based indexing and ensure it's in range
+        start_line = max(0, start_line - 1)
+        # ensure end_line is within range
+        end_line = min(len(lines), end_line)
+        # return the requested lines as a list
+        return ("\n".join(lines[start_line:end_line]) + "\n", start_line, end_line)
+    except FileNotFoundError:
+        print(f"Cwhy warning: file not found: {file_path.lstrip()}")
+        return ("\n", start_line, end_line)
 
 
 def complete(args, user_prompt):
