@@ -66,7 +66,7 @@ def read_lines(file_path: str, start_line: int, end_line: int) -> (str, int):
 
     """
     # open the file for reading
-    with open(file_path, "r") as f:
+    with open(file_path.lstrip(), "r") as f:
         # read all the lines from the file
         lines = f.readlines()
         # remove trailing newline characters
