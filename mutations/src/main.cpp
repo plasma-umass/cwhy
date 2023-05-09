@@ -50,9 +50,9 @@ std::vector<const clang::FunctionDecl*> getAllFunctionDeclarations(clang::ASTCon
     return declarations;
 }
 
-std::optional<clang::tooling::Replacements> flipFunctionCallArguments(const clang::FunctionDecl& function,
-                                                                      const clang::SourceManager& sm,
-                                                                      const clang::LangOptions& lo) {
+std::optional<clang::tooling::Replacements> flipFunctionParameters(const clang::FunctionDecl& function,
+                                                                   const clang::SourceManager& sm,
+                                                                   const clang::LangOptions& lo) {
     if (function.getNumParams() < 2) {
         return std::nullopt;
     }
@@ -144,7 +144,7 @@ int main(int argc, char** argv) {
     std::shuffle(candidates.begin(), candidates.end(), std::random_device());
 
     for (const auto& function : candidates) {
-        const auto replacements = flipFunctionCallArguments(*function, sm, lo);
+        const auto replacements = flipFunctionParameters(*function, sm, lo);
         if (!replacements) {
             continue;
         }
