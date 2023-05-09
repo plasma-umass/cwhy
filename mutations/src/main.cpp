@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iterator>
 #include <memory>
+#include <optional>
 #include <random>
 #include <string>
 #include <utility>
@@ -23,9 +24,9 @@
 
 #include <range/v3/all.hpp>
 
-size_t getRandom(size_t max) {
+std::size_t getRandom(std::size_t max) {
     std::random_device generator;
-    return std::uniform_int_distribution<size_t>(0, max - 1)(generator);
+    return std::uniform_int_distribution<std::size_t>(0, max - 1)(generator);
 }
 
 template <typename Iterator>
@@ -47,6 +48,45 @@ std::vector<const clang::FunctionDecl*> getAllFunctionDeclarations(clang::ASTCon
     }
 
     return declarations;
+}
+
+std::optional<clang::tooling::Replacements> flipFunctionCallArguments(const clang::FunctionDecl& function,
+                                                                      const clang::SourceManager& sm,
+                                                                      const clang::LangOptions& lo) {
+    if (function.getNumParams() < 2) {
+        return std::nullopt;
+    }
+
+    const auto first = getRandom(function.getNumParams());
+    const auto options = ranges::views::iota(0u, function.getNumParams()) | ranges::views::filter([&](auto index) {
+                             return function.getParamDecl(index)->getType() != function.getParamDecl(first)->getType();
+                         })
+                         | ranges::to<std::vector>();
+
+    if (options.empty()) {
+        return std::nullopt;
+    }
+
+    const auto second = *getRandom(options.begin(), options.end());
+
+    const auto firstSourceRange = clang::CharSourceRange::getTokenRange(function.getParamDecl(first)->getSourceRange());
+    const auto secondSourceRange
+        = clang::CharSourceRange::getTokenRange(function.getParamDecl(second)->getSourceRange());
+
+    const auto firstSourceText = clang::Lexer::getSourceText(firstSourceRange, sm, lo);
+    const auto secondSourceText = clang::Lexer::getSourceText(secondSourceRange, sm, lo);
+
+    clang::tooling::Replacements replacements;
+    if (auto error = replacements.add(clang::tooling::Replacement(sm, firstSourceRange, secondSourceText, lo))) {
+        return std::nullopt;
+    }
+
+    if (auto error = replacements.add(clang::tooling::Replacement(sm, secondSourceRange, firstSourceText, lo))) {
+        llvm::errs() << "Error: " << error;
+        return std::nullopt;
+    }
+
+    return replacements;
 }
 
 int main(int argc, char** argv) {
@@ -104,44 +144,13 @@ int main(int argc, char** argv) {
     std::shuffle(candidates.begin(), candidates.end(), std::random_device());
 
     for (const auto& function : candidates) {
-        if (function->getNumParams() < 2) {
+        const auto replacements = flipFunctionCallArguments(*function, sm, lo);
+        if (!replacements) {
             continue;
-        }
-
-        const auto first = getRandom(function->getNumParams());
-        const auto options
-            = ranges::views::iota(0u, function->getNumParams()) | ranges::views::filter([&](auto index) {
-                  return function->getParamDecl(index)->getType() != function->getParamDecl(first)->getType();
-              })
-              | ranges::to<std::vector>();
-
-        if (options.empty()) {
-            continue;
-        }
-
-        const auto second = *getRandom(options.begin(), options.end());
-
-        const auto firstSourceRange
-            = clang::CharSourceRange::getTokenRange(function->getParamDecl(first)->getSourceRange());
-        const auto secondSourceRange
-            = clang::CharSourceRange::getTokenRange(function->getParamDecl(second)->getSourceRange());
-
-        const auto firstSourceText = clang::Lexer::getSourceText(firstSourceRange, sm, lo);
-        const auto secondSourceText = clang::Lexer::getSourceText(secondSourceRange, sm, lo);
-
-        clang::tooling::Replacements replacements;
-        if (auto error = replacements.add(clang::tooling::Replacement(sm, firstSourceRange, secondSourceText, lo))) {
-            llvm::errs() << "Error: " << error;
-            return 1;
-        }
-
-        if (auto error = replacements.add(clang::tooling::Replacement(sm, secondSourceRange, firstSourceText, lo))) {
-            llvm::errs() << "Error: " << error;
-            return 1;
         }
 
         clang::Rewriter rewriter(sm, lo);
-        if (!clang::tooling::applyAllReplacements(replacements, rewriter)) {
+        if (!clang::tooling::applyAllReplacements(*replacements, rewriter)) {
             std::cerr << "Error: could not apply replacements." << std::endl;
             return 1;
         }
