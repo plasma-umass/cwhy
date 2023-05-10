@@ -82,8 +82,8 @@ std::optional<clang::tooling::Replacements> flipSourceRanges(const clang::Source
     return replacements;
 }
 
-std::optional<clang::tooling::Replacements>
-flipFunctionParameters(const clang::FunctionDecl& f, const clang::SourceManager& sm, const clang::LangOptions& lo) {
+std::optional<clang::tooling::Replacements> flipFunctionParameters(const clang::FunctionDecl& f,
+                                                                   clang::ASTContext& context) {
     if (f.getNumParams() < 2) {
         return std::nullopt;
     }
@@ -100,18 +100,26 @@ flipFunctionParameters(const clang::FunctionDecl& f, const clang::SourceManager&
 
     const auto second = *getRandom(options.begin(), options.end());
 
-    return flipSourceRanges(f.getParamDecl(first)->getSourceRange(), f.getParamDecl(second)->getSourceRange(), sm, lo);
+    return flipSourceRanges(f.getParamDecl(first)->getSourceRange(), f.getParamDecl(second)->getSourceRange(),
+                            context.getSourceManager(), context.getLangOpts());
 }
 
-std::optional<clang::tooling::Replacements>
-flipFunctionCallArguments(const clang::CallExpr& e, const clang::SourceManager& sm, const clang::LangOptions& lo) {
+std::optional<clang::tooling::Replacements> flipFunctionCallArguments(const clang::CallExpr& e,
+                                                                      clang::ASTContext& context) {
     if (e.getNumArgs() < 2) {
         return std::nullopt;
     }
 
-    const auto first = getRandom(e.getNumArgs());
+    const auto nonDefaultArguments = ranges::views::iota(0u, e.getNumArgs()) | ranges::views::filter([&](auto index) {
+                                         using namespace clang::ast_matchers;
+                                         const auto matches = match(cxxDefaultArgExpr(), *e.getArg(index), context);
+                                         return matches.empty();
+                                     })
+                                     | ranges::to<std::vector>();
+
+    const auto first = *getRandom(nonDefaultArguments.begin(), nonDefaultArguments.end());
     const auto options
-        = ranges::views::iota(0u, e.getNumArgs())
+        = nonDefaultArguments
           | ranges::views::filter([&](auto index) { return e.getArg(index)->getType() != e.getArg(first)->getType(); })
           | ranges::to<std::vector>();
 
@@ -121,13 +129,16 @@ flipFunctionCallArguments(const clang::CallExpr& e, const clang::SourceManager& 
 
     const auto second = *getRandom(options.begin(), options.end());
 
-    llvm::errs() << clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(e.getSourceRange()), sm, lo)
+    llvm::errs() << clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(e.getSourceRange()),
+                                                context.getSourceManager(), context.getLangOpts())
                  << "\n";
     llvm::errs() << clang::Lexer::getSourceText(
-        clang::CharSourceRange::getTokenRange(e.getArg(first)->getSourceRange()), sm, lo)
+        clang::CharSourceRange::getTokenRange(e.getArg(first)->getSourceRange()), context.getSourceManager(),
+        context.getLangOpts())
                  << "\n";
     llvm::errs() << clang::Lexer::getSourceText(
-        clang::CharSourceRange::getTokenRange(e.getArg(second)->getSourceRange()), sm, lo)
+        clang::CharSourceRange::getTokenRange(e.getArg(second)->getSourceRange()), context.getSourceManager(),
+        context.getLangOpts())
                  << "\n"
                  << "\n";
 
@@ -191,7 +202,7 @@ int main(int argc, char** argv) {
 
     for (const auto& function : candidates) {
         // const auto replacements = flipFunctionParameters(*function, sm, lo);
-        const auto replacements = flipFunctionCallArguments(*function, sm, lo);
+        const auto replacements = flipFunctionCallArguments(*function, ASTs[0]->getASTContext());
         if (!replacements) {
             continue;
         }
