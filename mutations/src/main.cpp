@@ -129,20 +129,8 @@ std::optional<clang::tooling::Replacements> flipFunctionCallArguments(const clan
 
     const auto second = *getRandom(options.begin(), options.end());
 
-    llvm::errs() << clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(e.getSourceRange()),
-                                                context.getSourceManager(), context.getLangOpts())
-                 << "\n";
-    llvm::errs() << clang::Lexer::getSourceText(
-        clang::CharSourceRange::getTokenRange(e.getArg(first)->getSourceRange()), context.getSourceManager(),
-        context.getLangOpts())
-                 << "\n";
-    llvm::errs() << clang::Lexer::getSourceText(
-        clang::CharSourceRange::getTokenRange(e.getArg(second)->getSourceRange()), context.getSourceManager(),
-        context.getLangOpts())
-                 << "\n"
-                 << "\n";
-
-    return std::nullopt;
+    return flipSourceRanges(e.getArg(first)->getSourceRange(), e.getArg(second)->getSourceRange(),
+                            context.getSourceManager(), context.getLangOpts());
 }
 
 int main(int argc, char** argv) {
