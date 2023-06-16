@@ -6,7 +6,7 @@ by [Emery Berger](https://emeryberger.com), [Bryce Adelstein Lelbach](https://tw
 
 ("See why")
 
-Explains and suggest fixes for C/C++/Rust compiler error messages.
+Explains and suggests fixes for C/C++/Rust compiler error messages.
 
 ## Installation
 
