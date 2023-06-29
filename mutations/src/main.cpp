@@ -24,6 +24,7 @@
 
 #include <range/v3/all.hpp>
 
+namespace {
 std::size_t getRandom(std::size_t max) {
     std::random_device generator;
     return std::uniform_int_distribution<std::size_t>(0, max - 1)(generator);
@@ -35,7 +36,7 @@ Iterator getRandom(Iterator begin, Iterator end) {
     return begin;
 }
 
-std::vector<const clang::FunctionDecl*> getAllFunctionDeclarations(clang::ASTContext& context) {
+[[maybe_unused]] std::vector<const clang::FunctionDecl*> getAllFunctionDeclarations(clang::ASTContext& context) {
     using namespace clang::ast_matchers;
     const auto matcher = functionDecl(isExpansionInMainFile(), isDefinition(), unless(isImplicit())).bind("root");
     const auto matches = match(matcher, context);
@@ -48,7 +49,7 @@ std::vector<const clang::FunctionDecl*> getAllFunctionDeclarations(clang::ASTCon
     return declarations;
 }
 
-std::vector<const clang::CallExpr*> getAllFunctionCallExpressions(clang::ASTContext& context) {
+[[maybe_unused]] std::vector<const clang::CallExpr*> getAllFunctionCallExpressions(clang::ASTContext& context) {
     using namespace clang::ast_matchers;
     const auto matcher = callExpr(isExpansionInMainFile(), unless(cxxOperatorCallExpr())).bind("root");
     const auto matches = match(matcher, context);
@@ -132,6 +133,7 @@ std::optional<clang::tooling::Replacements> flipFunctionCallArguments(const clan
     return flipSourceRanges(e.getArg(first)->getSourceRange(), e.getArg(second)->getSourceRange(),
                             context.getSourceManager(), context.getLangOpts());
 }
+} // namespace
 
 int main(int argc, char** argv) {
     namespace po = boost::program_options;
@@ -160,7 +162,8 @@ int main(int argc, char** argv) {
     try {
         po::notify(vm);
     } catch (const po::error& e) {
-        std::cerr << "Error: " << e.what() << std::endl << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << std::endl;
         std::cerr << required << std::endl;
         return 1;
     }
