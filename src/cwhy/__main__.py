@@ -38,41 +38,10 @@ def main():
         help="print prompts before sending them to OpenAI for debugging",
     )
 
-    subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
-    subparsers.add_parser(
-        "explain", help="explain the diagnostic. This is the default subcommand"
-    ).set_defaults(fn=explain)
-    subparsers.add_parser("fix", help="propose a fix for the diagnostic").set_defaults(
-        fn=fix
-    )
-    subparsers.add_parser(
-        "extract_sources",
-        help="extract the source locations from the diagnostic as CSV",
-    ).set_defaults(fn=extract_sources)
-
     args = parser.parse_args()
 
     if args.version:
         print(f"cwhy version {importlib.metadata.metadata('cwhy')['Version']}")
         return
 
-    if args.subcommand is None:
-        args.fn = explain
-
-    args.fn(args)
-
-
-def explain(args):
     cwhy.evaluate_prompt(args, cwhy.explain_prompt(sys.stdin.read()))
-
-
-def fix(args):
-    cwhy.evaluate_prompt(args, cwhy.fix_prompt(sys.stdin.read()))
-
-
-def extract_sources(args):
-    cwhy.evaluate_prompt(
-        args,
-        cwhy.extract_sources_prompt(sys.stdin.read()),
-        wrap=False,
-    )
