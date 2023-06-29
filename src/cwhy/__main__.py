@@ -1,71 +1,78 @@
 #! /usr/bin/env python3
+
+import argparse
 import importlib.metadata
 import sys
-
-import click
 
 from . import cwhy
 
 
-@click.group(invoke_without_command=True)
-@click.option(
-    "--llm",
-    type=click.Choice(["gpt-4", "gpt-3.5-turbo"]),
-    required=False,
-    default="gpt-3.5-turbo",
-)
-@click.option(
-    "--show-prompt",
-    is_flag=True,
-    help="Print the prompt before sending it to OpenAI for debugging.",
-    required=False,
-    default=False,
-)
-@click.option(
-    "--timeout",
-    type=int,
-    required=False,
-    default=60,
-    help="Timeout for API calls in seconds.",
-)
-@click.option(
-    "--version",
-    is_flag=True,
-    help="Print the version of cwhy.",
-    required=False,
-    default=False,
-)
-@click.pass_context
-def main(ctx, llm, timeout, version, show_prompt):
-    if version:
+def main():
+    parser = argparse.ArgumentParser(
+        prog="cwhy",
+        description="CWhy provides utilities to explain diagnostic messages using LLMs.",
+    )
+
+    parser.add_argument(
+        "--version",
+        action="store_true",
+        help="print the version of cwhy and exit",
+    )
+
+    parser.add_argument(
+        "--llm",
+        type=str,
+        default="gpt-3.5-turbo",
+        help="the language model to use. this tool is tested with 'gpt-3.5-turbo' and 'gpt-4'",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=60,
+        help="timeout for API calls in seconds",
+    )
+
+    parser.add_argument(
+        "--show-prompt",
+        action="store_true",
+        help="print prompts before sending them to OpenAI for debugging",
+    )
+
+    subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
+    subparsers.add_parser(
+        "explain", help="explain the diagnostic. This is the default subcommand"
+    ).set_defaults(fn=explain)
+    subparsers.add_parser("fix", help="propose a fix for the diagnostic").set_defaults(
+        fn=fix
+    )
+    subparsers.add_parser(
+        "extract_sources",
+        help="extract the source locations from the diagnostic as CSV",
+    ).set_defaults(fn=extract_sources)
+
+    args = parser.parse_args()
+
+    if args.version:
         print(f"cwhy version {importlib.metadata.metadata('cwhy')['Version']}")
         return
-    ctx.ensure_object(dict)
-    ctx.obj["llm"] = llm
-    ctx.obj["timeout"] = timeout
-    ctx.obj["show-prompt"] = show_prompt
 
-    if ctx.invoked_subcommand is None:
-        ctx.invoke(explain)
+    if args.subcommand is None:
+        args.fn = explain
+
+    args.fn(args)
 
 
-@main.command(short_help="Explain the diagnostic.")
-@click.pass_context
-def explain(ctx):
-    cwhy.evaluate_prompt(ctx.obj, cwhy.explain_prompt(sys.stdin.read()))
+def explain(args):
+    cwhy.evaluate_prompt(args, cwhy.explain_prompt(sys.stdin.read()))
 
 
-@main.command(short_help="Propose a fix for the diagnostic.")
-@click.pass_context
-def fix(ctx):
-    cwhy.evaluate_prompt(ctx.obj, cwhy.fix_prompt(sys.stdin.read()))
+def fix(args):
+    cwhy.evaluate_prompt(args, cwhy.fix_prompt(sys.stdin.read()))
 
 
-@main.command(short_help="Extract the source locations from the diagnostic as CSV.")
-@click.pass_context
-def extract_sources(ctx):
+def extract_sources(args):
     cwhy.evaluate_prompt(
-        ctx.obj,
+        args,
         cwhy.extract_sources_prompt(sys.stdin.read()),
         wrap=False,
     )

@@ -1,4 +1,3 @@
-import io
 import re
 import sys
 import textwrap
@@ -86,8 +85,8 @@ def read_lines(file_path: str, start_line: int, end_line: int) -> (str, int):
 def complete(args, user_prompt):
     try:
         completion = openai.ChatCompletion.create(
-            model=args["llm"],
-            request_timeout=args["timeout"],
+            model=args.llm,
+            request_timeout=args.timeout,
             messages=[{"role": "user", "content": user_prompt}],
         )
         return completion.choices[0].message.content
@@ -110,7 +109,7 @@ def evaluate_prompt(args, prompt, wrap=True):
     if not prompt:
         # Do nothing if nothing was sent to stdin
         return
-    if args["show-prompt"]:
+    if args.show_prompt:
         print("===================== Prompt =====================")
         print(prompt)
         print("==================================================")
