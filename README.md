@@ -2,7 +2,9 @@
 
 by [Emery Berger](https://emeryberger.com), [Bryce Adelstein Lelbach](https://twitter.com/blelbach?lang=en), and [Nicolas van Kempen](https://nvankempen.com/)
 
-[![PyPI Latest Release](https://img.shields.io/pypi/v/cwhy.svg)](https://pypi.org/project/cwhy/)[![Downloads](https://pepy.tech/badge/cwhy)](https://pepy.tech/project/cwhy) [![Downloads](https://pepy.tech/badge/cwhy/month)](https://pepy.tech/project/cwhy) ![Python versions](https://img.shields.io/pypi/pyversions/cwhy.svg?style=flat-square)
+[![PyPI](https://img.shields.io/pypi/v/cwhy.svg)](https://pypi.org/project/cwhy/)
+[![downloads](https://pepy.tech/badge/cwhy)](https://pepy.tech/project/cwhy)
+[![downloads/month](https://pepy.tech/badge/cwhy/month)](https://pepy.tech/project/cwhy)
 
 ("See why")
 
