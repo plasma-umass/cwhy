@@ -30,20 +30,18 @@ variable called `OPENAI_API_KEY`. If you do not have one yet, you can
 ### Compiler wrapper mode
 
 This new mode is recommended as CWhy will then operate in the same context as the compiler, and will do a better job
-finding the right source files. Additional options should be passed along with the `--wrapper` call.
+finding the right source files.
 
 ```bash
 # Invoking the compiler directly.
-% `cwhy --wrapper` mycode.cpp
+% `cwhy wrapper` mycode.cpp
 
 # Invoking with GNU make, using GPT-4.
-% CXX=`cwhy --wrapper --llm gpt-4` make
+% CXX=`cwhy --llm=gpt-4 wrapper` make
 
-# Invoking with CMake.
-% cmake -DCMAKE_CXX_COMPILER=`cwhy --wrapper` ...
+# Invoking with CMake, using GPT-4 and clang++.
+% cmake -DCMAKE_CXX_COMPILER=`cwhy --llm=gpt-4 wrapper --compiler=clang++` ...
 ```
-
-The underlying compiler can be selected with the `CWHY_CXX` environment variable.
 
 ### Original mode
 
@@ -60,6 +58,8 @@ These options can be retrieved with `cwhy --help`.
  -  `--llm`: pick a specific OpenAI LLM. CWhy is tested with `gpt-3.5-turbo` and `gpt-4`.
  -  `--timeout`: pick a different timeout than the default for API calls.
  -  `--show-prompt` (debug): print prompts before calling the API.
+
+The wrapper mode specifically also has a `--compiler` option to select the underlying compiler to use.
 
 ## Examples
 

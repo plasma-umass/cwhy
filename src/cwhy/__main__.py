@@ -8,6 +8,7 @@ import tempfile
 
 from . import cwhy
 
+
 def wrapper(args):
     return f"""#! /usr/bin/env python3
 
@@ -17,10 +18,8 @@ import sys
 
 from cwhy import cwhy
 
-CWHY_CXX = os.environ.get("CWHY_CXX", "c++")
-
 process = subprocess.run(
-    [CWHY_CXX, *sys.argv[1:]],
+    ["{args["compiler"]}", *sys.argv[1:]],
     stdout=subprocess.PIPE,
     stderr=subprocess.STDOUT,
     text=True,
@@ -73,15 +72,40 @@ def main():
         help="enable compiler wrapper behavior",
     )
 
+    subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
+
+    subparsers.add_parser("explain", help="explain the diagnostic (default)")
+    subparsers.add_parser("fix", help="propose a fix for the diagnostic")
+    subparsers.add_parser(
+        "extract-sources", help="extract the source locations from the diagnostic"
+    )
+    subparsers.add_parser(
+        "wrapper", help="behave like a compiler wrapper"
+    ).add_argument(
+        "--compiler", type=str, default="c++", help="the underlying compiler"
+    )
+
+    parser.set_defaults(subcommand="explain")
+
     args = vars(parser.parse_args())
-    
-    if args["wrapper"]:
+
+    if args["subcommand"] == "wrapper":
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
             f.write(wrapper(args))
         os.chmod(f.name, 0o755)
         print(f.name)
     elif args["version"]:
         print(f"cwhy version {importlib.metadata.metadata('cwhy')['Version']}")
-        return
     else:
-        cwhy.evaluate_prompt(args, cwhy.explain_prompt(sys.stdin.read()))
+        stdin = sys.stdin.read()
+        if stdin:
+            if args["subcommand"] == "explain":
+                cwhy.evaluate_prompt(args, cwhy.explain_prompt(stdin))
+            elif args["subcommand"] == "fix":
+                cwhy.evaluate_prompt(args, cwhy.fix_prompt(stdin))
+            elif args["subcommand"] == "extract-sources":
+                cwhy.evaluate_prompt(
+                    args, cwhy.extract_sources_prompt(stdin), wrap=False
+                )
+            else:
+                raise Exception("unreachable")
