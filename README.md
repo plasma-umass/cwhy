@@ -1,6 +1,7 @@
 # cwhy
 
-by [Emery Berger](https://emeryberger.com), [Bryce Adelstein Lelbach](https://twitter.com/blelbach?lang=en), and [Nicolas van Kempen](https://nvankempen.com/)
+by [Emery Berger](https://emeryberger.com), [Bryce Adelstein Lelbach](https://twitter.com/blelbach?lang=en), and
+[Nicolas van Kempen](https://nvankempen.com/).
 
 [![PyPI](https://img.shields.io/pypi/v/cwhy.svg)](https://pypi.org/project/cwhy/)
 [![downloads](https://pepy.tech/badge/cwhy)](https://pepy.tech/project/cwhy)
@@ -16,31 +17,56 @@ Explains and suggests fixes for C/C++/Rust compiler error messages.
 python3 -m pip install cwhy
 ```
 
-*NOTE*: To use cwhy, you must first set up an OpenAI API key. If you
-already have an API key, you can set it as an environment variable
-called `OPENAI_API_KEY`. If you do not have one yet,
-you can get a key here: https://platform.openai.com/account/api-keys
+To use cwhy, you must first set up an OpenAI API key. If you already have an API key, you can set it as an environment
+variable called `OPENAI_API_KEY`. If you do not have one yet, you can
+[get a key here](https://platform.openai.com/account/api-keys).
 
-```
-export OPENAI_API_KEY=<your-api-key>
+```bash
+% export OPENAI_API_KEY=<your-api-key>
 ```
 
 ## Usage
 
-Just pipe your compiler's output to `cwhy`. `cwhy` will by default provide an explanation. If you'd like a suggested fix, add `fix`.
+### Compiler wrapper mode
 
-e.g.,
+This new mode is recommended as CWhy will then operate in the same context as the compiler, and will do a better job
+finding the right source files. Additional options should be passed along with the `--wrapper` call.
 
+```bash
+# Invoking the compiler directly.
+% `cwhy --wrapper` mycode.cpp
+
+# Invoking with GNU make, using GPT-4.
+% CXX=`cwhy --wrapper --llm gpt-4` make
+
+# Invoking with CMake.
+% cmake -DCMAKE_CXX_COMPILER=`cwhy --wrapper` ...
 ```
-% clang++ -g mycode.cpp |& cwhy     # explanation only
-% clang++ -g mycode.cpp |& cwhy fix # to see a suggested fix
+
+The underlying compiler can be selected with the `CWHY_CXX` environment variable.
+
+### Original mode
+
+Just pipe your compiler's output to `cwhy`.
+
+```bash
+% clang++ -g mycode.cpp |& cwhy
 ```
+
+### Options
+
+These options can be retrieved with `cwhy --help`.
+
+ -  `--llm`: pick a specific OpenAI LLM. CWhy is tested with `gpt-3.5-turbo` and `gpt-4`.
+ -  `--timeout`: pick a different timeout than the default for API calls.
+ -  `--show-prompt` (debug): print prompts before calling the API.
 
 ## Examples
 
 ### C++
 
-This highlighted example is [missing-hash.cpp](test/c++/missing-hash.cpp), which is one of the first cases we experimented with.
+This highlighted example is [missing-hash.cpp](test/c++/missing-hash.cpp), which is one of the first cases we
+experimented with.
 
 <details>
 <summary>
