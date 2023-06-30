@@ -53,9 +53,9 @@ Just pipe your compiler's output to `cwhy`.
 
 ### Options
 
-These options can be retrieved with `cwhy --help`.
+These options can be displayed with `cwhy --help`.
 
- -  `--llm`: pick a specific OpenAI LLM. CWhy is tested with `gpt-3.5-turbo` and `gpt-4`.
+ -  `--llm`: pick a specific OpenAI LLM. CWhy has been tested with `gpt-3.5-turbo` and `gpt-4`.
  -  `--timeout`: pick a different timeout than the default for API calls.
  -  `--show-prompt` (debug): print prompts before calling the API.
 
