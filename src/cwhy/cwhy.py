@@ -85,8 +85,8 @@ def read_lines(file_path: str, start_line: int, end_line: int) -> (str, int):
 def complete(args, user_prompt):
     try:
         completion = openai.ChatCompletion.create(
-            model=args.llm,
-            request_timeout=args.timeout,
+            model=args["llm"],
+            request_timeout=args["timeout"],
             messages=[{"role": "user", "content": user_prompt}],
         )
         return completion.choices[0].message.content
@@ -106,10 +106,7 @@ def complete(args, user_prompt):
 
 
 def evaluate_prompt(args, prompt, wrap=True):
-    if not prompt:
-        # Do nothing if nothing was sent to stdin
-        return
-    if args.show_prompt:
+    if args["show_prompt"]:
         print("===================== Prompt =====================")
         print(prompt)
         print("==================================================")
@@ -185,10 +182,6 @@ class explain_context:
 def base_prompt(diagnostic):
     ctx = explain_context(diagnostic)
 
-    if not ctx.unabridged_diagnostic.strip():
-        # Fail silently if stdin was empty
-        return ""
-
     user_prompt = ""
     if ctx.code:
         user_prompt += "This is my code:\n\n"
@@ -215,9 +208,7 @@ def fix_prompt(diagnostic):
 class extract_sources_context:
     def __init__(self, diagnostic):
         diagnostic_lines = diagnostic.splitlines()
-
         line = min(len(diagnostic_lines) - 1, 50)
-
         self.unabridged_diagnostic = "\n".join(diagnostic_lines) + "\n"
         self.abridged_diagnostic = (
             "```\n" + "\n".join(diagnostic_lines[:line]) + "\n```\n"
@@ -226,11 +217,6 @@ class extract_sources_context:
 
 def extract_sources_prompt(diagnostic):
     ctx = extract_sources_context(diagnostic)
-
-    if not ctx.unabridged_diagnostic.strip():
-        # Fail silently if stdin was empty
-        return ""
-
     user_prompt = "Respond only in the CSV format with no header row.\n"
     user_prompt += "Identify all of the file paths and associated line numbers.\n"
     user_prompt += "Output each file path and associated line number.\n"
