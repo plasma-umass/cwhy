@@ -1,0 +1,22 @@
+#! /usr/bin/env python3
+
+import subprocess
+import sys
+
+from cwhy import cwhy
+
+process = subprocess.run(
+    ["{compiler}", *sys.argv[1:]],
+    stdout=subprocess.PIPE,
+    stderr=subprocess.STDOUT,
+    text=True,
+)
+status = process.returncode
+if status != 0:
+    print(process.stdout)
+    print("==================================================")
+    print("CWhy")
+    print("==================================================")
+    cwhy.evaluate_prompt({args}, cwhy.explain_prompt(process.stdout))
+    print("==================================================")
+sys.exit(status)

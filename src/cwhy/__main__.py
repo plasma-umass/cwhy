@@ -10,30 +10,9 @@ from . import cwhy
 
 
 def wrapper(args):
-    return f"""#! /usr/bin/env python3
-
-import os
-import subprocess
-import sys
-
-from cwhy import cwhy
-
-process = subprocess.run(
-    ["{args["compiler"]}", *sys.argv[1:]],
-    stdout=subprocess.PIPE,
-    stderr=subprocess.STDOUT,
-    text=True,
-)
-status = process.returncode
-if status != 0:
-    print(process.stdout)
-    print("==================================================")
-    print("CWhy")
-    print("==================================================")
-    cwhy.evaluate_prompt({args}, cwhy.explain_prompt(process.stdout))
-    print("==================================================")
-sys.exit(status)
-"""
+    with open(os.path.join(os.path.dirname(__file__), "wrapper.py.in")) as f:
+        template = f.read()
+    return template.format(compiler=args["compiler"], args=args)
 
 
 def main():
