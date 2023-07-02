@@ -132,6 +132,10 @@ class explain_context:
             # This pattern works for some C++ compilers (GCC, Clang) and Rust.
             match = re.search(r"^([^:->]+):([0-9]+):([0-9]+)", diagnostic_lines[line])
 
+            if not match:
+                # This pattern works for javac.
+                match = re.search(r"^([^:->]+):([0-9]+):", diagnostic_lines[line])
+
             line += 1
 
             if not match:
