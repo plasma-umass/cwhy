@@ -9,7 +9,7 @@ by [Emery Berger](https://emeryberger.com), [Bryce Adelstein Lelbach](https://tw
 
 ("See why")
 
-Explains and suggests fixes for C/C++/Rust compiler error messages.
+Explains and suggests fixes for C/C++/Rust/Java compiler error messages.
 
 ## Installation
 
@@ -35,6 +35,9 @@ finding the right source files.
 ```bash
 # Invoking the compiler directly.
 % `cwhy wrapper` mycode.cpp
+
+# Using cwhy with Java
+% `cwhy wrapper --compiler=javac` mycode.java
 
 # Invoking with GNU make, using GPT-4.
 % CXX=`cwhy --llm=gpt-4 wrapper` make
