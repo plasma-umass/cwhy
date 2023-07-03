@@ -141,11 +141,11 @@ class explain_context:
         line = 0
         while line < len(diagnostic_lines):
             # This pattern works for some C++ compilers (GCC, Clang) and Rust.
-            match = re.search(r"^([^:->]+):([0-9]+):([0-9]+)", diagnostic_lines[line])
+            match = re.match(r"([a-zA-Z0-9./][^:->]+):([0-9]+):([0-9]+)", diagnostic_lines[line])
 
             if not match:
                 # This pattern works for javac.
-                match = re.search(r"^([^:->]+):([0-9]+):", diagnostic_lines[line])
+                match = re.match(r"([a-zA-Z0-9./][^:->]+):([0-9]+):", diagnostic_lines[line])
 
             line += 1
 
