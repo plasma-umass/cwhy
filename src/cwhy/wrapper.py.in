@@ -17,6 +17,6 @@ if status != 0:
     print("==================================================")
     print("CWhy")
     print("==================================================")
-    cwhy.evaluate_prompt({args}, cwhy.explain_prompt(process.stdout))
+    cwhy.evaluate({args}, process.stdout)
     print("==================================================")
 sys.exit(status)

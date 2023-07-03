@@ -34,16 +34,19 @@ finding the right source files.
 
 ```bash
 # Invoking the compiler directly.
-% `cwhy wrapper` mycode.cpp
+% `cwhy --wrapper` mycode.cpp
+
+% Using fix mode.
+% `cwhy --wrapper fix` mycode.cpp
 
 # Using cwhy with Java
-% `cwhy wrapper --compiler=javac` mycode.java
+% `cwhy --wrapper --wrapper-compiler=javac` mycode.java
 
 # Invoking with GNU make, using GPT-4.
-% CXX=`cwhy --llm=gpt-4 wrapper` make
+% CXX=`cwhy --llm=gpt-4 --wrapper` make
 
 # Invoking with CMake, using GPT-4 and clang++.
-% cmake -DCMAKE_CXX_COMPILER=`cwhy --llm=gpt-4 wrapper --compiler=clang++` ...
+% cmake -DCMAKE_CXX_COMPILER=`cwhy --llm=gpt-4 --wrapper --wrapper-compiler=clang++` ...
 ```
 
 ### Original mode
@@ -62,7 +65,7 @@ These options can be displayed with `cwhy --help`.
  -  `--timeout`: pick a different timeout than the default for API calls.
  -  `--show-prompt` (debug): print prompts before calling the API.
 
-The wrapper mode specifically also has a `--compiler` option to select the underlying compiler to use.
+The wrapper mode specifically also has a `--wrapper-compiler` option to select the underlying compiler to use.
 
 ## Examples
 

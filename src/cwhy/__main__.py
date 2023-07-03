@@ -12,7 +12,7 @@ from . import cwhy
 def wrapper(args):
     with open(os.path.join(os.path.dirname(__file__), "wrapper.py.in")) as f:
         template = f.read()
-    return template.format(compiler=args["compiler"], args=args)
+    return template.format(compiler=args["wrapper_compiler"], args=args)
 
 
 def main():
@@ -50,6 +50,13 @@ def main():
         action="store_true",
         help="enable compiler wrapper behavior",
     )
+    parser.add_argument(
+        "--wrapper-compiler",
+        metavar="COMPILER",
+        type=str,
+        default="c++",
+        help="the underlying compiler. Only enabled with --wrapper",
+    )
 
     subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
 
@@ -58,17 +65,12 @@ def main():
     subparsers.add_parser(
         "extract-sources", help="extract the source locations from the diagnostic"
     )
-    subparsers.add_parser(
-        "wrapper", help="behave like a compiler wrapper"
-    ).add_argument(
-        "--compiler", type=str, default="c++", help="the underlying compiler"
-    )
 
     parser.set_defaults(subcommand="explain")
 
     args = vars(parser.parse_args())
 
-    if args["subcommand"] == "wrapper":
+    if args["wrapper"]:
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
             f.write(wrapper(args))
         # NamedTemporaryFiles are not executable by default. Set its mode to 755 here with an octal literal.
@@ -79,13 +81,4 @@ def main():
     else:
         stdin = sys.stdin.read()
         if stdin:
-            if args["subcommand"] == "explain":
-                cwhy.evaluate_prompt(args, cwhy.explain_prompt(stdin))
-            elif args["subcommand"] == "fix":
-                cwhy.evaluate_prompt(args, cwhy.fix_prompt(stdin))
-            elif args["subcommand"] == "extract-sources":
-                cwhy.evaluate_prompt(
-                    args, cwhy.extract_sources_prompt(stdin), wrap=False
-                )
-            else:
-                raise Exception("unreachable")
+            cwhy.evaluate(args, stdin)
