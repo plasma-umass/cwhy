@@ -3,6 +3,7 @@
 import argparse
 import tempfile
 
+
 def anonymize(path):
     with open(path) as file:
         content = file.read()
@@ -24,6 +25,7 @@ def anonymize(path):
     file.close()
 
     return file.name, answer
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

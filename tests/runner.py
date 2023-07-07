@@ -27,7 +27,7 @@ def verify_prompt(answer, choice):
     prompt += "````\n" + answer + "\n````\n"
     prompt += "The second model gave this output.\n"
     prompt += "````\n" + choice + "\n````\n"
-    prompt += "Would you say the the second model's answer is correct and matches with the first model's?\n"
+    prompt += "Would you say the the second model's answer is correct and matches with the first model?\n"
     prompt += "Start your answer with 'true' or 'false'."
     return prompt
 
@@ -36,8 +36,8 @@ async def evaluate_verifications(args, prompts):
     completions = await asyncio.gather(
         *[
             openai.ChatCompletion.acreate(
-                model=args.llm,
-                request_timeout=args.timeout,
+                model=args["verification_llm"],
+                request_timeout=args["timeout"],
                 messages=[{"role": "user", "content": prompt}],
             )
             for prompt in prompts
@@ -60,7 +60,9 @@ async def evaluate_verifications(args, prompts):
 
 
 async def evaluate_benchmark(args, language, benchmark):
-    filename, answer = anonymizer.anonymize(os.path.join(ROOT, LANGUAGES[language]["path"], benchmark))
+    filename, answer = anonymizer.anonymize(
+        os.path.join(ROOT, LANGUAGES[language]["path"], benchmark)
+    )
     if answer is None:
         print(f"\t{benchmark}: skipped")
         return
@@ -71,10 +73,12 @@ async def evaluate_benchmark(args, language, benchmark):
     compiler_output = process.stderr.decode("utf-8")
 
     completion = await openai.ChatCompletion.acreate(
-        model=args.llm,
-        request_timeout=args.timeout,
-        n=args.n,
-        messages=[{"role": "user", "content": cwhy.explain_prompt(compiler_output)}],
+        model=args["llm"],
+        request_timeout=args["timeout"],
+        n=args["n"],
+        messages=[
+            {"role": "user", "content": cwhy.explain_prompt(args, compiler_output)}
+        ],
     )
 
     success_rate = await evaluate_verifications(
@@ -102,9 +106,10 @@ async def evaluate_language(args, language):
 
 def main(args):
     print(f"{'=' * 28} CWhy Test Runner {'=' * 28}")
-    print("LLM       : " + args.llm)
-    print("Timeout   : " + str(args.timeout))
-    print("Iterations: " + str(args.n))
+    print(f"LLM              : {args['llm']}")
+    print(f"Verification LLM : {args['verification_llm']}")
+    print(f"Timeout          : {args['timeout']}")
+    print(f"Iterations       : {args['n']}")
 
     for language in LANGUAGES.keys():
         print(f"[{language}] {'-' * (71 - len(language))}")
@@ -113,9 +118,15 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    # The LLM setting is for both CWhy and the verification prompts.
-    # Maybe these should be separated.
+
+    # These parameters will be passed directly to CWhy, hence they should match.
     parser.add_argument("--llm", type=str, default="gpt-4")
     parser.add_argument("--timeout", type=int, default=180)
+    parser.add_argument("--max-context", type=int, default=10)
+
+    # These arguments are specific to the test runner.
+    # They should not clash with any existing CWhy parameters.
+    parser.add_argument("--verification-llm", type=str, default="gpt-4")
     parser.add_argument("-n", type=int, default=10)
-    main(parser.parse_args())
+
+    main(vars(parser.parse_args()))
