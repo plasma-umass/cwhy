@@ -1,12 +1,15 @@
+#! /usr/bin/env python3
+
 import argparse
 import asyncio
 import os
 import subprocess
-import tempfile
 
 import openai
 
 from cwhy import cwhy
+
+from . import anonymizer
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -57,25 +60,13 @@ async def evaluate_verifications(args, prompts):
 
 
 async def evaluate_benchmark(args, language, benchmark):
-    path = os.path.join(ROOT, LANGUAGES[language]["path"], benchmark)
-    with open(path) as file:
-        content = file.read()
-
-        try:
-            i = content.index("/*")
-            j = content.index("*/", i)
-        except ValueError:
-            print(f"\t{benchmark}: skipped")
-            return
-        answer = content[i + 2 : j].strip()
-        code = content[j + 2 :].strip()
-
-    file = tempfile.NamedTemporaryFile(delete=False)
-    file.write(code.encode("utf-8"))
-    file.close()
+    filename, answer = anonymizer.anonymize(os.path.join(ROOT, LANGUAGES[language]["path"], benchmark))
+    if answer is None:
+        print(f"\t{benchmark}: skipped")
+        return
 
     process = subprocess.run(
-        [*LANGUAGES[language]["compiler"], file.name], stderr=subprocess.PIPE
+        [*LANGUAGES[language]["compiler"], filename], stderr=subprocess.PIPE
     )
     compiler_output = process.stderr.decode("utf-8")
 
@@ -95,7 +86,7 @@ async def evaluate_benchmark(args, language, benchmark):
     )
     print(f"\t{benchmark}: {100 * success_rate:.2f}%")
 
-    os.remove(file.name)
+    os.remove(filename)
 
 
 async def evaluate_language(args, language):
