@@ -105,11 +105,56 @@ def complete(args, user_prompt):
     sys.exit(1)
 
 
+def diff_helper(args, stdin):
+    schema = {
+        "type": "object",
+        "properties": {
+            "diff": {
+                "type": "object",
+                "properties": {
+                    "modifications": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "filename": {"type": "string"},
+                                "start-line-number": {"type": "integer"},
+                                "number-lines-remove": {"type": "integer"},
+                                "replacement": {"type": "string"},
+                            },
+                            "required": ["filename", "start-line-number", "number-lines-remove", "replacement"],
+                        },
+                    },
+                },
+                "required": ["modifications"],
+            }
+        },
+        "required": ["diff"],
+    }
+
+    completion = openai.ChatCompletion.create(
+        model="gpt-4-0613",
+        messages=[
+            {
+                "role": "user",
+                "content": base_prompt(stdin)
+                + "Help fix this issue by providing a diff.",
+            }
+        ],
+        functions=[{"name": "fix_error", "parameters": schema}],
+        function_call={"name": "fix_error"},
+    )
+
+    print(completion.choices[0].message.function_call.arguments)
+
+
 def evaluate(args, stdin):
     if args["subcommand"] == "explain":
         evaluate_prompt(args, explain_prompt(stdin))
     elif args["subcommand"] == "fix":
         evaluate_prompt(args, fix_prompt(stdin))
+    elif args["subcommand"] == "diff":
+        diff_helper(args, stdin)
     elif args["subcommand"] == "extract-sources":
         evaluate_prompt(args, extract_sources_prompt(stdin), wrap=False)
     else:
