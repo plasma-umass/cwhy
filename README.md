@@ -71,7 +71,7 @@ The wrapper mode specifically also has a `--wrapper-compiler` option to select t
 
 ### C++
 
-This highlighted example is [missing-hash.cpp](test/c++/missing-hash.cpp), which is one of the first cases we
+This highlighted example is [missing-hash.cpp](tests/c++/missing-hash.cpp), which is one of the first cases we
 experimented with.
 
 <details>
