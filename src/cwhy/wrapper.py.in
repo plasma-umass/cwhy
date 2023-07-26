@@ -13,11 +13,12 @@ process = subprocess.run(
     text=True,
 )
 status = process.returncode
-if "CWHY_DISABLE" not in os.environ and status != 0:
+if status != 0:
     print(process.stdout)
-    print("==================================================")
-    print("CWhy")
-    print("==================================================")
-    cwhy.evaluate({args}, process.stdout)
-    print("==================================================")
+    if "CWHY_DISABLE" not in os.environ:
+        print("==================================================")
+        print("CWhy")
+        print("==================================================")
+        cwhy.evaluate({args}, process.stdout)
+        print("==================================================")
 sys.exit(status)
