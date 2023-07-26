@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+import os
 import subprocess
 import sys
 
@@ -12,7 +13,7 @@ process = subprocess.run(
     text=True,
 )
 status = process.returncode
-if status != 0:
+if "CWHY_DISABLE" not in os.environ and status != 0:
     print(process.stdout)
     print("==================================================")
     print("CWhy")
