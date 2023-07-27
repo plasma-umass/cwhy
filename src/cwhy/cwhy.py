@@ -172,6 +172,7 @@ class explain_context:
                 )
             except FileNotFoundError:
                 print(f"Cwhy warning: file not found: {file_name.lstrip()}")
+                continue
 
             # Avoid duplicates.
             if (file_name, line_start, line_end) not in self.code_locations:
