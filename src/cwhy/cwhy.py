@@ -118,7 +118,6 @@ def evaluate(args, stdin):
 
 def evaluate_prompt(args, prompt, wrap=True):
     if args["show_prompt"]:
-        import sys
         print("===================== Prompt =====================")
         print(prompt)
         print("==================================================")
