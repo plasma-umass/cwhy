@@ -81,4 +81,4 @@ def main():
     else:
         stdin = sys.stdin.read()
         if stdin:
-            cwhy.evaluate(args, stdin)
+            print(cwhy.evaluate(args, stdin))
