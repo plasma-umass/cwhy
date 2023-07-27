@@ -18,7 +18,7 @@ def wrapper(args):
 def main():
     parser = argparse.ArgumentParser(
         prog="cwhy",
-        description="CWhy provides utilities to explain diagnostic messages using LLMs.",
+        description="CWhy explains and fixes compiler diagnostic errors.",
     )
 
     parser.add_argument(
@@ -31,19 +31,25 @@ def main():
         "--llm",
         type=str,
         default="gpt-3.5-turbo",
-        help="the language model to use. this tool is tested with 'gpt-3.5-turbo' and 'gpt-4'",
+        help="the language model to use, e.g., 'gpt-3.5-turbo' or 'gpt-4' (default: gpt-3.5-turbo)",
     )
     parser.add_argument(
         "--timeout",
         type=int,
         default=60,
-        help="timeout for API calls in seconds",
+        help="timeout for API calls in seconds (default: 60)",
+    )
+    parser.add_argument(
+        "--max-context",
+        type=int,
+        default=30,
+        help="maximum number of context to use (default: 30)",
     )
 
     parser.add_argument(
         "--show-prompt",
         action="store_true",
-        help="print prompts before sending them to OpenAI for debugging",
+        help="only print prompt and exit (for debugging purposes)",
     )
     parser.add_argument(
         "--wrapper",

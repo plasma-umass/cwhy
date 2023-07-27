@@ -78,7 +78,7 @@ def read_lines(file_path: str, start_line: int, end_line: int) -> (str, int):
         # return the requested lines as a list
         return ("\n".join(lines[start_line:end_line]) + "\n", start_line, end_line)
     except FileNotFoundError:
-        print(f"Cwhy warning: file not found: {file_path.lstrip()}")
+        # print(f"Cwhy warning: file not found: {file_path.lstrip()}")
         return ("\n", start_line, end_line)
 
 
@@ -107,9 +107,9 @@ def complete(args, user_prompt):
 
 def evaluate(args, stdin):
     if args["subcommand"] == "explain":
-        return evaluate_prompt(args, explain_prompt(stdin))
+        evaluate_prompt(args, explain_prompt(args, stdin))
     elif args["subcommand"] == "fix":
-        return evaluate_prompt(args, fix_prompt(stdin))
+        evaluate_prompt(args, fix_prompt(args, stdin))
     elif args["subcommand"] == "extract-sources":
         return evaluate_prompt(args, extract_sources_prompt(stdin), wrap=False)
     else:
@@ -121,6 +121,7 @@ def evaluate_prompt(args, prompt, wrap=True):
         print("===================== Prompt =====================")
         print(prompt)
         print("==================================================")
+        sys.exit(0)
     text = complete(args, prompt)
     if wrap:
         text = word_wrap_except_code_blocks(text)
@@ -128,14 +129,15 @@ def evaluate_prompt(args, prompt, wrap=True):
 
 
 class explain_context:
-    def __init__(self, diagnostic):
+    def __init__(self, args, diagnostic):
+        
         diagnostic_lines = diagnostic.splitlines()
 
         self.code_locations = {}
 
-        # Magic number - don't send more than this many code locations.
+        # Don't send more than this many code locations.
         # This is just to prevent overwhelming OpenAI.
-        max_code_locations = 10
+        max_code_locations = args["max_context"]
 
         # Go through the diagnostic and build up a list of code locations.
         line = 0
@@ -146,6 +148,10 @@ class explain_context:
             if not match:
                 # This pattern works for javac.
                 match = re.match(r"([a-zA-Z0-9./][^:->]+):([0-9]+):", diagnostic_lines[line])
+
+            if not match:
+                # This pattern works for Python, filtering out non-files (e.g., <string>).
+                match = re.match(r'\s*File "(.*?)", line (\d+), in ([^\<].*)', diagnostic_lines[line])
 
             line += 1
 
@@ -176,7 +182,7 @@ class explain_context:
 
         self.unabridged_diagnostic = "\n".join(diagnostic_lines) + "\n"
         self.abridged_diagnostic = (
-            "```\n" + "\n".join(diagnostic_lines[:line]) + "```\n"
+            "```\n" + "\n".join(diagnostic_lines[:line]) + "\n```\n"
         )
 
         def format_code_location(code_location):
@@ -194,8 +200,8 @@ class explain_context:
         )
 
 
-def base_prompt(diagnostic):
-    ctx = explain_context(diagnostic)
+def base_prompt(args, diagnostic):
+    ctx = explain_context(args, diagnostic)
 
     user_prompt = ""
     if ctx.code:
@@ -209,13 +215,13 @@ def base_prompt(diagnostic):
     return user_prompt
 
 
-def explain_prompt(diagnostic):
-    return base_prompt(diagnostic) + "What's the problem?"
+def explain_prompt(args, diagnostic):
+    return base_prompt(args, diagnostic) + "What's the problem?"
 
 
-def fix_prompt(diagnostic):
+def fix_prompt(args, diagnostic):
     return (
-        base_prompt(diagnostic)
+        base_prompt(args, diagnostic)
         + "Suggest code to fix the problem. Surround the code in backticks (```)."
     )
 
