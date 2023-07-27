@@ -49,6 +49,15 @@ finding the right source files.
 % cmake -DCMAKE_CXX_COMPILER=`cwhy --llm=gpt-4 --wrapper --wrapper-compiler=clang++` ...
 ```
 
+When running a configuration tool such as CMake or Autoconf, this may greatly increase configuration time, as these
+tools will occasionally invoke the compiler to check for features, which will fail and invoke CWhy unnecessarily if not
+available on the machine. To circumvent this, `CWHY_DISABLE` can be set in the environment to disable CWhy at
+configuration time.
+
+```bash
+% CWHY_DISABLE=1 cmake -DCMAKE_CXX_COMPILER=`cwhy --wrapper` ...
+```
+
 ### Original mode
 
 Just pipe your compiler's output to `cwhy`.

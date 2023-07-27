@@ -111,7 +111,7 @@ def evaluate(args, stdin):
     elif args["subcommand"] == "fix":
         evaluate_prompt(args, fix_prompt(args, stdin))
     elif args["subcommand"] == "extract-sources":
-        evaluate_prompt(args, extract_sources_prompt(stdin), wrap=False)
+        return evaluate_prompt(args, extract_sources_prompt(stdin), wrap=False)
     else:
         raise Exception(f"unknown subcommand: {args['subcommand']}")
 
@@ -126,7 +126,7 @@ def evaluate_prompt(args, prompt, wrap=True):
     text = complete(args, prompt)
     if wrap:
         text = word_wrap_except_code_blocks(text)
-    print(text)
+    return text
 
 
 class explain_context:
