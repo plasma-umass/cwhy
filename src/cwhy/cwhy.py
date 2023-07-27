@@ -51,35 +51,30 @@ def word_wrap_except_code_blocks(text: str) -> str:
     return wrapped_text
 
 
-def read_lines(file_path: str, start_line: int, end_line: int) -> (str, int):
+def read_lines(file_path, start_line, end_line):
     """
     Read lines from a file.
 
     Args:
         file_path (str): The path of the file to read.
-        start_line (int): The line number of the first line to include (1-indexed).
-        end_line (int): The line number of the last line to include.
+        start_line (int): The line number of the first line to include (1-indexed). Will be bounded below by 0.
+        end_line (int): The line number of the last line to include (1-indexed). Will be bounded above by file's line count.
 
     Returns:
         (str, end_line): The content read and the last line included.
 
+    Raises:
+        FileNotFoundError: If the file does not exist.
     """
-    # open the file for reading
-    try:
-        with open(file_path.lstrip(), "r") as f:
-            # read all the lines from the file
-            lines = f.readlines()
-            # remove trailing newline characters
-            lines = [line.rstrip() for line in lines]
-        # convert start_line to 0-based indexing and ensure it's in range
-        start_line = max(0, start_line - 1)
-        # ensure end_line is within range
-        end_line = min(len(lines), end_line)
-        # return the requested lines as a list
-        return ("\n".join(lines[start_line:end_line]) + "\n", start_line, end_line)
-    except FileNotFoundError:
-        # print(f"Cwhy warning: file not found: {file_path.lstrip()}")
-        return ("\n", start_line, end_line)
+    with open(file_path, "r") as f:
+        lines = f.readlines()
+        lines = [line.rstrip() for line in lines]
+
+    # Ensure indices are in range.
+    start_line = max(1, start_line)
+    end_line = min(len(lines), end_line)
+
+    return ("\n".join(lines[start_line - 1 : end_line]) + "\n", start_line, end_line)
 
 
 def complete(args, user_prompt):
@@ -130,7 +125,6 @@ def evaluate_prompt(args, prompt, wrap=True):
 
 class explain_context:
     def __init__(self, args, diagnostic):
-        
         diagnostic_lines = diagnostic.splitlines()
 
         self.code_locations = {}
@@ -143,15 +137,21 @@ class explain_context:
         line = 0
         while line < len(diagnostic_lines):
             # This pattern works for some C++ compilers (GCC, Clang) and Rust.
-            match = re.match(r"([a-zA-Z0-9./][^:->]+):([0-9]+):([0-9]+)", diagnostic_lines[line])
+            match = re.match(
+                r"([a-zA-Z0-9./][^:->]+):([0-9]+):([0-9]+)", diagnostic_lines[line]
+            )
 
             if not match:
                 # This pattern works for javac.
-                match = re.match(r"([a-zA-Z0-9./][^:->]+):([0-9]+):", diagnostic_lines[line])
+                match = re.match(
+                    r"([a-zA-Z0-9./][^:->]+):([0-9]+):", diagnostic_lines[line]
+                )
 
             if not match:
                 # This pattern works for Python, filtering out non-files (e.g., <string>).
-                match = re.match(r'\s*File "(.*?)", line (\d+), in ([^\<].*)', diagnostic_lines[line])
+                match = re.match(
+                    r'\s*File "(.*?)", line (\d+), in ([^\<].*)', diagnostic_lines[line]
+                )
 
             line += 1
 
@@ -163,12 +163,15 @@ class explain_context:
                 # for anymore, so we're done.
                 break
 
-            file_name = match.group(1)
+            file_name = match.group(1).lstrip()
             line_number = int(match.group(2))
 
-            (abridged_code, line_start, line_end) = read_lines(
-                file_name, line_number - 7, line_number + 2
-            )
+            try:
+                (abridged_code, line_start, line_end) = read_lines(
+                    file_name, line_number - 7, line_number + 2
+                )
+            except FileNotFoundError:
+                print(f"Cwhy warning: file not found: {file_name.lstrip()}")
 
             # Avoid duplicates.
             if (file_name, line_start, line_end) not in self.code_locations:
