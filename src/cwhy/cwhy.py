@@ -138,7 +138,7 @@ class explain_context:
 
         # Don't send more than this many code locations.
         # This is just to prevent overwhelming OpenAI.
-        max_code_locations = int(args["max_context"])
+        max_code_locations = args["max_context"]
 
         # Go through the diagnostic and build up a list of code locations.
         line = 0
