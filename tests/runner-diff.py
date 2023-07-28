@@ -19,6 +19,10 @@ LANGUAGES = {
         "path": "c++",
         "compiler": [os.environ.get("CXX", "c++"), "-x", "c++", "-shared"],
     },
+    "Python": {
+        "path": "python",
+        "compiler": ["python3"],
+    },
 }
 
 
@@ -30,7 +34,9 @@ def evaluate_once(args):
     print(f"Trying to repair {args['benchmark']} ({filename})...")
 
     process = subprocess.run(
-        [*LANGUAGES[args["language"]]["compiler"], filename], stderr=subprocess.PIPE
+        [*LANGUAGES[args["language"]]["compiler"], filename],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.PIPE,
     )
     status = process.returncode
     compiler_output = process.stderr.decode("utf-8")
@@ -53,7 +59,9 @@ def evaluate_once(args):
             break
 
         process = subprocess.run(
-            [*LANGUAGES[args["language"]]["compiler"], filename], stderr=subprocess.PIPE
+            [*LANGUAGES[args["language"]]["compiler"], filename],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
         )
         status = process.returncode
         compiler_output = process.stderr.decode("utf-8")
@@ -69,10 +77,16 @@ def evaluate_benchmark(args):
         usage = [u["total_tokens"] for u in usage]
         if success:
             successes += 1
-            print(f"Success in {len(usage)} retries! Total tokens used per retry: {usage}")
+            print(
+                f"Success in {len(usage)} retries! Total tokens used per retry: {usage}"
+            )
         else:
-            print(f"Failed after {len(usage)} retries. Total tokens used per retry: {usage}")
-    print(f"\n{args['language']}/{args['benchmark']} success rate: {100 * successes / args['n']:.2f}%")
+            print(
+                f"Failed after {len(usage)} retries. Total tokens used per retry: {usage}"
+            )
+    print(
+        f"\n{args['language']}/{args['benchmark']} success rate: {100 * successes / args['n']:.2f}%"
+    )
 
 
 def main(args):
@@ -82,7 +96,7 @@ def main(args):
     print(f"Iterations       : {args['n']}")
     print(f"Max retries      : {args['max_retries']}")
     print(f"Benchmark        : {args['language']}/{args['benchmark']}")
-    print('=' * 74)
+    print("=" * 74)
 
     evaluate_benchmark(args)
 
