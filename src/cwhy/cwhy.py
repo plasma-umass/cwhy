@@ -102,9 +102,9 @@ def complete(args, user_prompt):
 
 def evaluate(args, stdin):
     if args["subcommand"] == "explain":
-        evaluate_prompt(args, explain_prompt(args, stdin))
+        return evaluate_prompt(args, explain_prompt(args, stdin))
     elif args["subcommand"] == "fix":
-        evaluate_prompt(args, fix_prompt(args, stdin))
+        return evaluate_prompt(args, fix_prompt(args, stdin))
     elif args["subcommand"] == "extract-sources":
         return evaluate_prompt(args, extract_sources_prompt(stdin), wrap=False)
     else:
