@@ -251,19 +251,25 @@ class explain_context:
             "```\n" + "\n".join(diagnostic_lines[:line]) + "\n```\n"
         )
 
-        def format_file_locations(filename, lines):
-            def format_group_code_block(group, last):
-                # TODO: We can trim lines if first / last few are blank.
-                first = last - len(group) + 1
-                max_line_number_length = len(str(last))
-                result = "```\n"
-                for i, line in enumerate(group):
-                    result += "{0:>{1}} {2}\n".format(
-                        first + i, max_line_number_length, line
-                    )
-                result += "```\n\n"
-                return result
+        def format_group_code_block(group, last):
+            # Trim first / last few lines if they are blank.
+            while group and not group[0].strip():
+                group = group[1:]
+            while group and not group[-1].strip():
+                group = group[:-1]
+                last -= 1
 
+            first = last - len(group) + 1
+            max_line_number_length = len(str(last))
+            result = "```\n"
+            for i, line in enumerate(group):
+                result += "{0:>{1}} {2}\n".format(
+                    first + i, max_line_number_length, line
+                )
+            result += "```\n\n"
+            return result
+
+        def format_file_locations(filename, lines):
             result = ""
             last = None
             group = []
