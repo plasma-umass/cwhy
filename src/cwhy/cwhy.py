@@ -1,6 +1,7 @@
 import re
 import sys
 import textwrap
+import collections
 
 import openai
 
@@ -188,7 +189,8 @@ class explain_context:
     def __init__(self, args, diagnostic):
         diagnostic_lines = diagnostic.splitlines()
 
-        self.code_locations = {}
+        # We group by source file, then keep line numbers ordered.
+        self.code_locations = collections.defaultdict(collections.OrderedDict)
 
         # Don't send more than this many code locations.
         # This is just to prevent overwhelming OpenAI.
@@ -228,8 +230,6 @@ class explain_context:
             line_number = int(match.group(2))
 
             try:
-                # TODO: We can trim lines if first / last few are blank.
-                # TODO: We can merge code locations if there is a start / end overlap.
                 (abridged_code, line_start) = read_lines(
                     file_name, line_number - 7, line_number + 3
                 )
@@ -237,10 +237,9 @@ class explain_context:
                 print(f"Cwhy warning: file not found: {file_name.lstrip()}")
                 continue
 
-            # Avoid duplicates.
-            if (file_name, line_start) not in self.code_locations:
-                self.code_locations[(file_name, line_start)] = abridged_code
-                max_code_locations -= 1
+            for i, line_content in enumerate(abridged_code):
+                self.code_locations[file_name][line_start + i] = line_content
+            max_code_locations -= 1
 
         # If the diagnostic didn't come from a context that we know about and
         # handle in the above loop, we should make sure it's not too long.
@@ -252,19 +251,41 @@ class explain_context:
             "```\n" + "\n".join(diagnostic_lines[:line]) + "\n```\n"
         )
 
-        def format_code_location(code_location):
-            ((file_name, line_start), abridged_code) = code_location
-            s = "File `{}`:\n".format(file_name)
-            s += "```\n"
-            max_length = len(str(line_start + len(abridged_code)))
-            for (i, line) in enumerate(abridged_code):
-                s += "{0:>{1}} {2}\n".format(line_start + i, max_length, line)
-            s += "```\n"
-            return s
+        def format_file_locations(filename, lines):
+            def format_group_code_block(group, last):
+                # TODO: We can trim lines if first / last few are blank.
+                first = last - len(group) + 1
+                max_line_number_length = len(str(last))
+                result = "```\n"
+                for i, line in enumerate(group):
+                    result += "{0:>{1}} {2}\n".format(
+                        first + i, max_line_number_length, line
+                    )
+                result += "```\n\n"
+                return result
 
-        self.code = (
-            "\n".join([format_code_location(cl) for cl in self.code_locations.items()])
-            + "\n"
+            result = ""
+            last = None
+            group = []
+            for line_number, line_content in lines.items():
+                if last is None or line_number == last + 1:
+                    group.append(line_content)
+                    last = line_number
+                else:
+                    result += f"File `{filename}`:\n"
+                    result += format_group_code_block(group, last)
+                    last = None
+                    group = []
+            if last is not None:
+                result += f"File `{filename}`:\n"
+                result += format_group_code_block(group, last)
+            return result
+
+        self.code = "".join(
+            [
+                format_file_locations(filename, lines)
+                for filename, lines in self.code_locations.items()
+            ]
         )
 
 
@@ -276,7 +297,7 @@ def base_prompt(args, diagnostic):
         user_prompt += "This is my code:\n\n"
         user_prompt += ctx.code
         user_prompt += "\n"
-    user_prompt += "This is my error:\n\n"
+    user_prompt += "This is my error:\n"
     user_prompt += ctx.abridged_diagnostic
     user_prompt += "\n\n"
 
