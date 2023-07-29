@@ -61,7 +61,7 @@ def read_lines(file_path, start_line, end_line):
         end_line (int): The line number of the last line to include (1-indexed). Will be bounded above by file's line count.
 
     Returns:
-        (str, end_line): The content read and the last line included.
+        The lines read as an array and the number of the first line included.
 
     Raises:
         FileNotFoundError: If the file does not exist.
@@ -83,7 +83,7 @@ def read_lines(file_path, start_line, end_line):
     start_line = max(1, start_line)
     end_line = min(len(lines), end_line)
 
-    return ("\n".join(lines[start_line - 1 : end_line]) + "\n", start_line, end_line)
+    return (lines[start_line - 1 : end_line], start_line)
 
 
 def complete(args, user_prompt, **kwargs):
@@ -228,16 +228,18 @@ class explain_context:
             line_number = int(match.group(2))
 
             try:
-                (abridged_code, line_start, line_end) = read_lines(
-                    file_name, line_number - 7, line_number + 2
+                # TODO: We can trim lines if first / last few are blank.
+                # TODO: We can merge code locations if there is a start / end overlap.
+                (abridged_code, line_start) = read_lines(
+                    file_name, line_number - 7, line_number + 3
                 )
             except FileNotFoundError:
                 print(f"Cwhy warning: file not found: {file_name.lstrip()}")
                 continue
 
             # Avoid duplicates.
-            if (file_name, line_start, line_end) not in self.code_locations:
-                self.code_locations[(file_name, line_start, line_end)] = abridged_code
+            if (file_name, line_start) not in self.code_locations:
+                self.code_locations[(file_name, line_start)] = abridged_code
                 max_code_locations -= 1
 
         # If the diagnostic didn't come from a context that we know about and
@@ -251,11 +253,12 @@ class explain_context:
         )
 
         def format_code_location(code_location):
-            ((file_name, line_start, line_end), abridged_code) = code_location
-            s = "File `{}` line {} to {}:\n".format(file_name, line_start, line_end)
-            s += "\n"
+            ((file_name, line_start), abridged_code) = code_location
+            s = "File `{}`:\n".format(file_name)
             s += "```\n"
-            s += abridged_code
+            max_length = len(str(line_start + len(abridged_code)))
+            for (i, line) in enumerate(abridged_code):
+                s += "{0:>{1}} {2}\n".format(line_start + i, max_length, line)
             s += "```\n"
             return s
 
