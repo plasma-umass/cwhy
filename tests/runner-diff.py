@@ -95,8 +95,10 @@ def main(args):
     print(f"{'=' * 28} CWhy Test Runner {'=' * 28}")
     print(f"LLM              : {args['llm']}")
     print(f"Timeout          : {args['timeout']}")
-    print(f"Iterations       : {args['n']}")
+    print(f"Max context      : {args['max_context']}")
+    print()
     print(f"Max retries      : {args['max_retries']}")
+    print(f"Iterations       : {args['n']}")
     print(f"Benchmark        : {args['language']}/{args['benchmark']}")
     print("=" * 74)
 

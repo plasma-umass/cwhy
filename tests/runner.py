@@ -107,8 +107,10 @@ async def evaluate_language(args, language):
 def main(args):
     print(f"{'=' * 28} CWhy Test Runner {'=' * 28}")
     print(f"LLM              : {args['llm']}")
-    print(f"Verification LLM : {args['verification_llm']}")
     print(f"Timeout          : {args['timeout']}")
+    print(f"Max context      : {args['max_context']}")
+    print()
+    print(f"Verification LLM : {args['verification_llm']}")
     print(f"Iterations       : {args['n']}")
 
     for language in LANGUAGES.keys():
