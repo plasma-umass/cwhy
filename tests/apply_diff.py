@@ -5,8 +5,8 @@ import sys
 
 
 def apply(data):
-    # Sort modifications by line number so that we can apply them in order.
-    data["diff"]["modifications"].sort(key=lambda m: m["start-line-number"])
+    # Sort modifications by reverse start line number to apply them in that order.
+    data["diff"]["modifications"].sort(key=lambda m: m["start-line-number"], reverse=True)
 
     for modification in data["diff"]["modifications"]:
         with open(modification["filename"], "r") as f:
@@ -21,7 +21,11 @@ def apply(data):
         ]
 
         # If replacing a single line, make sure we keep indentation.
-        if modification["number-lines-remove"] == 1 and len(replacement_lines) == 1:
+        if (
+            modification["number-lines-remove"] == 1
+            and len(replacement_lines) == 1
+            and modification["start-line-number"] >= 1
+        ):
             replaced_line = lines[modification["start-line-number"] - 1]
             replacement_lines[0] = replacement_lines[0].lstrip()
             n = len(replaced_line) - len(replaced_line.lstrip())

@@ -57,6 +57,8 @@ def evaluate_once(args):
             break
         except PermissionError:
             break
+        except json.decoder.JSONDecodeError:
+            break
 
         process = subprocess.run(
             [*LANGUAGES[args["language"]]["compiler"], filename],
