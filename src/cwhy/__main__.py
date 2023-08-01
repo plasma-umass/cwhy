@@ -68,6 +68,7 @@ def main():
 
     subparsers.add_parser("explain", help="explain the diagnostic (default)")
     subparsers.add_parser("fix", help="propose a fix for the diagnostic")
+    subparsers.add_parser("diff", help="propose a fix in diff format")
     subparsers.add_parser(
         "extract-sources", help="extract the source locations from the diagnostic"
     )

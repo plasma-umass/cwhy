@@ -77,14 +77,21 @@ def read_lines(file_path, start_line, end_line):
     return ("\n".join(lines[start_line - 1 : end_line]) + "\n", start_line, end_line)
 
 
-def complete(args, user_prompt):
+def complete(args, user_prompt, **kwargs):
     try:
+        if "show_prompt" in args and args["show_prompt"]:
+            print("===================== Prompt =====================")
+            print(user_prompt)
+            print("==================================================")
+            sys.exit(0)
+
         completion = openai.ChatCompletion.create(
             model=args["llm"],
             request_timeout=args["timeout"],
             messages=[{"role": "user", "content": user_prompt}],
+            **kwargs,
         )
-        return completion.choices[0].message.content
+        return completion
     except openai.error.AuthenticationError:
         print("You need an OpenAI key to use this tool.")
         print("You can get a key here: https://platform.openai.com/account/api-keys")
@@ -100,24 +107,69 @@ def complete(args, user_prompt):
     sys.exit(1)
 
 
+def evaluate_diff(args, stdin):
+    prompt = base_prompt(args, stdin) + "Help fix this issue by providing a diff."
+    completion = complete(
+        args,
+        prompt,
+        functions=[
+            {
+                "name": "fix_error",
+                "description": "Returns all modifications needed for the provided code to compile.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "diff": {
+                            "type": "object",
+                            "properties": {
+                                "modifications": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "filename": {"type": "string"},
+                                            "start-line-number": {"type": "integer"},
+                                            "number-lines-remove": {"type": "integer"},
+                                            "replacement": {"type": "string"},
+                                        },
+                                        "required": [
+                                            "filename",
+                                            "start-line-number",
+                                            "number-lines-remove",
+                                            "replacement",
+                                        ],
+                                    },
+                                },
+                            },
+                            "required": ["modifications"],
+                        }
+                    },
+                    "required": ["diff"],
+                },
+            }
+        ],
+        function_call={"name": "fix_error"},
+    )
+
+    return completion
+
+
 def evaluate(args, stdin):
     if args["subcommand"] == "explain":
-        return evaluate_prompt(args, explain_prompt(args, stdin))
+        return evaluate_text_prompt(args, explain_prompt(args, stdin))
     elif args["subcommand"] == "fix":
-        return evaluate_prompt(args, fix_prompt(args, stdin))
+        return evaluate_text_prompt(args, fix_prompt(args, stdin))
+    elif args["subcommand"] == "diff":
+        return evaluate_diff(args, stdin).choices[0].message.function_call.arguments
     elif args["subcommand"] == "extract-sources":
-        return evaluate_prompt(args, extract_sources_prompt(stdin), wrap=False)
+        return evaluate_text_prompt(args, extract_sources_prompt(stdin), wrap=False)
     else:
         raise Exception(f"unknown subcommand: {args['subcommand']}")
 
 
-def evaluate_prompt(args, prompt, wrap=True):
-    if args["show_prompt"]:
-        print("===================== Prompt =====================")
-        print(prompt)
-        print("==================================================")
-        sys.exit(0)
-    text = complete(args, prompt)
+def evaluate_text_prompt(args, prompt, wrap=True, **kwargs):
+    completion = complete(args, prompt, **kwargs)
+    text = completion.choices[0].message.content
     if wrap:
         text = word_wrap_except_code_blocks(text)
     return text
