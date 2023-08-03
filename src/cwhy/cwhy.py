@@ -66,9 +66,18 @@ def read_lines(file_path, start_line, end_line):
     Raises:
         FileNotFoundError: If the file does not exist.
     """
+    max_chars_per_line = 128 # Prevent pathological case where lines are REALLY long.
+
+    def truncate(s, l):
+        """Truncate the string to at most the given length, adding ellipses if truncated."""
+        if len(s) < l:
+            return s
+        else:
+            return s[:l] + '...'
+        
     with open(file_path, "r") as f:
         lines = f.readlines()
-        lines = [line.rstrip() for line in lines]
+        lines = [truncate(line.rstrip(), max_chars_per_line) for line in lines]
 
     # Ensure indices are in range.
     start_line = max(1, start_line)
