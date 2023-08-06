@@ -36,10 +36,10 @@ finding the right source files.
 # Invoking the compiler directly.
 % `cwhy --wrapper` mycode.cpp
 
-% Using fix mode.
+# Using fix mode.
 % `cwhy --wrapper fix` mycode.cpp
 
-# Using cwhy with Java
+# Using cwhy with Java.
 % `cwhy --wrapper --wrapper-compiler=javac` mycode.java
 
 # Invoking with GNU make, using GPT-4.
