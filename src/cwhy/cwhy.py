@@ -2,13 +2,15 @@ import re
 import sys
 import textwrap
 import collections
+from typing import List, Tuple
 
 import openai
 import tiktoken
 
 
 def word_wrap_except_code_blocks(text: str) -> str:
-    """Wraps text except for code blocks.
+    """
+    Wraps text except for code blocks.
 
     Splits the text into paragraphs and wraps each paragraph,
     except for paragraphs that are inside of code blocks denoted
@@ -71,7 +73,9 @@ def read_lines(file_path, start_line, end_line):
     max_chars_per_line = 128  # Prevent pathological case where lines are REALLY long.
 
     def truncate(s, l):
-        """Truncate the string to at most the given length, adding ellipses if truncated."""
+        """
+        Truncate the string to at most the given length, adding ellipses if truncated.
+        """
         if len(s) < l:
             return s
         else:
@@ -225,8 +229,10 @@ class explain_context:
             for i, line_content in enumerate(abridged_code):
                 self.code_locations[file_name][line_start + i] = line_content
 
-    def get_diagnostic(self):
-        """Alternate taking front and back lines until the maximum number of tokens."""
+    def get_diagnostic(self) -> str:
+        """
+        Alternate taking front and back lines until the maximum number of tokens.
+        """
         front = []
         back = []
         n = len(self.diagnostic_lines)
@@ -257,9 +263,20 @@ class explain_context:
     def get_code(self):
         if not self.code_locations:
             return None
-        
-        def format_group_code_block(group, last):
-            # Trim first / last few lines if they are blank.
+
+        def format_group_code_block(group: List[str], last: int) -> str:
+            """
+            Format a group of consecutive lines from a single file as a code block.
+            Include line numbers in front of each line.
+            Trim first / last few lines if they are blank.
+
+            Args:
+                group: The list of lines.
+                last: The line number of the last line in group.
+
+            Returns:
+                The formatted code block.
+            """
             while group and not group[0].strip():
                 group = group[1:]
             while group and not group[-1].strip():
@@ -276,7 +293,18 @@ class explain_context:
             result += "```\n\n"
             return result
 
-        def format_file_locations(filename, lines):
+        def format_file_locations(filename: str, lines: List[Tuple[int, str]]) -> str:
+            """
+            Format all the lines from a single file as a code block.
+            There may be multiple groups: lines 1-10 and 100-110 for example.
+
+            Args:
+                filename: The name of the file lines originate from.
+                lines: A list of line number to actual line content tuples.
+
+            Returns:
+                One or more concatenated formatted code blocks.
+            """
             result = ""
             last = None
             group = []
@@ -302,7 +330,10 @@ class explain_context:
         counts = [len(self.encoding.encode(x)) for x in formatted_file_locations]
         index = 0
         total = 0
-        while index < len(counts) and total + counts[index] <= self.args["max_code_tokens"]:
+        while (
+            index < len(counts)
+            and total + counts[index] <= self.args["max_code_tokens"]
+        ):
             total += counts[index]
             index += 1
         return "".join(formatted_file_locations[:index])
