@@ -40,10 +40,16 @@ def main():
         help="timeout for API calls in seconds (default: 60)",
     )
     parser.add_argument(
-        "--max-context",
+        "--max-error-tokens",
         type=int,
-        default=30,
-        help="maximum number of context to use (default: 30)",
+        default=1920,
+        help="maximum number of tokens from the error message to send in the prompt (default: 1920)",
+    )
+    parser.add_argument(
+        "--max-code-tokens",
+        type=int,
+        default=1920,
+        help="maximum number of code locations tokens to send in the prompt (default: 1920)",
     )
 
     parser.add_argument(
