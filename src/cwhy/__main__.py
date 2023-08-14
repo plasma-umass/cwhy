@@ -39,11 +39,20 @@ def main():
         default=60,
         help="timeout for API calls in seconds (default: 60)",
     )
+    # The default maximum context length for `gpt-3.5-turbo` is 4096 tokens.
+    # We keep 256 tokens for other parts of the prompt, and split the remainder in two
+    # for the error message and code sections, resulting in 1920 tokens for each.
     parser.add_argument(
-        "--max-context",
+        "--max-error-tokens",
         type=int,
-        default=30,
-        help="maximum number of context to use (default: 30)",
+        default=1920,
+        help="maximum number of tokens from the error message to send in the prompt (default: 1920)",
+    )
+    parser.add_argument(
+        "--max-code-tokens",
+        type=int,
+        default=1920,
+        help="maximum number of code locations tokens to send in the prompt (default: 1920)",
     )
 
     parser.add_argument(

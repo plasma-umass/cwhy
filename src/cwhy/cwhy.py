@@ -1,12 +1,16 @@
 import re
 import sys
 import textwrap
+import collections
+from typing import List, Tuple
 
 import openai
+import tiktoken
 
 
 def word_wrap_except_code_blocks(text: str) -> str:
-    """Wraps text except for code blocks.
+    """
+    Wraps text except for code blocks.
 
     Splits the text into paragraphs and wraps each paragraph,
     except for paragraphs that are inside of code blocks denoted
@@ -61,20 +65,22 @@ def read_lines(file_path, start_line, end_line):
         end_line (int): The line number of the last line to include (1-indexed). Will be bounded above by file's line count.
 
     Returns:
-        (str, end_line): The content read and the last line included.
+        The lines read as an array and the number of the first line included.
 
     Raises:
         FileNotFoundError: If the file does not exist.
     """
-    max_chars_per_line = 128 # Prevent pathological case where lines are REALLY long.
+    max_chars_per_line = 128  # Prevent pathological case where lines are REALLY long.
 
     def truncate(s, l):
-        """Truncate the string to at most the given length, adding ellipses if truncated."""
+        """
+        Truncate the string to at most the given length, adding ellipses if truncated.
+        """
         if len(s) < l:
             return s
         else:
-            return s[:l] + '...'
-        
+            return s[:l] + "..."
+
     with open(file_path, "r") as f:
         lines = f.readlines()
         lines = [truncate(line.rstrip(), max_chars_per_line) for line in lines]
@@ -83,7 +89,7 @@ def read_lines(file_path, start_line, end_line):
     start_line = max(1, start_line)
     end_line = min(len(lines), end_line)
 
-    return ("\n".join(lines[start_line - 1 : end_line]) + "\n", start_line, end_line)
+    return (lines[start_line - 1 : end_line], start_line)
 
 
 def complete(args, user_prompt, **kwargs):
@@ -186,95 +192,164 @@ def evaluate_text_prompt(args, prompt, wrap=True, **kwargs):
 
 class explain_context:
     def __init__(self, args, diagnostic):
-        diagnostic_lines = diagnostic.splitlines()
+        self.args = args
+        self.encoding = tiktoken.encoding_for_model(args["llm"])
+        self.diagnostic_lines = diagnostic.splitlines()
 
-        self.code_locations = {}
-
-        # Don't send more than this many code locations.
-        # This is just to prevent overwhelming OpenAI.
-        max_code_locations = args["max_context"]
+        # We group by source file, then keep line numbers ordered.
+        self.code_locations = collections.defaultdict(collections.OrderedDict)
 
         # Go through the diagnostic and build up a list of code locations.
-        line = 0
-        while line < len(diagnostic_lines):
+        for line in self.diagnostic_lines:
             # This pattern works for some C++ compilers (GCC, Clang) and Rust.
-            match = re.match(
-                r"([a-zA-Z0-9./][^:->]+):([0-9]+):([0-9]+)", diagnostic_lines[line]
-            )
+            match = re.match(r"([a-zA-Z0-9./][^:->]+):([0-9]+):([0-9]+)", line)
 
             if not match:
                 # This pattern works for javac.
-                match = re.match(
-                    r"([a-zA-Z0-9./][^:->]+):([0-9]+):", diagnostic_lines[line]
-                )
+                match = re.match(r"([a-zA-Z0-9./][^:->]+):([0-9]+):", line)
 
             if not match:
                 # This pattern works for Python, filtering out non-files (e.g., <string>).
-                match = re.match(
-                    r'\s*File "(.*?)", line (\d+), in ([^\<].*)', diagnostic_lines[line]
-                )
-
-            line += 1
+                match = re.match(r'\s*File "(.*?)", line (\d+), in ([^\<].*)', line)
 
             if not match:
                 continue
-
-            if max_code_locations == 0:
-                # We've found the end of the last "frame", and we don't have room
-                # for anymore, so we're done.
-                break
 
             file_name = match.group(1).lstrip()
             line_number = int(match.group(2))
 
             try:
-                (abridged_code, line_start, line_end) = read_lines(
-                    file_name, line_number - 7, line_number + 2
+                (abridged_code, line_start) = read_lines(
+                    file_name, line_number - 7, line_number + 3
                 )
             except FileNotFoundError:
                 print(f"Cwhy warning: file not found: {file_name.lstrip()}")
                 continue
 
-            # Avoid duplicates.
-            if (file_name, line_start, line_end) not in self.code_locations:
-                self.code_locations[(file_name, line_start, line_end)] = abridged_code
-                max_code_locations -= 1
+            for i, line_content in enumerate(abridged_code):
+                self.code_locations[file_name][line_start + i] = line_content
 
-        # If the diagnostic didn't come from a context that we know about and
-        # handle in the above loop, we should make sure it's not too long.
-        if not self.code_locations and line == len(diagnostic_lines) - 1:
-            line = min(line, 50)
+    def get_diagnostic(self) -> str:
+        """
+        Alternate taking front and back lines until the maximum number of tokens.
+        """
+        front = []
+        back = []
+        n = len(self.diagnostic_lines)
 
-        self.unabridged_diagnostic = "\n".join(diagnostic_lines) + "\n"
-        self.abridged_diagnostic = (
-            "```\n" + "\n".join(diagnostic_lines[:line]) + "\n```\n"
-        )
+        def build_diagnostic_string():
+            return (
+                "```\n"
+                + "\n".join(front)
+                + "\n\n[...]\n\n"
+                + "\n".join(reversed(back))
+                + "\n```\n"
+            )
 
-        def format_code_location(code_location):
-            ((file_name, line_start, line_end), abridged_code) = code_location
-            s = "File `{}` line {} to {}:\n".format(file_name, line_start, line_end)
-            s += "\n"
-            s += "```\n"
-            s += abridged_code
-            s += "```\n"
-            return s
+        for i in range(n):
+            if i % 2 == 0:
+                line = self.diagnostic_lines[i // 2]
+                list = front
+            else:
+                line = self.diagnostic_lines[n - i // 2 - 1]
+                list = back
+            list.append(line)
+            count = len(self.encoding.encode(build_diagnostic_string()))
+            if count > self.args["max_error_tokens"]:
+                list.pop()
+                break
+        return build_diagnostic_string()
 
-        self.code = (
-            "\n".join([format_code_location(cl) for cl in self.code_locations.items()])
-            + "\n"
-        )
+    def get_code(self):
+        if not self.code_locations:
+            return None
+
+        def format_group_code_block(group: List[str], last: int) -> str:
+            """
+            Format a group of consecutive lines from a single file as a code block.
+            Include line numbers in front of each line.
+            Trim first / last few lines if they are blank.
+
+            Args:
+                group: The list of lines.
+                last: The line number of the last line in group.
+
+            Returns:
+                The formatted code block.
+            """
+            while group and not group[0].strip():
+                group = group[1:]
+            while group and not group[-1].strip():
+                group = group[:-1]
+                last -= 1
+
+            first = last - len(group) + 1
+            max_line_number_length = len(str(last))
+            result = "```\n"
+            for i, line in enumerate(group):
+                result += "{0:>{1}} {2}\n".format(
+                    first + i, max_line_number_length, line
+                )
+            result += "```\n\n"
+            return result
+
+        def format_file_locations(filename: str, lines: List[Tuple[int, str]]) -> str:
+            """
+            Format all the lines from a single file as a code block.
+            There may be multiple groups: lines 1-10 and 100-110 for example.
+
+            Args:
+                filename: The name of the file lines originate from.
+                lines: A list of line number to actual line content tuples.
+
+            Returns:
+                One or more concatenated formatted code blocks.
+            """
+            result = ""
+            last = None
+            group = []
+            for line_number, line_content in lines.items():
+                if last is None or line_number == last + 1:
+                    group.append(line_content)
+                    last = line_number
+                else:
+                    result += f"File `{filename}`:\n"
+                    result += format_group_code_block(group, last)
+                    last = None
+                    group = []
+            if last is not None:
+                result += f"File `{filename}`:\n"
+                result += format_group_code_block(group, last)
+            return result
+
+        formatted_file_locations = [
+            format_file_locations(filename, lines)
+            for filename, lines in self.code_locations.items()
+        ]
+
+        counts = [len(self.encoding.encode(x)) for x in formatted_file_locations]
+        index = 0
+        total = 0
+        while (
+            index < len(counts)
+            and total + counts[index] <= self.args["max_code_tokens"]
+        ):
+            total += counts[index]
+            index += 1
+        return "".join(formatted_file_locations[:index])
 
 
 def base_prompt(args, diagnostic):
     ctx = explain_context(args, diagnostic)
 
     user_prompt = ""
-    if ctx.code:
+    code = ctx.get_code()
+    if code:
         user_prompt += "This is my code:\n\n"
-        user_prompt += ctx.code
+        user_prompt += code
         user_prompt += "\n"
-    user_prompt += "This is my error:\n\n"
-    user_prompt += ctx.abridged_diagnostic
+    user_prompt += "This is my error:\n"
+    user_prompt += ctx.get_diagnostic()
     user_prompt += "\n\n"
 
     return user_prompt
@@ -295,10 +370,7 @@ class extract_sources_context:
     def __init__(self, diagnostic):
         diagnostic_lines = diagnostic.splitlines()
         line = min(len(diagnostic_lines) - 1, 50)
-        self.unabridged_diagnostic = "\n".join(diagnostic_lines) + "\n"
-        self.abridged_diagnostic = (
-            "```\n" + "\n".join(diagnostic_lines[:line]) + "\n```\n"
-        )
+        self.diagnostic = "```\n" + "\n".join(diagnostic_lines[:line]) + "\n```\n"
 
 
 def extract_sources_prompt(diagnostic):
@@ -307,6 +379,6 @@ def extract_sources_prompt(diagnostic):
     user_prompt += "Identify all of the file paths and associated line numbers.\n"
     user_prompt += "Output each file path and associated line number.\n"
     user_prompt += "\n"
-    user_prompt += ctx.abridged_diagnostic
+    user_prompt += ctx.diagnostic
 
     return user_prompt

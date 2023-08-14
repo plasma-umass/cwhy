@@ -68,7 +68,8 @@ def evaluate_once(args):
         status = process.returncode
         compiler_output = process.stderr.decode("utf-8")
 
-    os.remove(filename)
+    if not args["keep_temporary_files"]:
+        os.remove(filename)
     return status == 0, usage
 
 
@@ -95,8 +96,11 @@ def main(args):
     print(f"{'=' * 28} CWhy Test Runner {'=' * 28}")
     print(f"LLM              : {args['llm']}")
     print(f"Timeout          : {args['timeout']}")
-    print(f"Iterations       : {args['n']}")
+    print(f"Max Error Tokens : {args['max_error_tokens']}")
+    print(f"Max Code Tokens  : {args['max_code_tokens']}")
+    print()
     print(f"Max retries      : {args['max_retries']}")
+    print(f"Iterations       : {args['n']}")
     print(f"Benchmark        : {args['language']}/{args['benchmark']}")
     print("=" * 74)
 
@@ -109,10 +113,12 @@ if __name__ == "__main__":
     # These parameters will be passed directly to CWhy, hence they should match.
     parser.add_argument("--llm", type=str, default="gpt-4")
     parser.add_argument("--timeout", type=int, default=180)
-    parser.add_argument("--max-context", type=int, default=10)
+    parser.add_argument("--max-error-tokens", type=int, default=1920)
+    parser.add_argument("--max-code-tokens", type=int, default=1920)
 
     # These arguments are specific to the test runner.
     # They should not clash with any existing CWhy parameters.
+    parser.add_argument("--keep-temporary-files", action="store_true")
     parser.add_argument("--max-retries", type=int, default=5)
     parser.add_argument("-n", type=int, default=10)
     parser.add_argument("language", type=str, choices=LANGUAGES.keys())

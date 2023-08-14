@@ -107,8 +107,11 @@ async def evaluate_language(args, language):
 def main(args):
     print(f"{'=' * 28} CWhy Test Runner {'=' * 28}")
     print(f"LLM              : {args['llm']}")
-    print(f"Verification LLM : {args['verification_llm']}")
     print(f"Timeout          : {args['timeout']}")
+    print(f"Max Error Tokens : {args['max_error_tokens']}")
+    print(f"Max Code Tokens  : {args['max_code_tokens']}")
+    print()
+    print(f"Verification LLM : {args['verification_llm']}")
     print(f"Iterations       : {args['n']}")
 
     for language in LANGUAGES.keys():
@@ -122,7 +125,8 @@ if __name__ == "__main__":
     # These parameters will be passed directly to CWhy, hence they should match.
     parser.add_argument("--llm", type=str, default="gpt-4")
     parser.add_argument("--timeout", type=int, default=180)
-    parser.add_argument("--max-context", type=int, default=10)
+    parser.add_argument("--max-error-tokens", type=int, default=1920)
+    parser.add_argument("--max-code-tokens", type=int, default=1920)
 
     # These arguments are specific to the test runner.
     # They should not clash with any existing CWhy parameters.
