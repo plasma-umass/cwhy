@@ -192,6 +192,30 @@ def evaluate_text_prompt(args, prompt, wrap=True, **kwargs):
     return text
 
 
+# Define regular expressions for different compiler error formats
+error_patterns = [
+    # C# error message pattern
+    ("C#", re.compile(
+        r"([a-zA-Z0-9./][^:\r\n]+)\((\d+),(\d+)\): error ([A-Za-z0-9]+): (.*)"
+    )),
+    # C/C++/Rust error message pattern
+    ("C/C++/Rust", re.compile(
+        r"([a-zA-Z0-9./][^:->]+):([0-9]+):([0-9]+)"
+    )),
+    # Java error message pattern
+    ("Java", re.compile(
+        r"([a-zA-Z0-9./][^:->]+):([0-9]+):"
+    )),
+    # Python error message pattern
+    ("Python", re.compile(
+        r'\s*File "(.*?)", line (\d+), in ([^\<].*)'
+    )),
+    # Go error message pattern
+    ("Go", re.compile(
+        r"([a-zA-Z0-9./][^:\r\n]+):([0-9]+):([0-9]+): (.*): (.*)"
+    )),
+]
+
 class explain_context:
     def __init__(self, args, diagnostic):
         self.args = args
@@ -202,24 +226,20 @@ class explain_context:
         self.code_locations = collections.defaultdict(collections.OrderedDict)
 
         # Go through the diagnostic and build up a list of code locations.
-        for line in self.diagnostic_lines:
-            # This pattern works for some C++ compilers (GCC, Clang) and Rust.
-            match = re.match(r"([a-zA-Z0-9./][^:->]+):([0-9]+):([0-9]+)", line)
+        for (linenum, line) in enumerate(self.diagnostic_lines):
+            file_name = None
+            line_number = None
+            for (lang, pattern) in error_patterns:
+                match = pattern.match(line)
+                if match:
+                    # Extract common information
+                    file_name = match.group(1).lstrip()
+                    line_number = int(match.group(2))
+                    break  # Move to the next line after a match
 
-            if not match:
-                # This pattern works for javac.
-                match = re.match(r"([a-zA-Z0-9./][^:->]+):([0-9]+):", line)
-
-            if not match:
-                # This pattern works for Python, filtering out non-files (e.g., <string>).
-                match = re.match(r'\s*File "(.*?)", line (\d+), in ([^\<].*)', line)
-
-            if not match:
+            if not file_name:
                 continue
-
-            file_name = match.group(1).lstrip()
-            line_number = int(match.group(2))
-
+            
             try:
                 (abridged_code, line_start) = read_lines(
                     file_name, line_number - 7, line_number + 3
