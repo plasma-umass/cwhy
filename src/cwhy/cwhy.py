@@ -184,6 +184,26 @@ def evaluate_text_prompt(args, prompt, wrap=True, **kwargs):
     return text
 
 
+# Define regular expressions for different compiler error formats
+error_patterns = [
+    # C# error message pattern
+    ("C#", re.compile(
+        r"([a-zA-Z0-9./][^:\r\n]+)\((\d+),(\d+)\): error ([A-Za-z0-9]+): (.*)"
+    )),
+    # C/C++/Rust error message pattern
+    ("C/C++/Rust", re.compile(
+        r"([a-zA-Z0-9./][^:->]+):([0-9]+):([0-9]+)"
+    )),
+    # Java error message pattern
+    ("Java", re.compile(
+        r"([a-zA-Z0-9./][^:->]+):([0-9]+):"
+    )),
+    # Python error message pattern
+    ("Python", re.compile(
+        r'\s*File "(.*?)", line (\d+), in ([^\<].*)'
+    )),
+]
+
 class explain_context:
     def __init__(self, args, diagnostic):
         diagnostic_lines = diagnostic.splitlines()
@@ -195,37 +215,19 @@ class explain_context:
         max_code_locations = args["max_context"]
 
         # Go through the diagnostic and build up a list of code locations.
-        line = 0
-        while line < len(diagnostic_lines):
-            # This pattern works for some C++ compilers (GCC, Clang) and Rust.
-            match = re.match(
-                r"([a-zA-Z0-9./][^:->]+):([0-9]+):([0-9]+)", diagnostic_lines[line]
-            )
-
-            if not match:
-                # This pattern works for javac.
-                match = re.match(
-                    r"([a-zA-Z0-9./][^:->]+):([0-9]+):", diagnostic_lines[line]
-                )
-
-            if not match:
-                # This pattern works for Python, filtering out non-files (e.g., <string>).
-                match = re.match(
-                    r'\s*File "(.*?)", line (\d+), in ([^\<].*)', diagnostic_lines[line]
-                )
-
-            line += 1
-
-            if not match:
-                continue
+        for (linenum, line) in enumerate(diagnostic_lines):
+            for (lang, pattern) in error_patterns:
+                match = pattern.match(line)
+                if match:
+                    # Extract common information
+                    file_name = match.group(1).lstrip()
+                    line_number = int(match.group(2))
+                    break  # Move to the next line after a match
 
             if max_code_locations == 0:
                 # We've found the end of the last "frame", and we don't have room
                 # for anymore, so we're done.
                 break
-
-            file_name = match.group(1).lstrip()
-            line_number = int(match.group(2))
 
             try:
                 (abridged_code, line_start, line_end) = read_lines(
@@ -242,12 +244,12 @@ class explain_context:
 
         # If the diagnostic didn't come from a context that we know about and
         # handle in the above loop, we should make sure it's not too long.
-        if not self.code_locations and line == len(diagnostic_lines) - 1:
-            line = min(line, 50)
+        if not self.code_locations and linenum == len(diagnostic_lines) - 1:
+            linenum = min(linenum, 50)
 
         self.unabridged_diagnostic = "\n".join(diagnostic_lines) + "\n"
         self.abridged_diagnostic = (
-            "```\n" + "\n".join(diagnostic_lines[:line]) + "\n```\n"
+            "```\n" + "\n".join(diagnostic_lines[:linenum]) + "\n```\n"
         )
 
         def format_code_location(code_location):
