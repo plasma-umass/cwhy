@@ -6,7 +6,9 @@ import sys
 
 def apply(data):
     # Sort modifications by reverse start line number to apply them in that order.
-    data["diff"]["modifications"].sort(key=lambda m: m["start-line-number"], reverse=True)
+    data["diff"]["modifications"].sort(
+        key=lambda m: m["start-line-number"], reverse=True
+    )
 
     for modification in data["diff"]["modifications"]:
         with open(modification["filename"], "r") as f:

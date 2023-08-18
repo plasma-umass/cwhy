@@ -4,8 +4,8 @@ by [Emery Berger](https://emeryberger.com), [Bryce Adelstein Lelbach](https://tw
 [Nicolas van Kempen](https://nvankempen.com/).
 
 [![PyPI](https://img.shields.io/pypi/v/cwhy.svg)](https://pypi.org/project/cwhy/)
-[![downloads](https://pepy.tech/badge/cwhy)](https://pepy.tech/project/cwhy)
-[![downloads/month](https://pepy.tech/badge/cwhy/month)](https://pepy.tech/project/cwhy)
+[![downloads](https://static.pepy.tech/badge/cwhy)](https://pepy.tech/project/cwhy)
+[![downloads/month](https://static.pepy.tech/badge/cwhy/month)](https://pepy.tech/project/cwhy)
 
 ("See why")
 
@@ -36,10 +36,10 @@ finding the right source files.
 # Invoking the compiler directly.
 % `cwhy --wrapper` mycode.cpp
 
-% Using fix mode.
+# Using fix mode.
 % `cwhy --wrapper fix` mycode.cpp
 
-# Using cwhy with Java
+# Using cwhy with Java.
 % `cwhy --wrapper --wrapper-compiler=javac` mycode.java
 
 # Invoking with GNU make, using GPT-4.
