@@ -1,0 +1,3 @@
+# command-line-arguments
+./testme.go:6:30: newline in string
+./testme.go:6:30: syntax error: unexpected newline in argument list; possibly missing comma or )
