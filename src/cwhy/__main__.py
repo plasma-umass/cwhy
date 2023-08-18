@@ -17,7 +17,7 @@ def wrapper(args):
         from cwhy import cwhy
         cwhy.wrapper({args})
         """
-    )
+    ).lstrip()
 
 
 def main():
