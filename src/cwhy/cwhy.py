@@ -1,6 +1,8 @@
 import re
 import sys
 import textwrap
+import os
+import subprocess
 import collections
 from typing import List, Tuple
 
@@ -382,3 +384,23 @@ def extract_sources_prompt(diagnostic):
     user_prompt += ctx.diagnostic
 
     return user_prompt
+
+
+def wrapper(args):
+    process = subprocess.run(
+        [args["wrapper_compiler"], *sys.argv[1:]],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+
+    status = process.returncode
+    if status != 0:
+        print(process.stdout)
+        if "CWHY_DISABLE" not in os.environ:
+            print("==================================================")
+            print("CWhy")
+            print("==================================================")
+            print(evaluate(args, process.stdout))
+            print("==================================================")
+    sys.exit(status)

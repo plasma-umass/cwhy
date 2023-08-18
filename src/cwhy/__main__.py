@@ -5,14 +5,19 @@ import importlib.metadata
 import os
 import sys
 import tempfile
+import textwrap
 
 from . import cwhy
 
 
 def wrapper(args):
-    with open(os.path.join(os.path.dirname(__file__), "wrapper.py.in")) as f:
-        template = f.read()
-    return template.format(compiler=args["wrapper_compiler"], args=args)
+    return textwrap.dedent(
+        f"""
+        #! /usr/bin/env python3
+        from cwhy import cwhy
+        cwhy.wrapper({args})
+        """
+    )
 
 
 def main():
