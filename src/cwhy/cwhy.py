@@ -231,11 +231,6 @@ class explain_context:
                     line_number = int(match.group(2))
                     break  # Move to the next line after a match
 
-            if max_code_locations == 0:
-                # We've found the end of the last "frame", and we don't have room
-                # for anymore, so we're done.
-                break
-
             try:
                 (abridged_code, line_start) = read_lines(
                     file_name, line_number - 7, line_number + 3
