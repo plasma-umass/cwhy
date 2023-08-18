@@ -210,6 +210,10 @@ error_patterns = [
     ("Python", re.compile(
         r'\s*File "(.*?)", line (\d+), in ([^\<].*)'
     )),
+    # Go error message pattern
+    ("Go", re.compile(
+        r"([a-zA-Z0-9./][^:\r\n]+):([0-9]+):([0-9]+): (.*): (.*)"
+    )),
 ]
 
 class explain_context:
@@ -223,6 +227,8 @@ class explain_context:
 
         # Go through the diagnostic and build up a list of code locations.
         for (linenum, line) in enumerate(self.diagnostic_lines):
+            file_name = None
+            line_number = None
             for (lang, pattern) in error_patterns:
                 match = pattern.match(line)
                 if match:
@@ -231,6 +237,9 @@ class explain_context:
                     line_number = int(match.group(2))
                     break  # Move to the next line after a match
 
+            if not file_name:
+                continue
+            
             try:
                 (abridged_code, line_start) = read_lines(
                     file_name, line_number - 7, line_number + 3
