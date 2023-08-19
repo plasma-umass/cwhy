@@ -9,7 +9,7 @@ by [Emery Berger](https://emeryberger.com), [Bryce Adelstein Lelbach](https://tw
 
 ("See why")
 
-Explains and suggests fixes for compiler error messages for a range of programming languages, including C, C++, C#, Java, Python, Rust, and TypeScript.
+Explains and suggests fixes for compiler error messages for a range of programming languages, including C, C++, C#, Go, Java, Python, Rust, and TypeScript.
 
 ## Installation
 
