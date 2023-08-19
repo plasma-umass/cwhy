@@ -214,6 +214,10 @@ error_patterns = [
     ("Go", re.compile(
         r"([a-zA-Z0-9./][^:\r\n]+):([0-9]+):([0-9]+): (.*): (.*)"
     )),
+    # TypeScript error message pattern
+    re.compile(
+        r"([a-zA-Z0-9./][^:\r\n]+)\((\d+),(\d+)\): error ([A-Za-z0-9]+): (.*)"
+    ),
 ]
 
 class explain_context:
