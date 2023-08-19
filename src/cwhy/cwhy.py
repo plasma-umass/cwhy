@@ -201,6 +201,10 @@ error_patterns = [
     ("C/C++/Rust", re.compile(
         r"([a-zA-Z0-9./][^:->]+):([0-9]+):([0-9]+)"
     ), 1, 2),
+    # Note: LaTeX must precede Java
+    ("LaTeX", re.compile(
+        r"(.*\.tex):(\d+): error: (.*)"
+    ), 1, 2),
     ("Java", re.compile(
         r"([a-zA-Z0-9./][^:->]+):([0-9]+):"
     ), 1, 2),
@@ -219,9 +223,6 @@ error_patterns = [
     ("PHP", re.compile(
         r"PHP (?:Parse|Fatal) error: (.*) in (.*) on line (\d+)"
     ), 2, 3),
-    ("LaTeX", re.compile(
-        r"(.*\.tex):(\d+): error: (.*)"
-    ), 1, 2),
 ]
 
 class explain_context:
@@ -239,7 +240,7 @@ class explain_context:
             line_number = None
             for lang, pattern, file_group, line_group in error_patterns:
                 match = pattern.match(line)
-                # Rule out messages that contain the word 'warning'.
+                # Rule out messages that contain the word 'warning' (for LaTeX; these match Java's regex)
                 if match and "warning" not in line.lower():
                     # Extract information based on group indices
                     file_name = match.group(file_group).lstrip()
