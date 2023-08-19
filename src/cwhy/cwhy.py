@@ -4,7 +4,7 @@ import textwrap
 import os
 import subprocess
 import collections
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 import openai
 import tiktoken
@@ -231,8 +231,8 @@ class explain_context:
         self.encoding = tiktoken.encoding_for_model(args["llm"])
         self.diagnostic_lines = diagnostic.splitlines()
 
-        # We group by source file, then keep line numbers ordered.
-        self.code_locations = collections.defaultdict(collections.OrderedDict)
+        # We group by source file.
+        self.code_locations = collections.defaultdict(dict)
 
         # Go through the diagnostic and build up a list of code locations.
         for (linenum, line) in enumerate(self.diagnostic_lines):
@@ -325,22 +325,25 @@ class explain_context:
             result += "```\n\n"
             return result
 
-        def format_file_locations(filename: str, lines: List[Tuple[int, str]]) -> str:
+        def format_file_locations(filename: str, lines: Dict[int, str]) -> str:
             """
             Format all the lines from a single file as a code block.
             There may be multiple groups: lines 1-10 and 100-110 for example.
 
             Args:
                 filename: The name of the file lines originate from.
-                lines: A list of line number to actual line content tuples.
+                lines: A mapping of line numbers to the corresponding line content.
 
             Returns:
                 One or more concatenated formatted code blocks.
             """
+            # Sort lines by line number.
+            lines = sorted(lines.items(), key=lambda x: x[0])
+
             result = ""
             last = None
             group = []
-            for line_number, line_content in lines.items():
+            for line_number, line_content in lines:
                 if last is None or line_number == last + 1:
                     group.append(line_content)
                     last = line_number
