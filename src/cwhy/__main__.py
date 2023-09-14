@@ -13,7 +13,7 @@ from . import cwhy
 def wrapper(args):
     return textwrap.dedent(
         f"""
-        #! /usr/bin/env python3
+        #! {sys.executable}
         from cwhy import cwhy
         cwhy.wrapper({args})
         """
