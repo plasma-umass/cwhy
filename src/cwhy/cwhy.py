@@ -201,6 +201,9 @@ error_patterns = [
     ("C/C++/Rust", re.compile(
         r"([a-zA-Z0-9./][^:->]+):([0-9]+):([0-9]+)"
     ), 1, 2),
+    ("Visual Studio C/C++", re.compile(
+        r"([a-zA-Z]?:?[\\\/a-zA-Z0-9._-]+)\(([0-9]+)\)"
+    ), 1, 2),
     # Note: LaTeX must precede Java
     ("LaTeX", re.compile(
         r"(.*\.tex):(\d+): error: (.*)"
