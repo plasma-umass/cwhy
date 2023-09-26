@@ -26,7 +26,7 @@ jobs:
 
     - name: Commit
       run: |
-        git diff | test # There are no changes to the prompts.
+        if [[ `git status --porcelain` ]]; then :; else exit 1; fi
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add tests/.regression
