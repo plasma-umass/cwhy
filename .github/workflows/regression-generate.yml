@@ -32,7 +32,7 @@ jobs:
         git add tests/.regression
         git switch -c bot/regression/ubuntu
         git commit -m "[bot] Generate current state of CWhy prompts"
-        git push origin --delete bot/regression/ubuntu
+        git push origin --delete bot/regression/ubuntu || true
         git push origin bot/regression/ubuntu
 
     - name: Create pull request
