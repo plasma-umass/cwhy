@@ -212,7 +212,7 @@ error_patterns = [
     ),
     # Note: LaTeX must precede Java
     ("LaTeX", re.compile(r"(.*\.tex):(\d+): error: (.*)"), 1, 2),
-    ("Java", re.compile(r"([a-zA-Z0-9./][^:->]+):([0-9]+):"), 1, 2),
+    ("Java", re.compile(r"([a-zA-Z0-9./][^:->]+):([0-9]+): error:"), 1, 2),
     ("Python", re.compile(r'\s*File "(.*?)", line (\d+), in ([^\<].*)'), 1, 2),
     ("Go", re.compile(r"([a-zA-Z0-9./][^:\r\n]+):([0-9]+):([0-9]+): (.*): (.*)"), 1, 2),
     (
