@@ -55,19 +55,23 @@ def main(args):
                     and f.endswith(extension)
                 ]
             )
+            directory = os.path.join(ROOT, ".regression", args.platform, compiler[0])
             for test in tests:
                 prompt = get_cwhy_prompt(compiler, os.path.join(ROOT, path, test))
-                directory = os.path.join(
-                    ROOT, ".regression", args.platform, compiler[0]
-                )
+                savefile = os.path.join(directory, test)
 
                 if args.generate:
                     os.makedirs(directory, exist_ok=True)
-                    with open(os.path.join(directory, test), "w") as save:
+                    with open(savefile, "w") as save:
                         save.write(prompt)
                 elif args.check:
-                    with open(os.path.join(directory, test), "r") as save:
-                        assert save.read() == prompt, f"Prompt for {path}/{test} has changed."
+                    assert os.path.isfile(
+                        savefile
+                    ), f"Save file for {path}/{test} does not exist."
+                    with open(savefile, "r") as save:
+                        assert (
+                            save.read() == prompt
+                        ), f"Prompt for {path}/{test} has changed."
                 else:
                     assert False, "Unreachable."
 
