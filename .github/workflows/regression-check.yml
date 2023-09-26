@@ -1,0 +1,27 @@
+name: Regression | Check
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  check-ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y gcc-9 gcc-10 gcc-11 gcc-12
+
+    - name: Install CWhy
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install .
+
+    - name: Check prompts
+      run: python3 tests/regression.py --platform ubuntu --check
