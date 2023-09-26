@@ -23,4 +23,4 @@ jobs:
         run: python3 -m pip install -e .
 
       - name: Check version
-        run: python3 -m cwhy -version
+        run: python3 -m cwhy --version
