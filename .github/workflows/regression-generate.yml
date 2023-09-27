@@ -22,7 +22,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y gcc-9 gcc-10 gcc-11 gcc-12
+        sudo apt install -y gcc-12
+        curl -sSf https://apt.llvm.org/llvm.sh | sudo bash -s -- 17 all
 
     - name: Install CWhy
       run: |
