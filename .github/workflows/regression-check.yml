@@ -25,3 +25,31 @@ jobs:
 
     - name: Check prompts
       run: python3 tests/regression.py --platform ubuntu --check
+
+  check-macos:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install CWhy
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install .
+
+    - name: Check prompts
+      run: python3 tests/regression.py --platform macos --check
+
+  check-windows:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install CWhy
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install .
+
+    - name: Check prompts
+      run: python3 tests/regression.py --platform windows --check
