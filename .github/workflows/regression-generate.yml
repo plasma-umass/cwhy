@@ -102,10 +102,10 @@ jobs:
         git pull --rebase origin bot/regression/macos
         git pull --rebase origin bot/regression/windows
         git push origin --delete bot/regression || true
-        git push origin bot/regression
         git push origin --delete bot/regression/ubuntu
         git push origin --delete bot/regression/macos
         git push origin --delete bot/regression/windows
+        git push origin bot/regression
 
 
     - name: Create pull request
