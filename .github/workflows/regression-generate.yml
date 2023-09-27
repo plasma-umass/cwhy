@@ -4,7 +4,16 @@ on:
   workflow_dispatch:
 
 jobs:
+  remove-existing-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Delete branch
+        run: git push origin --delete bot/regression || true
+
   generate-ubuntu:
+    needs: remove-existing-branch
     runs-on: ubuntu-latest
 
     steps:
@@ -36,6 +45,7 @@ jobs:
         git push origin bot/regression/ubuntu
 
   generate-macos:
+    needs: remove-existing-branch
     runs-on: macos-latest
 
     steps:
@@ -62,6 +72,7 @@ jobs:
         git push origin bot/regression/macos
 
   generate-windows:
+    needs: remove-existing-branch
     runs-on: windows-latest
 
     steps:
