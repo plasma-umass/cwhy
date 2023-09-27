@@ -69,11 +69,11 @@ def main(args):
                 elif args.check:
                     assert os.path.isfile(
                         savefile
-                    ), f"Save file for {path}/{test} does not exist."
+                    ), f"Save file for {args.platform}/{compiler}/{path}/{test} does not exist."
                     with open(savefile, "r") as save:
                         assert (
                             save.read() == prompt
-                        ), f"Prompt for {path}/{test} has changed."
+                        ), f"Prompt for {args.platform}/{compiler}/{path}/{test} has changed."
                 else:
                     assert False, "Unreachable."
 
