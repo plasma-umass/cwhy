@@ -13,7 +13,6 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y curl
         sudo apt install -y gcc-9 gcc-10 gcc-11 gcc-12
 
     - name: Install CWhy
@@ -31,16 +30,86 @@ jobs:
         git config user.email github-actions@github.com
         git add tests/.regression
         git switch -c bot/regression/ubuntu
-        git commit -m "[bot] Generate current state of CWhy prompts"
+        git commit -m "[bot][ubuntu] Generate current state of CWhy prompts"
         git push origin --delete bot/regression/ubuntu || true
         git push origin bot/regression/ubuntu
 
+  generate-macos:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install CWhy
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install .
+
+    - name: Generate current prompts
+      run: python3 tests/regression.py --platform macos --generate
+
+    - name: Commit
+      run: |
+        if [[ `git status --porcelain` ]]; then :; else exit 1; fi
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add tests/.regression
+        git switch -c bot/regression/macos
+        git commit -m "[bot][macos] Generate current state of CWhy prompts"
+        git push origin --delete bot/regression/macos || true
+        git push origin bot/regression/macos
+
+  generate-windows:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install CWhy
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install .
+
+    - name: Generate current prompts
+      run: python3 tests/regression.py --platform windows --generate
+
+    - name: Commit
+      run: |
+        if [[ `git status --porcelain` ]]; then :; else exit 1; fi
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add tests/.regression
+        git switch -c bot/regression/windows
+        git commit -m "[bot][windows] Generate current state of CWhy prompts"
+        git push origin --delete bot/regression/windows || true
+        git push origin bot/regression/windows
+
+  create-pull-request:
+    needs: [generate-ubuntu, generate-macos, generate-windows]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Merge branches
+      run: |
+        git switch -c bot/regression
+        git rebase bot/regression/ubuntu
+        git rebase bot/regression/macos
+        git rebase bot/regression/windows
+        git push origin --delete bot/regression || true
+        git push origin bot/regression
+        git push origin --delete bot/regression/ubuntu
+        git push origin --delete bot/regression/macos
+        git push origin --delete bot/regression/windows
+
+
     - name: Create pull request
       run: |
-        curl -L                                                                                                                                                                  \
-          -X POST                                                                                                                                                                \
-          -H "Accept: application/vnd.github+json"                                                                                                                               \
-          -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}"                                                                                                                   \
-          -H "X-GitHub-Api-Version: 2022-11-28"                                                                                                                                  \
-          https://api.github.com/repos/plasma-umass/cwhy/pulls                                                                                                                   \
-          -d '{"title":"[bot] Generate current state of CWhy prompts","body":"Timestamp: ${{github.event.repository.updated_at}}","head":"bot/regression/ubuntu","base":"main"}'
+        curl -L                                                \
+          -X POST                                              \
+          -H "Accept: application/vnd.github+json"             \
+          -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
+          -H "X-GitHub-Api-Version: 2022-11-28"                \
+          https://api.github.com/repos/plasma-umass/cwhy/pulls \
+          -d '{"title":"[bot] Generate current state of CWhy prompts","body":"Timestamp: ${{github.event.repository.updated_at}}","head":"bot/regression","base":"main"}'
