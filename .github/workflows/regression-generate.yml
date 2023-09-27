@@ -77,12 +77,14 @@ jobs:
 
     - name: Commit
       run: |
-        if [[ `git status --porcelain` ]]; then :; else exit 1; fi
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git add tests/.regression
         git switch -c bot/regression/windows
-        git commit -m "[bot][windows] Generate current state of CWhy prompts"
+        $status = git status --porcelain
+        if (!$status) {
+          git add tests/.regression
+          git commit -m "[bot][windows] Generate current state of CWhy prompts"
+        }
         git push origin --delete bot/regression/windows || true
         git push origin bot/regression/windows
 
