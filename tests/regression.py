@@ -45,6 +45,8 @@ def main(args):
         name = language["name"]
         path = language["path"]
         extension = language["extension"]
+        if args.platform not in language["compilers"]:
+            continue
         compilers = language["compilers"][args.platform]
         for compiler in compilers:
             tests = sorted(
