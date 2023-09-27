@@ -9,7 +9,7 @@ LANGUAGES = [
         "path": "c++",
         "extension": ".cpp",
         "compilers": {
-            "ubuntu": [["g++-9"], ["g++-10"], ["g++-11"], ["g++-12"]],
+            "ubuntu": [["g++-12"]],
             "macos": [["clang++", "-std=c++20"]],
         },
     }
