@@ -98,9 +98,9 @@ jobs:
     - name: Merge branches
       run: |
         git switch -c bot/regression
-        git rebase bot/regression/ubuntu
-        git rebase bot/regression/macos
-        git rebase bot/regression/windows
+        git pull --rebase bot/regression/ubuntu
+        git pull --rebase bot/regression/macos
+        git pull --rebase bot/regression/windows
         git push origin --delete bot/regression || true
         git push origin bot/regression
         git push origin --delete bot/regression/ubuntu
