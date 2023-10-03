@@ -1,7 +1,6 @@
-# cwhy
+# CWhy
 
-by [Emery Berger](https://emeryberger.com), [Bryce Adelstein Lelbach](https://twitter.com/blelbach?lang=en), and
-[Nicolas van Kempen](https://nvankempen.com/).
+by [Emery Berger](https://emeryberger.com), [Nicolas van Kempen](https://nvankempen.com/), and [Bryce Adelstein Lelbach](https://twitter.com/blelbach?lang=en).
 
 [![PyPI](https://img.shields.io/pypi/v/cwhy.svg)](https://pypi.org/project/cwhy/)
 [![downloads](https://static.pepy.tech/badge/cwhy)](https://pepy.tech/project/cwhy)
@@ -13,16 +12,20 @@ Explains and suggests fixes for compiler error messages for a wide range of prog
 
 ## Installation
 
+> **Note**
+>
+> CWhy needs to be connected to an [OpenAI account](https://openai.com/api/). _Your account will need to have a positive balance for this to work_ ([check your balance](https://platform.openai.com/account/usage)). [Get a key here.](https://platform.openai.com/account/api-keys)
+>
+> CWhy currently uses GPT-3.5 as its default model. If you want to use the newest and best model (GPT-4), you need to have purchased  at least $1 in credits (if your API account was created before August 13, 2023) or $0.50 (if you have a newer API account). 
+>
+> Once you have an API key, set it as an environment variable called `OPENAI_API_KEY`.
+>
+> ```bash
+> export OPENAI_API_KEY=<your-api-key>
+> ```
+
 ```
 python3 -m pip install cwhy
-```
-
-To use cwhy, you must first set up an OpenAI API key. If you already have an API key, you can set it as an environment
-variable called `OPENAI_API_KEY`. If you do not have one yet, you can
-[get a key here](https://platform.openai.com/account/api-keys).
-
-```bash
-% export OPENAI_API_KEY=<your-api-key>
 ```
 
 ## Usage
