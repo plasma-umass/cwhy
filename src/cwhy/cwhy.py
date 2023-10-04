@@ -103,8 +103,18 @@ def evaluate(args, stdin):
 def evaluate_text_prompt(args, prompt, wrap=True, **kwargs):
     completion = complete(args, prompt, **kwargs)
     text = completion.choices[0].message.content
+
     if wrap:
         text = llm_utils.word_wrap_except_code_blocks(text)
+
+    cost = llm_utils.calculate_cost(
+        completion.usage.prompt_tokens,
+        completion.usage.completion_tokens,
+        args["llm"]
+    )
+    text += "\n\n"
+    text += f"This request cost ~ {cost:.2f}$."
+
     return text
 
 
