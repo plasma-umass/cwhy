@@ -10,7 +10,7 @@ authors = [
   { name="Nicolas van Kempen", email="nvankemp@gmail.com" },
   { name="Bryce Adelstein Lelbach", email="brycelelbach@gmail.com" }
 ]
-dependencies = ["openai==0.28.1", "llm_utils==0.1.4"]
+dependencies = ["openai==0.28.1", "llm_utils==0.2"]
 description = "Explains and proposes fixes for compile-time errors for many programming languages."
 readme = "README.md"
 requires-python = ">=3.7"
@@ -22,7 +22,6 @@ classifiers = [
 
 [project.scripts]
 cwhy = "cwhy.__main__:main"
-
 
 [project.urls]
 "Homepage" = "https://github.com/plasma-umass/cwhy"
