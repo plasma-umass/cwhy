@@ -35,8 +35,8 @@ def main():
     parser.add_argument(
         "--llm",
         type=str,
-        default="gpt-3.5-turbo",
-        help="the language model to use, e.g., 'gpt-3.5-turbo' or 'gpt-4' (default: gpt-3.5-turbo)",
+        default="default",
+        help="the language model to use, e.g., 'gpt-3.5-turbo' or 'gpt-4' (default: 'default', which tries gpt-4 and falls back to gpt-3.5-turbo)",
     )
     parser.add_argument(
         "--timeout",

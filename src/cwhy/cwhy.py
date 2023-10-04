@@ -170,8 +170,21 @@ def evaluate_diff(args, stdin):
 
     return completion
 
+def evaluate_with_fallback(args, stdin):
+    DEFAULT_FALLBACK_MODELS = ["gpt-4", "gpt-3.5-turbo"]
+    for i, model in enumerate(DEFAULT_FALLBACK_MODELS):
+        if i != 0:
+            print(f"Falling back to {model}...")
+        args["llm"] = model
+        try:
+            return evaluate(args, stdin)
+        except openai.error.InvalidRequestError as e:
+            print(e)
 
 def evaluate(args, stdin):
+    if args["llm"] == "default":
+        return evaluate_with_fallback(args, stdin)
+
     if args["subcommand"] == "explain":
         return evaluate_text_prompt(args, explain_prompt(args, stdin))
     elif args["subcommand"] == "fix":
