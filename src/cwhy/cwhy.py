@@ -126,7 +126,7 @@ def evaluate_text_prompt(args, prompt, wrap=True, **kwargs):
         args["llm"]
     )
     text += "\n\n"
-    text += f"This request cost ~ {cost:.2f}$."
+    text += f"(Total cost: approximately ${cost:.2f} USD.)"
 
     return text
 
