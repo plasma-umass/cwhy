@@ -16,7 +16,7 @@ Explains and suggests fixes for compiler error messages for a wide range of prog
 >
 > CWhy needs to be connected to an [OpenAI account](https://openai.com/api/). _Your account will need to have a positive balance for this to work_ ([check your balance](https://platform.openai.com/account/usage)). [Get a key here.](https://platform.openai.com/account/api-keys)
 >
-> CWhy currently uses GPT-3.5 as its default model. If you want to use the newest and best model (GPT-4), you need to have purchased  at least $1 in credits (if your API account was created before August 13, 2023) or $0.50 (if you have a newer API account).
+> CWhy currently defaults to GPT-4, and falls back to GPT-3.5-turbo if a request error occurs. For the newest and best model (GPT-4) to work, you need to have purchased  at least $1 in credits (if your API account was created before August 13, 2023) or $0.50 (if you have a newer API account).
 >
 > Once you have an API key, set it as an environment variable called `OPENAI_API_KEY`.
 >
