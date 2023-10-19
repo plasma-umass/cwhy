@@ -197,7 +197,7 @@ With this change, the code should now compile and work as expected.
 ### Rust
 
 ```
-% rustc test/testme.rs |& cwhy
+% `cwhy --wrapper --wrapper-compiler=cargo` build
 There are three issues:  1. There are two unused variables `x` in the
 code.  2. The variable `x` is used after it has already been moved in
 the call to `f(x)`, which takes ownership of `x`. 3. The function
