@@ -1,6 +1,7 @@
 import argparse
 import os
 import subprocess
+import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 LANGUAGES = [
@@ -69,11 +70,17 @@ def main(args):
                 elif args.check:
                     assert os.path.isfile(
                         savefile
-                    ), f"Save file for {args.platform}/{compiler}/{path}/{test} does not exist."
+                    ), f"Save file for {args.platform}/{compiler[0]}/{path}/{test} does not exist."
                     with open(savefile, "r") as save:
-                        assert (
-                            save.read() == prompt
-                        ), f"Prompt for {args.platform}/{compiler}/{path}/{test} has changed."
+                        saved = save.read()
+                        if saved != prompt:
+                            print(f"Prompt for {args.platform}/{compiler[0]}/{path}/{test} has changed.")
+                            print(f"Saved prompt:")
+                            print(saved)
+                            print()
+                            print("New prompt:")
+                            print(prompt)
+                            sys.exit(1)
                 else:
                     assert False, "Unreachable."
 
