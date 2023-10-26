@@ -22,5 +22,8 @@ jobs:
       - name: Install in editable mode
         run: python3 -m pip install -e .
 
+      - name: Check version through Python
+        run: python3 -m cwhy --version
+
       - name: Check version
         run: cwhy --version
