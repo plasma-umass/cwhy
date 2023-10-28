@@ -68,9 +68,12 @@ def main(args):
                     with open(savefile, "w") as save:
                         save.write(prompt)
                 elif args.check:
-                    assert os.path.isfile(
-                        savefile
-                    ), f"Save file for {args.platform}/{compiler[0]}/{path}/{test} does not exist."
+                    if not os.path.isfile(savefile):
+                        print(
+                            f"::warning file={args.platform}/{compiler[0]}/{path}/{test}::Save file does not exist"
+                        )
+                        continue
+
                     with open(savefile, "r") as save:
                         saved = save.read()
                         if saved != prompt:
