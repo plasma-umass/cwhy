@@ -62,13 +62,11 @@ def main(args):
             directory = os.path.join(ROOT, ".regression", args.platform, compiler)
             for test in tests:
                 invocation = invocation.format(
-                    DEPENDENCIES_INSTALL=os.path.join(ROOT, "_deps", language, test, "install"),
+                    DEPENDENCIES_INSTALL=os.path.join(ROOT, "_deps", path, test, "install"),
                     FILENAME=os.path.join(ROOT, path, test)
                 )
-                print(invocation)
                 prompt = get_cwhy_prompt(invocation)
                 savefile = os.path.join(directory, test)
-                sys.exit(1)
 
                 if args.generate:
                     os.makedirs(directory, exist_ok=True)

@@ -1,4 +1,4 @@
-missing-hash.cpp:
+ctre-test.cpp:
   prepare:
     - git clone https://github.com/hanickadot/compile-time-regular-expressions.git --branch=v3.8.1 --depth=1 {DEPENDENCIES_SOURCES}/ctre
     - cmake {DEPENDENCIES_SOURCES}/ctre -B {DEPENDENCIES_BUILD}/ctre -DCMAKE_INSTALL_PREFIX={DEPENDENCIES_INSTALL}
