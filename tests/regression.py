@@ -3,6 +3,8 @@ import os
 import subprocess
 import sys
 
+import prepare
+
 ROOT = os.path.dirname(os.path.abspath(__file__))
 LANGUAGES = [
     {
@@ -42,6 +44,9 @@ def get_cwhy_prompt(compiler, path):
 
 
 def main(args):
+    prepare.clean()
+    prepare.prepare_all()
+
     for language in LANGUAGES:
         name = language["name"]
         path = language["path"]
