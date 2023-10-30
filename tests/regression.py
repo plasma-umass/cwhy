@@ -14,6 +14,7 @@ def get_diagnostic(invocation):
     return subprocess.run(
         invocation,
         shell=True,
+        text=True,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.PIPE,
         cwd=ROOT,
@@ -23,8 +24,8 @@ def get_diagnostic(invocation):
 def get_cwhy_prompt(invocation):
     diagnostic = get_diagnostic(invocation)
     process = subprocess.Popen(
-        "cwhy --show-prompt",
-        shell=True,
+        ["cwhy", "--show-prompt"],
+        text=True,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -38,8 +39,8 @@ def get_cwhy_prompt(invocation):
 
 
 def main(args):
-    # prepare.clean()
-    # prepare.prepare_all()
+    prepare.clean()
+    prepare.prepare_all()
 
     with open(os.path.join(ROOT, "manifest.yml"), "r") as stream:
         manifest = yaml.load(stream, yaml.Loader)
@@ -61,11 +62,11 @@ def main(args):
         for compiler, invocation in compilers.items():
             directory = os.path.join(ROOT, ".regression", args.platform, compiler)
             for test in tests:
-                invocation = invocation.format(
+                test_invocation = invocation.format(
                     DEPENDENCIES_INSTALL=os.path.join(ROOT, "_deps", path, test, "install"),
                     FILENAME=os.path.join(ROOT, path, test)
                 )
-                prompt = get_cwhy_prompt(invocation)
+                prompt = get_cwhy_prompt(test_invocation)
                 savefile = os.path.join(directory, test)
 
                 if args.generate:
