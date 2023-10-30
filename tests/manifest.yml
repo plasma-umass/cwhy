@@ -1,0 +1,9 @@
+C++:
+  path: c++
+  extension: .cpp
+  compilers:
+    ubuntu:
+      g++: g++-12 -std=c++20 -I{DEPENDENCIES_INSTALL}/include {FILENAME}
+      clang++: clang++-17 -std=c++20 -I{DEPENDENCIES_INSTALL}/include {FILENAME}
+    macos:
+      clang++: clang++ -std=c++20 -I{DEPENDENCIES_INSTALL}/include {FILENAME}

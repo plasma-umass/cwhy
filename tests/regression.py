@@ -3,70 +3,72 @@ import os
 import subprocess
 import sys
 
+import yaml
+
 import prepare
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-LANGUAGES = [
-    {
-        "name": "C++",
-        "path": "c++",
-        "extension": ".cpp",
-        "compilers": {
-            "ubuntu": [["g++-12"], ["clang++-17"]],
-            "macos": [["clang++", "-std=c++20"]],
-        },
-    }
-]
 
 
-def get_diagnostic(compiler, path):
+def get_diagnostic(invocation):
     return subprocess.run(
-        [*compiler, path],
-        text=True,
+        invocation,
+        shell=True,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.PIPE,
         cwd=ROOT,
     ).stderr
 
 
-def get_cwhy_prompt(compiler, path):
-    diagnostic = get_diagnostic(compiler, path)
+def get_cwhy_prompt(invocation):
+    diagnostic = get_diagnostic(invocation)
     process = subprocess.Popen(
-        ["cwhy", "--show-prompt"],
-        text=True,
+        "cwhy --show-prompt",
+        shell=True,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
     stdout, stderr = process.communicate(diagnostic)
-    assert not stderr.strip(), "CWhy reports an error or warning."
+    if stderr.strip():
+        print("CWhy reported an error or warning.")
+        print(stderr.strip())
+        sys.exit(1)
     return stdout
 
 
 def main(args):
-    prepare.clean()
-    prepare.prepare_all()
+    # prepare.clean()
+    # prepare.prepare_all()
 
-    for language in LANGUAGES:
-        name = language["name"]
+    with open(os.path.join(ROOT, "manifest.yml"), "r") as stream:
+        manifest = yaml.load(stream, yaml.Loader)
+
+    for name, language in manifest.items():
         path = language["path"]
         extension = language["extension"]
         if args.platform not in language["compilers"]:
             continue
         compilers = language["compilers"][args.platform]
-        for compiler in compilers:
-            tests = sorted(
-                [
-                    f
-                    for f in os.listdir(os.path.join(ROOT, path))
-                    if os.path.isfile(os.path.join(ROOT, path, f))
-                    and f.endswith(extension)
-                ]
-            )
-            directory = os.path.join(ROOT, ".regression", args.platform, compiler[0])
+        tests = sorted(
+            [
+                f
+                for f in os.listdir(os.path.join(ROOT, path))
+                if os.path.isfile(os.path.join(ROOT, path, f))
+                and f.endswith(extension)
+            ]
+        )
+        for compiler, invocation in compilers.items():
+            directory = os.path.join(ROOT, ".regression", args.platform, compiler)
             for test in tests:
-                prompt = get_cwhy_prompt(compiler, os.path.join(ROOT, path, test))
+                invocation = invocation.format(
+                    DEPENDENCIES_INSTALL=os.path.join(ROOT, "_deps", language, test, "install"),
+                    FILENAME=os.path.join(ROOT, path, test)
+                )
+                print(invocation)
+                prompt = get_cwhy_prompt(invocation)
                 savefile = os.path.join(directory, test)
+                sys.exit(1)
 
                 if args.generate:
                     os.makedirs(directory, exist_ok=True)
