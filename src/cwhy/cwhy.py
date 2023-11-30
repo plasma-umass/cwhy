@@ -33,17 +33,10 @@ def complete(args, user_prompt, **kwargs):
             **kwargs,
         )
         return completion
-    except openai.AuthenticationError:
-        print("You need an OpenAI key to use this tool.")
-        print("You can get a key here: https://platform.openai.com/account/api-keys")
-        print("Set the environment variable OPENAI_API_KEY to your key value.")
-        print(
-            "If OPENAI_API_KEY is already correctly set, you may have exceeded your usage or rate limit."
-        )
+    # TODO: Maybe an exception needs to be caught here when the user does not have access to the model.
     except openai.APITimeoutError:
-        print(
-            "The OpenAI API timed out. You can try increasing the timeout with the --timeout option."
-        )
+        print("The OpenAI API timed out.")
+        print("You can increase the timeout with the --timeout option.")
 
     sys.exit(1)
 
@@ -104,6 +97,7 @@ def evaluate_with_fallback(args, stdin):
         try:
             return evaluate(args, stdin)
         except openai.AuthenticationError as e:
+            # TODO: Make sure this is still the right exception to catch for access issues.
             print(e)
 
 
