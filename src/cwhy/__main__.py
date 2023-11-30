@@ -91,7 +91,8 @@ def main():
     if args["wrapper"]:
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
             f.write(wrapper(args))
-        # NamedTemporaryFiles are not executable by default. Set its mode to 755 here with an octal literal.
+        # NamedTemporaryFiles are not executable by default.
+        # Set its mode to 755 here with an octal literal.
         os.chmod(f.name, 0o755)
         print(f.name)
     elif args["version"]:
