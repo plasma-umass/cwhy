@@ -7,6 +7,8 @@ import sys
 import tempfile
 import textwrap
 
+import openai
+
 from . import cwhy
 
 
@@ -108,8 +110,13 @@ def main():
         print(f.name)
     else:
         stdin = sys.stdin.read()
-        if stdin:
+        if not stdin:
+            return
+        try:
             print(cwhy.evaluate(args, stdin))
+        except (openai.NotFoundError, openai.RateLimitError, openai.APITimeoutError):
+            # This type of exceptions should have been handled down the stack.
+            pass
 
 
 if __name__ == "__main__":

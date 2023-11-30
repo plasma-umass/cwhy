@@ -33,12 +33,16 @@ def complete(args, user_prompt, **kwargs):
             **kwargs,
         )
         return completion
-    # TODO: Maybe an exception needs to be caught here when the user does not have access to the model.
-    except openai.APITimeoutError:
+    except openai.NotFoundError as e:
+        print(f"'{args['llm']}' either does not exist or you do not have access to it.")
+        raise e
+    except openai.RateLimitError as e:
+        print("You have exceeded a rate limit or have no remaining funds.")
+        raise e
+    except openai.APITimeoutError as e:
         print("The OpenAI API timed out.")
         print("You can increase the timeout with the --timeout option.")
-
-    sys.exit(1)
+        raise e
 
 
 def evaluate_diff(args, stdin):
@@ -96,9 +100,8 @@ def evaluate_with_fallback(args, stdin):
         args["llm"] = model
         try:
             return evaluate(args, stdin)
-        except openai.AuthenticationError as e:
-            # TODO: Make sure this is still the right exception to catch for access issues.
-            print(e)
+        except openai.NotFoundError:
+            continue
 
 
 def evaluate(args, stdin):
