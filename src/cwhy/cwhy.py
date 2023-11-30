@@ -11,12 +11,6 @@ from .prompts import diff_prompt, explain_prompt, fix_prompt
 
 
 def complete(client, args, user_prompt, **kwargs):
-    if "show_prompt" in args and args.show_prompt:
-        print("===================== Prompt =====================")
-        print(user_prompt)
-        print("==================================================")
-        sys.exit(0)
-
     try:
         completion = client.chat.completions.create(
             model=args.llm,
@@ -115,6 +109,17 @@ def evaluate(client, args, stdin):
 
 
 def main(args, stdin):
+    if args.show_prompt:
+        print("===================== Prompt =====================")
+        if args.subcommand == "explain":
+            return explain_prompt(args, stdin)
+        elif args.subcommand == "fix":
+            return fix_prompt(args, stdin)
+        elif args.subcommand == "diff":
+            return diff_prompt(args, stdin)
+        print("==================================================")
+        sys.exit(0)
+
     try:
         client = openai.OpenAI(timeout=args.timeout)
     except openai.OpenAIError:
