@@ -116,11 +116,11 @@ def main(args, stdin):
         if args.llm == "default":
             args.llm = _DEFAULT_FALLBACK_MODELS[0]
         if args.subcommand == "explain":
-            return explain_prompt(args, stdin)
+            print(explain_prompt(args, stdin))
         elif args.subcommand == "fix":
-            return fix_prompt(args, stdin)
+            print(fix_prompt(args, stdin))
         elif args.subcommand == "diff":
-            return diff_prompt(args, stdin)
+            print(diff_prompt(args, stdin))
         print("==================================================")
         sys.exit(0)
 
