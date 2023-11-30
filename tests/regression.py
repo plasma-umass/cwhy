@@ -55,16 +55,17 @@ def main(args):
             [
                 f
                 for f in os.listdir(os.path.join(ROOT, path))
-                if os.path.isfile(os.path.join(ROOT, path, f))
-                and f.endswith(extension)
+                if os.path.isfile(os.path.join(ROOT, path, f)) and f.endswith(extension)
             ]
         )
         for compiler, invocation in compilers.items():
             directory = os.path.join(ROOT, ".regression", args.platform, compiler)
             for test in tests:
                 test_invocation = invocation.format(
-                    DEPENDENCIES_INSTALL=os.path.join(ROOT, "_deps", path, test, "install"),
-                    FILENAME=os.path.join(ROOT, path, test)
+                    DEPENDENCIES_INSTALL=os.path.join(
+                        ROOT, "_deps", path, test, "install"
+                    ),
+                    FILENAME=os.path.join(ROOT, path, test),
                 )
                 prompt = get_cwhy_prompt(test_invocation)
                 savefile = os.path.join(directory, test)
@@ -83,7 +84,9 @@ def main(args):
                     with open(savefile, "r") as save:
                         saved = save.read()
                         if saved != prompt:
-                            print(f"Prompt for {args.platform}/{compiler[0]}/{path}/{test} has changed.")
+                            print(
+                                f"Prompt for {args.platform}/{compiler[0]}/{path}/{test} has changed."
+                            )
                             print(f"Saved prompt:")
                             print(saved)
                             print()

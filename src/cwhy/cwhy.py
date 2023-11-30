@@ -7,32 +7,40 @@ import textwrap
 from typing import Dict, List, Tuple
 
 import openai
+
 from llm_utils import llm_utils
 
 
 def complete(args, user_prompt, **kwargs):
-    try:
-        if "show_prompt" in args and args["show_prompt"]:
-            print("===================== Prompt =====================")
-            print(user_prompt)
-            print("==================================================")
-            sys.exit(0)
+    if "show_prompt" in args and args["show_prompt"]:
+        print("===================== Prompt =====================")
+        print(user_prompt)
+        print("==================================================")
+        sys.exit(0)
 
-        completion = openai.ChatCompletion.create(
+    try:
+        client = openai.OpenAI(timeout=args["timeout"])
+    except openai.OpenAIError:
+        print("You need an OpenAI key to use this tool.")
+        print("You can get a key here: https://platform.openai.com/account/api-keys")
+        print("Set the environment variable OPENAI_API_KEY to your key value.")
+        sys.exit(1)
+
+    try:
+        completion = client.chat.completions.create(
             model=args["llm"],
-            request_timeout=args["timeout"],
             messages=[{"role": "user", "content": user_prompt}],
             **kwargs,
         )
         return completion
-    except openai.error.AuthenticationError:
+    except openai.AuthenticationError:
         print("You need an OpenAI key to use this tool.")
         print("You can get a key here: https://platform.openai.com/account/api-keys")
         print("Set the environment variable OPENAI_API_KEY to your key value.")
         print(
             "If OPENAI_API_KEY is already correctly set, you may have exceeded your usage or rate limit."
         )
-    except openai.error.Timeout:
+    except openai.APITimeoutError:
         print(
             "The OpenAI API timed out. You can try increasing the timeout with the --timeout option."
         )
@@ -86,6 +94,7 @@ def evaluate_diff(args, stdin):
 
     return completion
 
+
 def evaluate_with_fallback(args, stdin):
     DEFAULT_FALLBACK_MODELS = ["gpt-4", "gpt-3.5-turbo"]
     for i, model in enumerate(DEFAULT_FALLBACK_MODELS):
@@ -94,8 +103,9 @@ def evaluate_with_fallback(args, stdin):
         args["llm"] = model
         try:
             return evaluate(args, stdin)
-        except openai.error.InvalidRequestError as e:
+        except openai.AuthenticationError as e:
             print(e)
+
 
 def evaluate(args, stdin):
     if args["llm"] == "default":
@@ -121,9 +131,7 @@ def evaluate_text_prompt(args, prompt, wrap=True, **kwargs):
         text = llm_utils.word_wrap_except_code_blocks(text)
 
     cost = llm_utils.calculate_cost(
-        completion.usage.prompt_tokens,
-        completion.usage.completion_tokens,
-        args["llm"]
+        completion.usage.prompt_tokens, completion.usage.completion_tokens, args["llm"]
     )
     text += "\n\n"
     text += f"(Total cost: approximately ${cost:.2f} USD.)"

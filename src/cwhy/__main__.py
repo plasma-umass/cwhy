@@ -104,5 +104,6 @@ def main():
         if stdin:
             print(cwhy.evaluate(args, stdin))
 
+
 if __name__ == "__main__":
     main()

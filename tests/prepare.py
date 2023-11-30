@@ -19,7 +19,9 @@ def prepare(language):
             command = command.format(
                 DEPENDENCIES_SOURCES=os.path.join(ROOT, "_deps", language, test, "src"),
                 DEPENDENCIES_BUILD=os.path.join(ROOT, "_deps", language, test, "build"),
-                DEPENDENCIES_INSTALL=os.path.join(ROOT, "_deps", language, test, "install"),
+                DEPENDENCIES_INSTALL=os.path.join(
+                    ROOT, "_deps", language, test, "install"
+                ),
             )
             subprocess.run(command, shell=True).check_returncode()
 

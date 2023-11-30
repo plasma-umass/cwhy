@@ -20,6 +20,8 @@ LANGUAGES = {
     },
 }
 
+client = openai.AsyncOpenAI()
+
 
 def verify_prompt(answer, choice):
     prompt = "I have used two different models to help me debug a program.\n"
@@ -35,7 +37,7 @@ def verify_prompt(answer, choice):
 async def evaluate_verifications(args, prompts):
     completions = await asyncio.gather(
         *[
-            openai.ChatCompletion.acreate(
+            client.chat.completions.create(
                 model=args["verification_llm"],
                 request_timeout=args["timeout"],
                 messages=[{"role": "user", "content": prompt}],
@@ -72,7 +74,7 @@ async def evaluate_benchmark(args, language, benchmark):
     )
     compiler_output = process.stderr.decode("utf-8")
 
-    completion = await openai.ChatCompletion.acreate(
+    completion = await aclient.chat.completions.create(
         model=args["llm"],
         request_timeout=args["timeout"],
         n=args["n"],
