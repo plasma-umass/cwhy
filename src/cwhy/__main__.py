@@ -99,9 +99,9 @@ def main():
 
     parser.set_defaults(subcommand="explain")
 
-    args = vars(parser.parse_args())
+    args = parser.parse_args()
 
-    if args["wrapper"]:
+    if args.wrapper:
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
             f.write(wrapper(args))
         # NamedTemporaryFiles are not executable by default.

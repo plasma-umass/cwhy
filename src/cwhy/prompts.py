@@ -104,8 +104,8 @@ class _Context:
                 line = self.diagnostic_lines[n - i // 2 - 1]
                 list = back
             list.append(line)
-            count = llm_utils.count_tokens(self.args["llm"], build_diagnostic_string())
-            if count > self.args["max_error_tokens"]:
+            count = llm_utils.count_tokens(self.args.llm, build_diagnostic_string())
+            if count > self.args.max_error_tokens:
                 list.pop()
                 break
         return build_diagnostic_string()
@@ -181,14 +181,12 @@ class _Context:
         ]
 
         counts = [
-            llm_utils.count_tokens(self.args["llm"], x)
-            for x in formatted_file_locations
+            llm_utils.count_tokens(self.args.llm, x) for x in formatted_file_locations
         ]
         index = 0
         total = 0
         while (
-            index < len(counts)
-            and total + counts[index] <= self.args["max_code_tokens"]
+            index < len(counts) and total + counts[index] <= self.args.max_code_tokens
         ):
             total += counts[index]
             index += 1

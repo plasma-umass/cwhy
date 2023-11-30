@@ -11,14 +11,14 @@ from .prompts import diff_prompt, explain_prompt, fix_prompt
 
 
 def complete(args, user_prompt, **kwargs):
-    if "show_prompt" in args and args["show_prompt"]:
+    if "show_prompt" in args and args.show_prompt:
         print("===================== Prompt =====================")
         print(user_prompt)
         print("==================================================")
         sys.exit(0)
 
     try:
-        client = openai.OpenAI(timeout=args["timeout"])
+        client = openai.OpenAI(timeout=args.timeout)
     except openai.OpenAIError:
         print("You need an OpenAI key to use this tool.")
         print("You can get a key here: https://platform.openai.com/account/api-keys")
@@ -27,13 +27,13 @@ def complete(args, user_prompt, **kwargs):
 
     try:
         completion = client.chat.completions.create(
-            model=args["llm"],
+            model=args.llm,
             messages=[{"role": "user", "content": user_prompt}],
             **kwargs,
         )
         return completion
     except openai.NotFoundError as e:
-        print(f"'{args['llm']}' either does not exist or you do not have access to it.")
+        print(f"'{args.llm}' either does not exist or you do not have access to it.")
         raise e
     except openai.RateLimitError as e:
         print("You have exceeded a rate limit or have no remaining funds.")
@@ -96,7 +96,7 @@ def evaluate_with_fallback(args, stdin):
     for i, model in enumerate(DEFAULT_FALLBACK_MODELS):
         if i != 0:
             print(f"Falling back to {model}...")
-        args["llm"] = model
+        args.llm = model
         try:
             return evaluate(args, stdin)
         except openai.NotFoundError:
@@ -104,17 +104,17 @@ def evaluate_with_fallback(args, stdin):
 
 
 def evaluate(args, stdin):
-    if args["llm"] == "default":
+    if args.llm == "default":
         return evaluate_with_fallback(args, stdin)
 
-    if args["subcommand"] == "explain":
+    if args.subcommand == "explain":
         return evaluate_text_prompt(args, explain_prompt(args, stdin))
-    elif args["subcommand"] == "fix":
+    elif args.subcommand == "fix":
         return evaluate_text_prompt(args, fix_prompt(args, stdin))
-    elif args["subcommand"] == "diff":
+    elif args.subcommand == "diff":
         return evaluate_diff(args, stdin).choices[0].message.function_call.arguments
     else:
-        raise Exception(f"unknown subcommand: {args['subcommand']}")
+        raise Exception(f"unknown subcommand: {args.subcommand}")
 
 
 def evaluate_text_prompt(args, prompt, wrap=True, **kwargs):
@@ -125,7 +125,7 @@ def evaluate_text_prompt(args, prompt, wrap=True, **kwargs):
         text = llm_utils.word_wrap_except_code_blocks(text)
 
     cost = llm_utils.calculate_cost(
-        completion.usage.prompt_tokens, completion.usage.completion_tokens, args["llm"]
+        completion.usage.prompt_tokens, completion.usage.completion_tokens, args.llm
     )
     text += "\n\n"
     text += f"(Total cost: approximately ${cost:.2f} USD.)"
@@ -135,7 +135,7 @@ def evaluate_text_prompt(args, prompt, wrap=True, **kwargs):
 
 def wrapper(args):
     process = subprocess.run(
-        [args["wrapper_compiler"], *sys.argv[1:]],
+        [args.wrapper_compiler, *sys.argv[1:]],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
