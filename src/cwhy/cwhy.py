@@ -78,9 +78,11 @@ def evaluate_diff(client, args, stdin):
     return completion
 
 
+_DEFAULT_FALLBACK_MODELS = ["gpt-4", "gpt-3.5-turbo"]
+
+
 def evaluate_with_fallback(client, args, stdin):
-    DEFAULT_FALLBACK_MODELS = ["gpt-4", "gpt-3.5-turbo"]
-    for i, model in enumerate(DEFAULT_FALLBACK_MODELS):
+    for i, model in enumerate(_DEFAULT_FALLBACK_MODELS):
         if i != 0:
             print(f"Falling back to {model}...")
         args.llm = model
@@ -111,6 +113,8 @@ def evaluate(client, args, stdin):
 def main(args, stdin):
     if args.show_prompt:
         print("===================== Prompt =====================")
+        if args.llm == "default":
+            args.llm = _DEFAULT_FALLBACK_MODELS[0]
         if args.subcommand == "explain":
             return explain_prompt(args, stdin)
         elif args.subcommand == "fix":
