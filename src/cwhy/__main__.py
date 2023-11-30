@@ -24,25 +24,36 @@ def main():
     parser = argparse.ArgumentParser(
         prog="cwhy",
         description="CWhy explains and fixes compiler diagnostic errors.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        add_help=False,
     )
 
     parser.add_argument(
+        "--help",
+        "-h",
+        action="help",
+        default=argparse.SUPPRESS,
+        help="Show this help message and exit.",
+    )
+    parser.add_argument(
         "--version",
-        action="store_true",
-        help="print the version of cwhy and exit",
+        action="version",
+        version=f"%(prog)s v{importlib.metadata.metadata('cwhy')['Version']}",
+        default=argparse.SUPPRESS,
+        help="Print the version of CWhy and exit.",
     )
 
     parser.add_argument(
         "--llm",
         type=str,
         default="default",
-        help="the language model to use, e.g., 'gpt-3.5-turbo' or 'gpt-4' (default: 'default', which tries gpt-4 and falls back to gpt-3.5-turbo)",
+        help="The language model to use, e.g., 'gpt-3.5-turbo' or 'gpt-4'. The default mode tries gpt-4 and falls back to gpt-3.5-turbo.",
     )
     parser.add_argument(
         "--timeout",
         type=int,
         default=60,
-        help="timeout for API calls in seconds (default: 60)",
+        help="The timeout for API calls in seconds.",
     )
     # The default maximum context length for `gpt-3.5-turbo` is 4096 tokens.
     # We keep 256 tokens for other parts of the prompt, and split the remainder in two
@@ -51,38 +62,38 @@ def main():
         "--max-error-tokens",
         type=int,
         default=1920,
-        help="maximum number of tokens from the error message to send in the prompt (default: 1920)",
+        help="The maximum number of tokens from the error message to send in the prompt.",
     )
     parser.add_argument(
         "--max-code-tokens",
         type=int,
         default=1920,
-        help="maximum number of code locations tokens to send in the prompt (default: 1920)",
+        help="The maximum number of code locations tokens to send in the prompt.",
     )
 
     parser.add_argument(
         "--show-prompt",
         action="store_true",
-        help="only print prompt and exit (for debugging purposes)",
+        help="When enabled, only print prompt and exit (for debugging purposes).",
     )
     parser.add_argument(
         "--wrapper",
         action="store_true",
-        help="enable compiler wrapper behavior",
+        help="Enable compiler wrapper behavior.",
     )
     parser.add_argument(
         "--wrapper-compiler",
         metavar="COMPILER",
         type=str,
         default="c++",
-        help="the underlying compiler. Only enabled with --wrapper",
+        help="The underlying compiler. Only enabled with --wrapper.",
     )
 
     subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
 
-    subparsers.add_parser("explain", help="explain the diagnostic (default)")
-    subparsers.add_parser("fix", help="propose a fix for the diagnostic")
-    subparsers.add_parser("diff", help="propose a fix in diff format")
+    subparsers.add_parser("explain", help="Explain the diagnostic. (default)")
+    subparsers.add_parser("fix", help="Propose a fix for the diagnostic.")
+    subparsers.add_parser("diff", help="Propose a fix in diff format.")
 
     parser.set_defaults(subcommand="explain")
 
@@ -95,8 +106,6 @@ def main():
         # Set its mode to 755 here with an octal literal.
         os.chmod(f.name, 0o755)
         print(f.name)
-    elif args["version"]:
-        print(f"cwhy version {importlib.metadata.metadata('cwhy')['Version']}")
     else:
         stdin = sys.stdin.read()
         if stdin:
