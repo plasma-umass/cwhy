@@ -111,8 +111,6 @@ def evaluate(args, stdin):
         return evaluate_text_prompt(args, fix_prompt(args, stdin))
     elif args["subcommand"] == "diff":
         return evaluate_diff(args, stdin).choices[0].message.function_call.arguments
-    elif args["subcommand"] == "extract-sources":
-        return evaluate_text_prompt(args, extract_sources_prompt(stdin), wrap=False)
     else:
         raise Exception(f"unknown subcommand: {args['subcommand']}")
 
@@ -348,24 +346,6 @@ def fix_prompt(args, diagnostic):
         base_prompt(args, diagnostic)
         + "Suggest code to fix the problem. Surround the code in backticks (```)."
     )
-
-
-class extract_sources_context:
-    def __init__(self, diagnostic):
-        diagnostic_lines = diagnostic.splitlines()
-        line = min(len(diagnostic_lines) - 1, 50)
-        self.diagnostic = "```\n" + "\n".join(diagnostic_lines[:line]) + "\n```\n"
-
-
-def extract_sources_prompt(diagnostic):
-    ctx = extract_sources_context(diagnostic)
-    user_prompt = "Respond only in the CSV format with no header row.\n"
-    user_prompt += "Identify all of the file paths and associated line numbers.\n"
-    user_prompt += "Output each file path and associated line number.\n"
-    user_prompt += "\n"
-    user_prompt += ctx.diagnostic
-
-    return user_prompt
 
 
 def wrapper(args):
