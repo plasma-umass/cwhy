@@ -35,4 +35,3 @@ auto g(T t) noexcept(noexcept(f(t))) -> decltype(f(t)) {
 
 
 What's the problem?
-==================================================

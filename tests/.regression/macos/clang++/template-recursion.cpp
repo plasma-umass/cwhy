@@ -84,4 +84,3 @@ In file included from /Users/runner/work/cwhy/cwhy/tests/c++/template-recursion.
 
 
 What's the problem?
-==================================================

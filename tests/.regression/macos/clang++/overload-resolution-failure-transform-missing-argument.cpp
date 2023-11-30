@@ -59,4 +59,3 @@ transform(_InputIterator1 __first1, _InputIterator1 __last1, _InputIterator2 __f
 
 
 What's the problem?
-==================================================
