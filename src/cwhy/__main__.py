@@ -113,7 +113,7 @@ def main():
         if not stdin:
             return
         try:
-            print(cwhy.evaluate(args, stdin))
+            print(cwhy.main(args, stdin))
         except (openai.NotFoundError, openai.RateLimitError, openai.APITimeoutError):
             # This type of exceptions should have been handled down the stack.
             pass
