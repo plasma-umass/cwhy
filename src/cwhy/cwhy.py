@@ -128,7 +128,7 @@ def main(args, stdin):
         client = openai.OpenAI(timeout=args.timeout)
     except openai.OpenAIError:
         print("You need an OpenAI key to use this tool.")
-        print("You can get a key here: https://platform.openai.com/account/api-keys")
+        print("You can get a key here: https://platform.openai.com/api-keys")
         print("Set the environment variable OPENAI_API_KEY to your key value.")
         sys.exit(1)
 
