@@ -1,13 +1,13 @@
 import os
 import subprocess
 import sys
-import textwrap
 
 import openai
 
 from llm_utils import llm_utils
 
-from .prompts import diff_prompt, explain_prompt, fix_prompt
+from . import prompts
+from . import conversation
 
 
 def complete(client, args, user_prompt, **kwargs):
@@ -97,15 +97,17 @@ def evaluate(client, args, stdin):
         return evaluate_with_fallback(client, args, stdin)
 
     if args.subcommand == "explain":
-        return evaluate_text_prompt(client, args, explain_prompt(args, stdin))
+        return evaluate_text_prompt(client, args, prompts.explain_prompt(args, stdin))
     elif args.subcommand == "fix":
-        return evaluate_text_prompt(client, args, fix_prompt(args, stdin))
+        return evaluate_text_prompt(client, args, prompts.fix_prompt(args, stdin))
     elif args.subcommand == "diff":
         return (
             evaluate_diff(client, args, stdin)
             .choices[0]
             .message.function_call.arguments
         )
+    elif args.subcommand == "converse":
+        return conversation.converse(client, args, stdin)
     else:
         raise Exception(f"unknown subcommand: {args.subcommand}")
 
@@ -116,11 +118,11 @@ def main(args, stdin):
         if args.llm == "default":
             args.llm = _DEFAULT_FALLBACK_MODELS[0]
         if args.subcommand == "explain":
-            print(explain_prompt(args, stdin))
+            print(prompts.explain_prompt(args, stdin))
         elif args.subcommand == "fix":
-            print(fix_prompt(args, stdin))
+            print(prompts.fix_prompt(args, stdin))
         elif args.subcommand == "diff":
-            print(diff_prompt(args, stdin))
+            print(prompts.diff_prompt(args, stdin))
         print("==================================================")
         sys.exit(0)
 

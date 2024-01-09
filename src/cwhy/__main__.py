@@ -95,7 +95,10 @@ def main():
 
     subparsers.add_parser("explain", help="Explain the diagnostic. (default)")
     subparsers.add_parser("fix", help="Propose a fix for the diagnostic.")
-    subparsers.add_parser("diff", help="Propose a fix in diff format.")
+    subparsers.add_parser("diff", help="[experimental] Propose a fix in diff format.")
+    subparsers.add_parser(
+        "converse", help="[experimental] A back-and-forth mode with ChatGPT."
+    )
 
     parser.set_defaults(subcommand="explain")
 
