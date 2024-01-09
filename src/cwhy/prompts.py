@@ -1,6 +1,6 @@
 import collections
 import re
-from typing import Dict, List, Tuple
+import sys
 
 from llm_utils import llm_utils
 
@@ -114,7 +114,7 @@ class _Context:
         if not self.code_locations:
             return None
 
-        def format_group_code_block(group: List[str], last: int) -> str:
+        def format_group_code_block(group: list[str], last: int) -> str:
             """
             Format a group of consecutive lines from a single file as a code block.
             Include line numbers in front of each line.
@@ -143,7 +143,7 @@ class _Context:
             result += "```\n\n"
             return result
 
-        def format_file_locations(filename: str, lines: Dict[int, str]) -> str:
+        def format_file_locations(filename: str, lines: dict[int, str]) -> str:
             """
             Format all the lines from a single file as a code block.
             There may be multiple groups: lines 1-10 and 100-110 for example.
