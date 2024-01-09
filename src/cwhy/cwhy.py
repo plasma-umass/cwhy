@@ -1,3 +1,4 @@
+import argparse
 import os
 import subprocess
 import sys
@@ -117,8 +118,7 @@ def main(args):
         text=True,
     )
 
-    status = process.returncode
-    if status == 0:
+    if process.returncode == 0:
         return
 
     if args.show_prompt:
@@ -148,6 +148,8 @@ def main(args):
         print(evaluate(client, args, process.stderr))
         print("==================================================")
 
+    sys.exit(process.returncode)
+
 
 def evaluate_text_prompt(client, args, prompt, wrap=True, **kwargs):
     completion = complete(client, args, prompt, **kwargs)
@@ -166,5 +168,6 @@ def evaluate_text_prompt(client, args, prompt, wrap=True, **kwargs):
 
 
 def wrapper(args):
+    args = argparse.Namespace(**args)
     args.command.extend(sys.argv[1:])
     main(args)

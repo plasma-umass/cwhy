@@ -20,7 +20,7 @@ def wrapper(args):
             f"""
             #! {sys.executable}
             from cwhy import cwhy
-            cwhy.wrapper({args})
+            cwhy.wrapper({vars(args)})
         """
         ).strip()
         + "\n"
