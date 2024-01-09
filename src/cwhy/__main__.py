@@ -164,7 +164,7 @@ def main():
         os.chmod(f.name, 0o755)
         print(f.name)
     else:
-        cwhy.wrapper(args)
+        cwhy.main(args)
 
 
 if __name__ == "__main__":

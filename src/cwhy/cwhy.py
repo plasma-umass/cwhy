@@ -109,27 +109,44 @@ def evaluate(client, args, stdin):
         raise Exception(f"unknown subcommand: {args.subcommand}")
 
 
-def main(args, stdin):
+def main(args):
+    process = subprocess.run(
+        [*args.command],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+    status = process.returncode
+    if status == 0:
+        return
+
     if args.show_prompt:
         print("===================== Prompt =====================")
         if args.llm == "default":
             args.llm = _DEFAULT_FALLBACK_MODELS[0]
         if args.subcommand == "explain":
-            print(prompts.explain_prompt(args, stdin))
+            print(prompts.explain_prompt(args, process.stderr))
         elif args.subcommand == "diff":
-            print(prompts.diff_prompt(args, stdin))
+            print(prompts.diff_prompt(args, process.stderr))
         print("==================================================")
         sys.exit(0)
 
-    try:
-        client = openai.OpenAI(timeout=args.timeout)
-    except openai.OpenAIError:
-        print("You need an OpenAI key to use this tool.")
-        print("You can get a key here: https://platform.openai.com/api-keys")
-        print("Set the environment variable OPENAI_API_KEY to your key value.")
-        sys.exit(1)
-
-    return evaluate(client, args, stdin)
+    print(process.stdout)
+    print(process.stderr, file=sys.stderr)
+    if "CWHY_DISABLE" not in os.environ:
+        print("==================================================")
+        print("CWhy")
+        print("==================================================")
+        try:
+            client = openai.OpenAI(timeout=args.timeout)
+        except openai.OpenAIError:
+            print("You need an OpenAI key to use this tool.")
+            print("You can get a key here: https://platform.openai.com/api-keys")
+            print("Set the environment variable OPENAI_API_KEY to your key value.")
+            sys.exit(1)
+        print(evaluate(client, args, process.stderr))
+        print("==================================================")
 
 
 def evaluate_text_prompt(client, args, prompt, wrap=True, **kwargs):
@@ -149,20 +166,5 @@ def evaluate_text_prompt(client, args, prompt, wrap=True, **kwargs):
 
 
 def wrapper(args):
-    process = subprocess.run(
-        [args.wrapper_compiler, *sys.argv[1:]],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-    )
-
-    status = process.returncode
-    if status != 0:
-        print(process.stdout)
-        if "CWHY_DISABLE" not in os.environ:
-            print("==================================================")
-            print("CWhy")
-            print("==================================================")
-            print(evaluate(args, process.stdout))
-            print("==================================================")
-    sys.exit(status)
+    args.command.extend(sys.argv[1:])
+    main(args)
