@@ -83,8 +83,8 @@ class _Context:
         """
         Alternate taking front and back lines until the maximum number of tokens.
         """
-        front = []
-        back = []
+        front: list[str] = []
+        back: list[str] = []
         n = len(self.diagnostic_lines)
 
         def build_diagnostic_string():
@@ -156,12 +156,12 @@ class _Context:
                 One or more concatenated formatted code blocks.
             """
             # Sort lines by line number.
-            lines = sorted(lines.items(), key=lambda x: x[0])
+            sorted_lines = sorted(lines.items(), key=lambda x: x[0])
 
             result = ""
             last = None
             group = []
-            for line_number, line_content in lines:
+            for line_number, line_content in sorted_lines:
                 if last is None or line_number == last + 1:
                     group.append(line_content)
                     last = line_number
@@ -176,8 +176,8 @@ class _Context:
             return result
 
         formatted_file_locations = [
-            format_file_locations(filename, lines)
-            for filename, lines in self.code_locations.items()
+            format_file_locations(filename, sorted_lines)
+            for filename, sorted_lines in self.code_locations.items()
         ]
 
         counts = [

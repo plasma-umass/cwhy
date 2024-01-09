@@ -5,7 +5,7 @@ import sys
 
 import yaml
 
-import prepare
+from . import prepare
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 

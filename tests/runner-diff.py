@@ -9,8 +9,7 @@ import json
 
 from cwhy import cwhy
 
-import anonymizer
-import apply_diff
+from . import anonymizer, apply_diff
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
