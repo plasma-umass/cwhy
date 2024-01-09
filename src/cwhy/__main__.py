@@ -38,12 +38,19 @@ class RichArgParser(argparse.ArgumentParser):
 
 
 class CWhyArgumentFormatter(argparse.HelpFormatter):
+    # RawDescriptionHelpFormatter.
     def _fill_text(self, text, width, indent):
         return "".join(indent + line for line in text.splitlines(keepends=True))
 
+    # RawTextHelpFormatter.
+    def _split_lines(self, text, width):
+        return text.splitlines()
+
+    # ArgumentDefaultsHelpFormatter.
+    # Ignore if help message is multiline.
     def _get_help_string(self, action):
         help = action.help
-        if "%(default)" not in action.help:
+        if "\n" not in help and "%(default)" not in action.help:
             if action.default is not argparse.SUPPRESS:
                 defaulting_nargs = [argparse.OPTIONAL, argparse.ZERO_OR_MORE]
                 if action.option_strings or action.nargs in defaulting_nargs:
@@ -58,7 +65,7 @@ def main():
             [blue][link=https://github.com/plasma-umass/cwhy]https://github.com/plasma-umass/cwhy[/link][/blue]
 
             usage:
-                [b]cwhy \[OPTIONS...] --- COMMAND...[/b]
+                [b]cwhy [SUBCOMMAND] \[OPTIONS...] --- COMMAND...[/b]
             usage (GNU Make):
                 [b]CXX=`cwhy --wrapper \[OPTIONS...] --- c++` make[/b]
             usage (CMake):
@@ -78,20 +85,40 @@ def main():
         action="version",
         version=f"%(prog)s v{importlib.metadata.metadata('cwhy')['Version']}",
         default=argparse.SUPPRESS,
-        help="print the version of CWhy and exit.",
+        help="print the version of CWhy and exit",
+    )
+
+    parser.add_argument(
+        "subcommand",
+        nargs="?",
+        default="explain",
+        choices=["explain", "diff", "converse"],
+        metavar="subcommand",
+        help=textwrap.dedent(
+            """
+                explain:  explain the diagnostic (default)
+                diff:     generate a diff to fix the diagnostic
+                converse: interactively converse with CWhy
+            """
+        ).strip(),
     )
 
     parser.add_argument(
         "--llm",
         type=str,
         default="default",
-        help="the language model to use, e.g., 'gpt-3.5-turbo' or 'gpt-4'. The default mode tries gpt-4 and falls back to gpt-3.5-turbo.",
+        help=textwrap.dedent(
+            """
+                the language model to use, e.g., 'gpt-3.5-turbo' or 'gpt-4'
+                the default mode tries gpt-4 and falls back to gpt-3.5-turbo
+            """
+        ).strip(),
     )
     parser.add_argument(
         "--timeout",
         type=int,
         default=60,
-        help="the timeout for API calls in seconds.",
+        help="the timeout for API calls in seconds",
     )
     # The default maximum context length for `gpt-3.5-turbo` is 4096 tokens.
     # We keep 256 tokens for other parts of the prompt, and split the remainder in two
@@ -100,33 +127,32 @@ def main():
         "--max-error-tokens",
         type=int,
         default=1920,
-        help="the maximum number of tokens from the error message to send in the prompt.",
+        help="the maximum number of tokens from the error message to send in the prompt",
     )
     parser.add_argument(
         "--max-code-tokens",
         type=int,
         default=1920,
-        help="the maximum number of code locations tokens to send in the prompt.",
+        help="the maximum number of code locations tokens to send in the prompt",
     )
 
     parser.add_argument(
         "--show-prompt",
         action="store_true",
-        help="when enabled, only print prompt and exit (for debugging purposes).",
+        help="when enabled, only print prompt and exit (for debugging purposes)",
     )
     parser.add_argument(
         "--wrapper",
         action="store_true",
-        help="generate a temporary executable used to wrap to compiler command.",
+        help="generate a temporary executable used to wrap to compiler command",
     )
-
-    subparsers = parser.add_subparsers(title="Subcommands", dest="subcommand")
-    subparsers.add_parser("explain", help="explain the diagnostic. (default)")
-    subparsers.add_parser("diff", help="\[experimental] propose a fix in diff format.")
-    subparsers.add_parser(
-        "converse", help="\[experimental] a conversation mode with ChatGPT."
+    parser.add_argument(
+        "---",
+        dest="command",
+        required=True,
+        help=argparse.SUPPRESS,
+        nargs=argparse.REMAINDER,
     )
-    parser.set_defaults(subcommand="explain")
 
     args = parser.parse_args()
 
@@ -138,14 +164,7 @@ def main():
         os.chmod(f.name, 0o755)
         print(f.name)
     else:
-        stdin = sys.stdin.read()
-        if not stdin:
-            return
-        try:
-            print(cwhy.main(args, stdin))
-        except (openai.NotFoundError, openai.RateLimitError, openai.APITimeoutError):
-            # This type of exceptions should have been handled down the stack.
-            pass
+        cwhy.wrapper(args)
 
 
 if __name__ == "__main__":
