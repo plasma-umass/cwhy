@@ -97,8 +97,6 @@ def evaluate(client, args, stdin):
 
     if args.subcommand == "explain":
         return evaluate_text_prompt(client, args, prompts.explain_prompt(args, stdin))
-    elif args.subcommand == "fix":
-        return evaluate_text_prompt(client, args, prompts.fix_prompt(args, stdin))
     elif args.subcommand == "diff":
         return (
             evaluate_diff(client, args, stdin)
@@ -118,8 +116,6 @@ def main(args, stdin):
             args.llm = _DEFAULT_FALLBACK_MODELS[0]
         if args.subcommand == "explain":
             print(prompts.explain_prompt(args, stdin))
-        elif args.subcommand == "fix":
-            print(prompts.fix_prompt(args, stdin))
         elif args.subcommand == "diff":
             print(prompts.diff_prompt(args, stdin))
         print("==================================================")

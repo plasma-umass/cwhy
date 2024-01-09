@@ -210,13 +210,9 @@ def _base_prompt(args, diagnostic):
 
 
 def explain_prompt(args, diagnostic):
-    return _base_prompt(args, diagnostic) + "What's the problem?"
-
-
-def fix_prompt(args, diagnostic):
     return (
         _base_prompt(args, diagnostic)
-        + "Suggest code to fix the problem. Surround the code in backticks (```)."
+        + "What's the problem? If you can, suggest code to fix the issue."
     )
 
 
