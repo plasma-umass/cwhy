@@ -6,8 +6,7 @@ import openai
 
 from llm_utils import llm_utils
 
-from . import prompts
-from . import conversation
+from . import conversation, prompts
 
 
 def complete(client, args, user_prompt, **kwargs):
@@ -31,7 +30,7 @@ def complete(client, args, user_prompt, **kwargs):
 
 
 def evaluate_diff(client, args, stdin):
-    prompt = diff_prompt(args, stdin)
+    prompt = prompts.diff_prompt(args, stdin)
     completion = complete(
         client,
         args,
