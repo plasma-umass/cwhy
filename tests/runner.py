@@ -9,7 +9,7 @@ import openai
 
 from cwhy import cwhy
 
-import anonymizer
+from . import anonymizer
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 

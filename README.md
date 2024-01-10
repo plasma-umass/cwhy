@@ -30,26 +30,22 @@ python3 -m pip install cwhy
 
 ## Usage
 
-### Compiler wrapper mode
-
-This new mode is recommended as CWhy will then operate in the same context as the compiler, and will do a better job
-finding the right source files.
+The wrapper mode is now default and mandatory, with a slightly modified interface.
+CWhy can either be used standalone by passing the full command after the triple dashes `---`, or as part of a build tool
+by creating a short executable script wrapping the compiler command.
 
 ```bash
 # Invoking the compiler directly.
-% `cwhy --wrapper` mycode.cpp
+% cwhy --- g++ mycode.cpp
 
-# Using fix mode.
-% `cwhy --wrapper fix` mycode.cpp
+# Using CWhy with Java and an increased timeout.
+% cwhy --timeout 180 --- javac MyCode.java
 
-# Using cwhy with Java.
-% `cwhy --wrapper --wrapper-compiler=javac` mycode.java
-
-# Invoking with GNU make, using GPT-4.
-% CXX=`cwhy --llm=gpt-4 --wrapper` make
+# Invoking with GNU Make, using GPT-3.5.
+% CXX=`cwhy --llm=gpt-3.5-turbo --wrapper --- c++` make
 
 # Invoking with CMake, using GPT-4 and clang++.
-% cmake -DCMAKE_CXX_COMPILER=`cwhy --llm=gpt-4 --wrapper --wrapper-compiler=clang++` ...
+% cmake -DCMAKE_CXX_COMPILER=`cwhy --llm=gpt-4 --wrapper --- clang++` ...
 ```
 
 When running a configuration tool such as CMake or Autoconf, this may greatly increase configuration time, as these
@@ -61,14 +57,6 @@ configuration time.
 % CWHY_DISABLE=1 cmake -DCMAKE_CXX_COMPILER=`cwhy --wrapper` ...
 ```
 
-### Original mode
-
-Just pipe your compiler's output to `cwhy`.
-
-```bash
-% clang++ -g mycode.cpp |& cwhy
-```
-
 ### Options
 
 These options can be displayed with `cwhy --help`.
@@ -76,8 +64,6 @@ These options can be displayed with `cwhy --help`.
  -  `--llm`: pick a specific OpenAI LLM. CWhy has been tested with `gpt-3.5-turbo` and `gpt-4`.
  -  `--timeout`: pick a different timeout than the default for API calls.
  -  `--show-prompt` (debug): print prompts before calling the API.
-
-The wrapper mode specifically also has a `--wrapper-compiler` option to select the underlying compiler to use.
 
 ## Examples
 

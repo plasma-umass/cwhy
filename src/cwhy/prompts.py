@@ -1,6 +1,6 @@
 import collections
 import re
-from typing import Dict, List, Tuple
+import sys
 
 from llm_utils import llm_utils
 
@@ -83,8 +83,8 @@ class _Context:
         """
         Alternate taking front and back lines until the maximum number of tokens.
         """
-        front = []
-        back = []
+        front: list[str] = []
+        back: list[str] = []
         n = len(self.diagnostic_lines)
 
         def build_diagnostic_string():
@@ -114,7 +114,7 @@ class _Context:
         if not self.code_locations:
             return None
 
-        def format_group_code_block(group: List[str], last: int) -> str:
+        def format_group_code_block(group: list[str], last: int) -> str:
             """
             Format a group of consecutive lines from a single file as a code block.
             Include line numbers in front of each line.
@@ -143,7 +143,7 @@ class _Context:
             result += "```\n\n"
             return result
 
-        def format_file_locations(filename: str, lines: Dict[int, str]) -> str:
+        def format_file_locations(filename: str, lines: dict[int, str]) -> str:
             """
             Format all the lines from a single file as a code block.
             There may be multiple groups: lines 1-10 and 100-110 for example.
@@ -156,12 +156,12 @@ class _Context:
                 One or more concatenated formatted code blocks.
             """
             # Sort lines by line number.
-            lines = sorted(lines.items(), key=lambda x: x[0])
+            sorted_lines = sorted(lines.items(), key=lambda x: x[0])
 
             result = ""
             last = None
             group = []
-            for line_number, line_content in lines:
+            for line_number, line_content in sorted_lines:
                 if last is None or line_number == last + 1:
                     group.append(line_content)
                     last = line_number
@@ -176,8 +176,8 @@ class _Context:
             return result
 
         formatted_file_locations = [
-            format_file_locations(filename, lines)
-            for filename, lines in self.code_locations.items()
+            format_file_locations(filename, sorted_lines)
+            for filename, sorted_lines in self.code_locations.items()
         ]
 
         counts = [
@@ -210,13 +210,9 @@ def _base_prompt(args, diagnostic):
 
 
 def explain_prompt(args, diagnostic):
-    return _base_prompt(args, diagnostic) + "What's the problem?"
-
-
-def fix_prompt(args, diagnostic):
     return (
         _base_prompt(args, diagnostic)
-        + "Suggest code to fix the problem. Surround the code in backticks (```)."
+        + "What's the problem? If you can, suggest code to fix the issue."
     )
 
 

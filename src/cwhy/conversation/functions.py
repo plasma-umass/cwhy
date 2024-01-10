@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 
 from llm_utils import llm_utils
 
@@ -18,7 +19,7 @@ class Functions:
             ]
         ]
 
-    def dispatch(self, function_call) -> str:
+    def dispatch(self, function_call) -> Optional[str]:
         arguments = json.loads(function_call.arguments)
         print(
             f"Calling: {function_call.name}({', '.join([f'{k}={v}' for k, v in arguments.items()])})"
@@ -34,7 +35,6 @@ class Functions:
                 )
         except Exception as e:
             print(e)
-            pass
         return None
 
     def get_truncated_error_message_schema(self):
@@ -47,8 +47,8 @@ class Functions:
         """
         Alternate taking front and back lines until the maximum number of tokens.
         """
-        front = []
-        back = []
+        front: list[str] = []
+        back: list[str] = []
         diagnostic_lines = self.diagnostic.splitlines()
         n = len(diagnostic_lines)
 
@@ -69,15 +69,15 @@ class Functions:
                 break
         return build_diagnostic_string()
 
-    def get_compile_or_run_command_schema():
+    def get_compile_or_run_command_schema(self):
         return {
             "name": "get_compile_or_run_command",
             "description": "Returns the command used to compile or run the code.",
         }
 
-    def get_compile_or_run_command() -> str:
+    def get_compile_or_run_command(self) -> str:
         # TODO.
-        pass
+        return "Not implemented."
 
     def get_code_surrounding_schema(self):
         return {

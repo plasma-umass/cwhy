@@ -25,7 +25,7 @@ jobs:
         python3 -m pip install .
 
     - name: Check prompts
-      run: python3 tests/regression.py --platform ubuntu --check
+      run: python3 -m tests.regression --platform ubuntu --check
 
   check-macos:
     runs-on: macos-latest
@@ -39,7 +39,7 @@ jobs:
         python3 -m pip install .
 
     - name: Check prompts
-      run: python3 tests/regression.py --platform macos --check
+      run: python3 -m tests.regression --platform macos --check
 
   check-windows:
     runs-on: windows-latest
@@ -53,4 +53,4 @@ jobs:
         python3 -m pip install .
 
     - name: Check prompts
-      run: python3 tests/regression.py --platform windows --check
+      run: python3 -m tests.regression --platform windows --check
