@@ -1,4 +1,5 @@
 import json
+import os
 from typing import Optional
 
 from llm_utils import llm_utils
@@ -16,6 +17,7 @@ class Functions:
                 # self.get_truncated_error_message_schema(),
                 # self.get_compile_or_run_command_schema(),
                 self.get_code_surrounding_schema(),
+                self.list_directory_schema(),
             ]
         ]
 
@@ -33,6 +35,8 @@ class Functions:
                 return self.get_code_surrounding(
                     arguments["filename"], arguments["lineno"]
                 )
+            elif function_call.name == "list_directory":
+                return self.list_directory(arguments["path"])
         except Exception as e:
             print(e)
         return None
@@ -119,3 +123,26 @@ class Functions:
 
         (lines, first) = llm_utils.read_lines(filename, lineno - 7, lineno + 3)
         return format_group_code_block(lines, first)
+
+    def list_directory_schema(self):
+        return {
+            "name": "list_directory",
+            "description": "Returns a list of all files and directories in the given directory.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "The path of the directory of interest.",
+                    },
+                },
+                "required": ["path"],
+            },
+        }
+
+    def list_directory(self, path: str) -> str:
+        entries = os.listdir(path)
+        for i in range(len(entries)):
+            if os.path.isdir(os.path.join(path, entries[i])):
+                entries[i] += "/"
+        return "\n".join(entries)
