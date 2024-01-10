@@ -5,32 +5,22 @@ import sys
 
 import yaml
 
-from . import prepare
+import prepare
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
-def get_diagnostic(invocation):
-    return subprocess.run(
-        invocation,
-        shell=True,
-        text=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.PIPE,
-        cwd=ROOT,
-    ).stderr
-
-
 def get_cwhy_prompt(invocation):
-    diagnostic = get_diagnostic(invocation)
-    process = subprocess.Popen(
-        ["cwhy", "--show-prompt"],
+    process = subprocess.run(
+        f"cwhy --show-prompt --- {invocation}",
         text=True,
+        shell=True,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        cwd=ROOT,
     )
-    stdout, stderr = process.communicate(diagnostic)
+    stdout, stderr = process.stdout, process.stderr
     if stderr.strip():
         print("CWhy reported an error or warning.")
         print(stderr.strip())
