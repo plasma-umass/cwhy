@@ -132,8 +132,8 @@ def main(args):
         print("==================================================")
         sys.exit(0)
 
-    print(process.stdout)
-    print(process.stderr, file=sys.stderr)
+    print(process.stdout, end="")
+    print(process.stderr, file=sys.stderr, end="")
     if "CWHY_DISABLE" not in os.environ:
         print("==================================================")
         print("CWhy")
