@@ -31,7 +31,7 @@ jobs:
         python3 -m pip install .
 
     - name: Generate current prompts
-      run: python3 tests/regression.py --platform ubuntu --generate
+      run: python3 -m tests.regression --platform ubuntu --generate
 
     - name: Commit
       run: |
@@ -58,7 +58,7 @@ jobs:
         python3 -m pip install .
 
     - name: Generate current prompts
-      run: python3 tests/regression.py --platform macos --generate
+      run: python3 -m tests.regression --platform macos --generate
 
     - name: Commit
       run: |
@@ -85,7 +85,7 @@ jobs:
         python3 -m pip install .
 
     - name: Generate current prompts
-      run: python3 tests/regression.py --platform windows --generate
+      run: python3 -m tests.regression --platform windows --generate
 
     - name: Commit
       run: |
