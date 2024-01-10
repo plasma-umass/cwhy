@@ -104,5 +104,5 @@ operator<<(basic_ostream<_CharT, _Traits>& __os, const error_code& __ec)
 ```
 
 
-What's the problem?
+What's the problem? If you can, suggest code to fix the issue.
 ==================================================

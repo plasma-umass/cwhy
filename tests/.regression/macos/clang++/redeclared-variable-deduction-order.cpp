@@ -33,5 +33,5 @@ extern decltype(f(0)) g;
 ```
 
 
-What's the problem?
+What's the problem? If you can, suggest code to fix the issue.
 ==================================================

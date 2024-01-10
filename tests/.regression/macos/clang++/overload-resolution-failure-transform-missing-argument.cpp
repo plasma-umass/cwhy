@@ -58,5 +58,5 @@ transform(_InputIterator1 __first1, _InputIterator1 __last1, _InputIterator2 __f
 ```
 
 
-What's the problem?
+What's the problem? If you can, suggest code to fix the issue.
 ==================================================
