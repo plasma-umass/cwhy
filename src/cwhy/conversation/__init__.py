@@ -1,7 +1,4 @@
 import textwrap
-import sys
-
-import openai
 
 from llm_utils import llm_utils
 
