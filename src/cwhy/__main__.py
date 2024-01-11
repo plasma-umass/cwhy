@@ -8,7 +8,6 @@ import tempfile
 import textwrap
 from typing import Any, Optional
 
-import openai
 from rich.console import Console
 
 from . import cwhy
