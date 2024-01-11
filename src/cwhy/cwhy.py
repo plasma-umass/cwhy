@@ -112,7 +112,7 @@ def evaluate(client, args, stdin):
 
 def main(args):
     process = subprocess.run(
-        [*args.command],
+        args.command,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,

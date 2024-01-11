@@ -15,7 +15,7 @@ class Functions:
             {"type": "function", "function": schema}
             for schema in [
                 # self.get_truncated_error_message_schema(),
-                # self.get_compile_or_run_command_schema(),
+                self.get_compile_or_run_command_schema(),
                 self.get_code_surrounding_schema(),
                 self.list_directory_schema(),
             ]
@@ -76,12 +76,11 @@ class Functions:
     def get_compile_or_run_command_schema(self):
         return {
             "name": "get_compile_or_run_command",
-            "description": "Returns the command used to compile or run the code.",
+            "description": "Returns the command used to compile or run the code. This will include any flags and options used.",
         }
 
     def get_compile_or_run_command(self) -> str:
-        # TODO.
-        return "Not implemented."
+        return " ".join(self.args.command)
 
     def get_code_surrounding_schema(self):
         return {
