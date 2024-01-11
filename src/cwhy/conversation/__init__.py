@@ -15,7 +15,8 @@ def converse(client, args, diagnostic):
         f"""
             You are an assistant debugger. The user is having an issue with their code, and you are trying to help them.
             A few functions exist to help with this process, namely: {", ".join(available_functions_names)}.
-            Once you are confident in your answer, explain the diagnostic and provide a way to fix the issue if you can.
+            Don't hesitate to call as many functions as needed to give the best possible answer.
+            Once you have identified the problem, explain the diagnostic and provide a way to fix the issue if you can.
         """
     ).strip()
     user_message = f"Here is my error message:\n\n```\n{fns.get_truncated_error_message()}\n```\n\nWhat's the problem?"
