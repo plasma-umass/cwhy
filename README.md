@@ -54,7 +54,7 @@ available on the machine. To circumvent this, `CWHY_DISABLE` can be set in the e
 configuration time.
 
 ```bash
-% CWHY_DISABLE=1 cmake -DCMAKE_CXX_COMPILER=`cwhy --wrapper` ...
+% CWHY_DISABLE=1 cmake -DCMAKE_CXX_COMPILER=`cwhy --wrapper --- c++` ...
 ```
 
 ### Options
