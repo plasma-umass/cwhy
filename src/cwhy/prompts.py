@@ -137,15 +137,17 @@ class _Context:
                     group.append(line_content)
                     last = line_number
                 else:
-                    result += f"File `{filename}`:\n"
+                    result += f"File `{filename}`:\n```\n"
                     result += llm_utils.number_group_of_lines(
                         group, last - len(group) + 1
                     )
+                    result += "\n```\n\n"
                     last = None
                     group = []
             if last is not None:
-                result += f"File `{filename}`:\n"
+                result += f"File `{filename}`:\n```\n"
                 result += llm_utils.number_group_of_lines(group, last - len(group) + 1)
+                result += "\n```\n\n"
             return result
 
         formatted_file_locations = [
