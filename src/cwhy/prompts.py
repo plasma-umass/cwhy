@@ -2,7 +2,7 @@ import collections
 import re
 import sys
 
-from llm_utils import llm_utils
+import llm_utils
 
 
 # Define error patterns with associated information. The numbers

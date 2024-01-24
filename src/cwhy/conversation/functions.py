@@ -2,7 +2,7 @@ import json
 import os
 from typing import Optional
 
-from llm_utils import llm_utils
+import llm_utils
 
 
 class Functions:

@@ -1,6 +1,6 @@
 import textwrap
 
-from llm_utils import llm_utils
+import llm_utils
 
 from . import functions
 
