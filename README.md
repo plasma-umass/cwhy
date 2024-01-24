@@ -148,7 +148,7 @@ In file included from /usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/1
 And here's the English-language explanation from `cwhy`:
 
 ````
-% clang++ --std=c++20 -c missing-hash.cpp |& cwhy
+% cwhy --- clang++ --std=c++20 -c missing-hash.cpp
 The problem is that you are attempting to use `std::unordered_set`
 with `std::pair<int, int>` as the key type. However, the standard
 library does not provide a hash function specialization for
@@ -183,7 +183,7 @@ With this change, the code should now compile and work as expected.
 ### Rust
 
 ```
-% `cwhy --wrapper --wrapper-compiler=cargo` build
+% cwhy --- cargo build
 There are three issues:  1. There are two unused variables `x` in the
 code.  2. The variable `x` is used after it has already been moved in
 the call to `f(x)`, which takes ownership of `x`. 3. The function
