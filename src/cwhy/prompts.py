@@ -138,12 +138,14 @@ class _Context:
                     last = line_number
                 else:
                     result += f"File `{filename}`:\n"
-                    result += llm_utils.number_group_of_lines(group, last)
+                    result += llm_utils.number_group_of_lines(
+                        group, last - len(group) + 1
+                    )
                     last = None
                     group = []
             if last is not None:
                 result += f"File `{filename}`:\n"
-                result += llm_utils.number_group_of_lines(group, last)
+                result += llm_utils.number_group_of_lines(group, last - len(group) + 1)
             return result
 
         formatted_file_locations = [
