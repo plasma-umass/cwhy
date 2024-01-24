@@ -114,35 +114,6 @@ class _Context:
         if not self.code_locations:
             return None
 
-        def format_group_code_block(group: list[str], last: int) -> str:
-            """
-            Format a group of consecutive lines from a single file as a code block.
-            Include line numbers in front of each line.
-            Trim first / last few lines if they are blank.
-
-            Args:
-                group: The list of lines.
-                last: The line number of the last line in group.
-
-            Returns:
-                The formatted code block.
-            """
-            while group and not group[0].strip():
-                group = group[1:]
-            while group and not group[-1].strip():
-                group = group[:-1]
-                last -= 1
-
-            first = last - len(group) + 1
-            max_line_number_length = len(str(last))
-            result = "```\n"
-            for i, line in enumerate(group):
-                result += "{0:>{1}} {2}\n".format(
-                    first + i, max_line_number_length, line
-                )
-            result += "```\n\n"
-            return result
-
         def format_file_locations(filename: str, lines: dict[int, str]) -> str:
             """
             Format all the lines from a single file as a code block.
@@ -167,12 +138,12 @@ class _Context:
                     last = line_number
                 else:
                     result += f"File `{filename}`:\n"
-                    result += format_group_code_block(group, last)
+                    result += llm_utils.number_group_of_lines(group, last)
                     last = None
                     group = []
             if last is not None:
                 result += f"File `{filename}`:\n"
-                result += format_group_code_block(group, last)
+                result += llm_utils.number_group_of_lines(group, last)
             return result
 
         formatted_file_locations = [

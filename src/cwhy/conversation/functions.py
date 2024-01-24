@@ -103,25 +103,8 @@ class Functions:
         }
 
     def get_code_surrounding(self, filename: str, lineno: int) -> str:
-        def format_group_code_block(group: list[str], first: int) -> str:
-            while group and not group[0].strip():
-                group = group[1:]
-                first += 1
-            while group and not group[-1].strip():
-                group = group[:-1]
-
-            last = first + len(group) - 1
-            max_line_number_length = len(str(last))
-            result = "\n".join(
-                [
-                    "{0:>{1}} {2}".format(first + i, max_line_number_length, line)
-                    for i, line in enumerate(group)
-                ]
-            )
-            return result
-
         (lines, first) = llm_utils.read_lines(filename, lineno - 7, lineno + 3)
-        return format_group_code_block(lines, first)
+        return llm_utils.number_group_of_lines(lines, first)
 
     def list_directory_schema(self):
         return {
