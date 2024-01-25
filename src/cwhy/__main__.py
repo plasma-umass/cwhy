@@ -18,8 +18,17 @@ def wrapper(args):
         textwrap.dedent(
             f"""
             #! {sys.executable}
-            from cwhy import cwhy
-            cwhy.wrapper({vars(args)})
+            import os
+            import sys
+            if "CWHY_DISABLE" in os.environ:
+                import subprocess
+                sys.exit(subprocess.run([*{args.command}, *sys.argv[1:]]).returncode)
+            else:
+                import argparse
+                from cwhy import cwhy
+                args = argparse.Namespace(**{vars(args)})
+                args.command.extend(sys.argv[1:])
+                cwhy.main(args)
         """
         ).strip()
         + "\n"

@@ -134,19 +134,18 @@ def main(args):
 
     print(process.stdout, end="")
     print(process.stderr, file=sys.stderr, end="")
-    if "CWHY_DISABLE" not in os.environ:
-        print("==================================================")
-        print("CWhy")
-        print("==================================================")
-        try:
-            client = openai.OpenAI(timeout=args.timeout)
-        except openai.OpenAIError:
-            print("You need an OpenAI key to use this tool.")
-            print("You can get a key here: https://platform.openai.com/api-keys")
-            print("Set the environment variable OPENAI_API_KEY to your key value.")
-            sys.exit(1)
-        print(evaluate(client, args, process.stderr))
-        print("==================================================")
+    print("==================================================")
+    print("CWhy")
+    print("==================================================")
+    try:
+        client = openai.OpenAI(timeout=args.timeout)
+    except openai.OpenAIError:
+        print("You need an OpenAI key to use this tool.")
+        print("You can get a key here: https://platform.openai.com/api-keys")
+        print("Set the environment variable OPENAI_API_KEY to your key value.")
+        sys.exit(1)
+    print(evaluate(client, args, process.stderr))
+    print("==================================================")
 
     sys.exit(process.returncode)
 
@@ -165,9 +164,3 @@ def evaluate_text_prompt(client, args, prompt, wrap=True, **kwargs):
     text += f"(Total cost: approximately ${cost:.2f} USD.)"
 
     return text
-
-
-def wrapper(args):
-    args = argparse.Namespace(**args)
-    args.command.extend(sys.argv[1:])
-    main(args)
