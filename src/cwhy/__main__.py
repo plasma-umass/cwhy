@@ -165,7 +165,7 @@ def main():
     args = parser.parse_args()
 
     if args.wrapper:
-        with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".py") as f:
             f.write(wrapper(args))
         # NamedTemporaryFiles are not executable by default.
         # Set its mode to 755 here with an octal literal.
