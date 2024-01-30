@@ -144,7 +144,7 @@ def main(args):
         print("You can get a key here: https://platform.openai.com/api-keys")
         print("Set the environment variable OPENAI_API_KEY to your key value.")
         sys.exit(1)
-    print(evaluate(client, args, process.stderr))
+    print(evaluate(client, args, process.stderr if process.stderr else process.stdout))
     print("==================================================")
 
     sys.exit(process.returncode)

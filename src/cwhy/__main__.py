@@ -3,6 +3,7 @@
 import argparse
 import importlib.metadata
 import os
+import platform
 import sys
 import tempfile
 import textwrap
@@ -13,7 +14,7 @@ from rich.console import Console
 from . import cwhy
 
 
-def wrapper(args):
+def py_wrapper(args):
     return (
         textwrap.dedent(
             f"""
@@ -30,6 +31,18 @@ def wrapper(args):
                 args.command.extend(sys.argv[1:])
                 cwhy.main(args)
         """
+        ).strip()
+        + "\n"
+    )
+
+
+def win_wrapper(python_filename: str) -> str:
+    return (
+        textwrap.dedent(
+            f"""
+                @echo off
+                python {python_filename} %*
+            """
         ).strip()
         + "\n"
     )
@@ -164,15 +177,22 @@ def main():
 
     args = parser.parse_args()
 
-    if args.wrapper:
-        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".py") as f:
-            f.write(wrapper(args))
+    if not args.wrapper:
+        cwhy.main(args)
+        return
+
+    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".py") as f:
+        f.write(py_wrapper(args))
+    if platform.system() == "Windows":
+        # We need to make a second wrapper, wrapping the Python script in a shell script.
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".bat") as g:
+            g.write(win_wrapper(f.name))
+            print(g.name.replace("\\", "/"))
+    else:
         # NamedTemporaryFiles are not executable by default.
         # Set its mode to 755 here with an octal literal.
         os.chmod(f.name, 0o755)
         print(f.name)
-    else:
-        cwhy.main(args)
 
 
 if __name__ == "__main__":
