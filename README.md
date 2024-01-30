@@ -1,6 +1,8 @@
 # CWhy
 
-by [Emery Berger](https://emeryberger.com), [Nicolas van Kempen](https://nvankempen.com/), and [Bryce Adelstein Lelbach](https://twitter.com/blelbach?lang=en).
+by [Emery Berger](https://emeryberger.com),
+[Nicolas van Kempen](https://nvankempen.com/),
+and [Bryce Adelstein Lelbach](https://twitter.com/blelbach).
 
 [![PyPI](https://img.shields.io/pypi/v/cwhy.svg)](https://pypi.org/project/cwhy/)
 [![downloads](https://static.pepy.tech/badge/cwhy)](https://pepy.tech/project/cwhy)
@@ -8,27 +10,38 @@ by [Emery Berger](https://emeryberger.com), [Nicolas van Kempen](https://nvankem
 
 ("See why")
 
-Explains and suggests fixes for compiler error messages for a wide range of programming languages, including C, C++, C#, Go, Java, LaTeX, PHP, Python, Ruby, Rust, Swift, and TypeScript.
+Explains and suggests fixes for compiler error messages for a wide range of programming languages, including C, C++, C#,
+Go, Java, LaTeX, PHP, Python, Ruby, Rust, Swift, and TypeScript.
 
 ## Installation
 
-> **Note**
->
-> CWhy needs to be connected to an [OpenAI account](https://openai.com/api/). _Your account will need to have a positive balance for this to work_ ([check your balance](https://platform.openai.com/account/usage)). [Get a key here.](https://platform.openai.com/account/api-keys)
->
-> CWhy currently defaults to GPT-4, and falls back to GPT-3.5-turbo if a request error occurs. For the newest and best model (GPT-4) to work, you need to have purchased  at least $1 in credits (if your API account was created before August 13, 2023) or $0.50 (if you have a newer API account).
->
-> Once you have an API key, set it as an environment variable called `OPENAI_API_KEY`.
->
-> ```bash
-> export OPENAI_API_KEY=<your-api-key>
-> ```
+ >  **Note**
+ >
+ >  CWhy needs to be connected to an [OpenAI account](https://openai.com/api/). _Your account will need to have a
+ >  positive balance for this to work_ ([check your balance](https://platform.openai.com/usage)).
+ >  [Get a key here](https://platform.openai.com/api-keys).
+ > 
+ >  CWhy currently defaults to GPT-4, and falls back to GPT-3.5-turbo if a request error occurs. For the newest and best
+ >  model (GPT-4) to work, you need to have purchased  at least $1 in credits (if your API account was created before
+ >  August 13, 2023) or $0.50 (if you have a newer API account).
+ > 
+ >  Once you have an API key, set it as an environment variable called `OPENAI_API_KEY`.
+ > 
+ >  ```bash
+ >  # On Linux/MacOs.
+ >  export OPENAI_API_KEY=<your-api-key>
+ >  
+ >  # On Windows.
+ >  $env:OPENAI_API_KEY=<your-api-key>
+ >  ```
 
 ```
 python3 -m pip install cwhy
 ```
 
-## Usage
+## Usage 
+
+### Linux/MacOS
 
 The wrapper mode is now default and mandatory, with a slightly modified interface.
 CWhy can either be used standalone by passing the full command after the triple dashes `---`, or as part of a build tool
@@ -54,7 +67,18 @@ available on the machine. To circumvent this, `CWHY_DISABLE` can be set in the e
 configuration time.
 
 ```bash
-% CWHY_DISABLE=1 cmake -DCMAKE_CXX_COMPILER=`cwhy --wrapper --- c++` ...
+% CWHY_DISABLE='ON' cmake -DCMAKE_CXX_COMPILER=`cwhy --wrapper --- c++` ...
+```
+
+### Windows
+
+Windows support has been tested using Powershell. On the command line, using Ninja is required as MSBuild / `.vcxproj`
+will override any option set.
+
+```bash
+% $env:CWHY_DISABLE='ON'
+% cmake -G Ninja -DCMAKE_CXX_COMPILER="$(python -m cwhy --wrapper --- cl)"  ...
+% $env:CWHY_DISABLE=''
 ```
 
 ### Options
