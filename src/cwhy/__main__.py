@@ -187,7 +187,7 @@ def main():
         # We need to make a second wrapper, wrapping the Python script in a shell script.
         with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".bat") as g:
             g.write(win_wrapper(f.name))
-            print(g.name)
+            print(g.name.replace("\\", "/"))
     else:
         # NamedTemporaryFiles are not executable by default.
         # Set its mode to 755 here with an octal literal.
