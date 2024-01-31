@@ -25,9 +25,7 @@ class Functions:
             f"Calling: {function_call.name}({', '.join([f'{k}={v}' for k, v in arguments.items()])})"
         )
         try:
-            if function_call.name == "get_truncated_error_message":
-                return self.get_truncated_error_message()
-            elif function_call.name == "get_compile_or_run_command":
+            if function_call.name == "get_compile_or_run_command":
                 return self.get_compile_or_run_command()
             elif function_call.name == "get_code_surrounding":
                 return self.get_code_surrounding(
