@@ -81,6 +81,17 @@ will override any option set.
 % $env:CWHY_DISABLE=''
 ```
 
+### Continuous Integration
+
+CI using GitHub actions is straightforward on both Linux and MacOs. On Windows, Ninja is not installed by default on the
+image, and `cl` is not bound to the compiler. We recommend using `choco install ninja` and
+[ilammy/msvc-dev-cmd](https://github.com/ilammy/msvc-dev-cmd) to work around these two issues.
+
+An example action YAML file covering all three platforms
+[can be found here](https://github.com/nicovank/litterer/blob/master/.github/workflows/ci.yml).
+
+**Important**: Set the `CWHY_DISABLE` environment variable at configure-time to save money and cycles.
+
 ### Options
 
 These options can be displayed with `cwhy --help`.
