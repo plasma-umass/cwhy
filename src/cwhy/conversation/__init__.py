@@ -1,3 +1,4 @@
+import argparse
 import textwrap
 
 import llm_utils
@@ -5,7 +6,7 @@ import llm_utils
 from . import functions
 
 
-def get_truncated_error_message(args, diagnostic) -> str:
+def get_truncated_error_message(args: argparse.Namespace, diagnostic: str) -> str:
     """
     Alternate taking front and back lines until the maximum number of tokens.
     """
@@ -14,7 +15,7 @@ def get_truncated_error_message(args, diagnostic) -> str:
     diagnostic_lines = diagnostic.splitlines()
     n = len(diagnostic_lines)
 
-    def build_diagnostic_string():
+    def build_diagnostic_string() -> str:
         return "\n".join(front) + "\n\n[...]\n\n" + "\n".join(reversed(back)) + "\n"
 
     for i in range(n):

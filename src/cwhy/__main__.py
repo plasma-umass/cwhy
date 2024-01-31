@@ -14,7 +14,7 @@ from rich.console import Console
 from . import cwhy
 
 
-def py_wrapper(args):
+def py_wrapper(args: argparse.Namespace) -> str:
     return (
         textwrap.dedent(
             f"""
@@ -79,7 +79,7 @@ class CWhyArgumentFormatter(argparse.HelpFormatter):
         return help
 
 
-def main():
+def main() -> None:
     description = textwrap.dedent(
         rf"""
             [b]CWhy[/b]: Explains and proposes fixes for compile-time errors for many programming languages.

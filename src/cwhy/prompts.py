@@ -1,6 +1,8 @@
+import argparse
 import collections
 import re
 import sys
+from typing import Optional
 
 import llm_utils
 
@@ -42,12 +44,12 @@ _error_patterns = [
 
 
 class _Context:
-    def __init__(self, args, diagnostic):
+    def __init__(self, args: argparse.Namespace, diagnostic: str):
         self.args = args
         self.diagnostic_lines = diagnostic.splitlines()
 
         # We group by source file.
-        self.code_locations = collections.defaultdict(dict)
+        self.code_locations: dict[str, dict[int, str]] = collections.defaultdict(dict)
 
         # Go through the diagnostic and build up a list of code locations.
         for linenum, line in enumerate(self.diagnostic_lines):
@@ -62,7 +64,7 @@ class _Context:
                     line_number = int(match.group(line_group))
                     break  # Move to the next line after a match
 
-            if not file_name:
+            if not file_name or not line_number:
                 continue
 
             try:
@@ -87,7 +89,7 @@ class _Context:
         back: list[str] = []
         n = len(self.diagnostic_lines)
 
-        def build_diagnostic_string():
+        def build_diagnostic_string() -> str:
             return (
                 "```\n"
                 + "\n".join(front)
@@ -110,7 +112,7 @@ class _Context:
                 break
         return build_diagnostic_string()
 
-    def get_code(self):
+    def get_code(self) -> Optional[str]:
         if not self.code_locations:
             return None
 
@@ -168,7 +170,7 @@ class _Context:
         return "".join(formatted_file_locations[:index])
 
 
-def _base_prompt(args, diagnostic):
+def _base_prompt(args: argparse.Namespace, diagnostic: str) -> str:
     ctx = _Context(args, diagnostic)
 
     prompt = ""
@@ -184,14 +186,14 @@ def _base_prompt(args, diagnostic):
     return prompt
 
 
-def explain_prompt(args, diagnostic):
+def explain_prompt(args: argparse.Namespace, diagnostic: str) -> str:
     return (
         _base_prompt(args, diagnostic)
         + "What's the problem? If you can, suggest code to fix the issue."
     )
 
 
-def diff_prompt(args, diagnostic):
+def diff_prompt(args: argparse.Namespace, diagnostic: str) -> str:
     return (
         _base_prompt(args, diagnostic)
         + "Help fix this issue by providing a diff in JSON format."

@@ -1,5 +1,4 @@
 import argparse
-import os
 import subprocess
 import sys
 
@@ -110,7 +109,7 @@ def evaluate(client, args, stdin):
         raise Exception(f"unknown subcommand: {args.subcommand}")
 
 
-def main(args):
+def main(args: argparse.Namespace) -> None:
     process = subprocess.run(
         args.command,
         stdout=subprocess.PIPE,

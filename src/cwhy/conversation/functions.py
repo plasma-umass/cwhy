@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 from typing import Optional
@@ -6,7 +7,7 @@ import llm_utils
 
 
 class Functions:
-    def __init__(self, args):
+    def __init__(self, args: argparse.Namespace):
         self.args = args
 
     def as_tools(self):
