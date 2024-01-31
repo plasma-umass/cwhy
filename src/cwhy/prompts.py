@@ -52,10 +52,10 @@ class _Context:
         self.code_locations: dict[str, dict[int, str]] = collections.defaultdict(dict)
 
         # Go through the diagnostic and build up a list of code locations.
-        for linenum, line in enumerate(self.diagnostic_lines):
+        for line in self.diagnostic_lines:
             file_name = None
             line_number = None
-            for lang, pattern, file_group, line_group in _error_patterns:
+            for _, pattern, file_group, line_group in _error_patterns:
                 match = pattern.match(line)
                 # Rule out messages that contain the word 'warning' (for LaTeX; these match Java's regex)
                 if match and "warning" not in line.lower():
