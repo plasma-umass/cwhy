@@ -153,6 +153,8 @@ def evaluate(client, args, stdin):
         return tool_calls[0].function.arguments
     elif args.subcommand == "converse":
         return conversation.converse(client, args, stdin)
+    elif args.subcommand == "diff-converse":
+        return conversation.diff_converse(client, args, stdin)
     else:
         raise Exception(f"unknown subcommand: {args.subcommand}")
 
