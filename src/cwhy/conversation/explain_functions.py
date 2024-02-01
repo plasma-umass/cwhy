@@ -6,7 +6,7 @@ from typing import Optional
 import llm_utils
 
 
-class Functions:
+class ExplainFunctions:
     def __init__(self, args: argparse.Namespace):
         self.args = args
 

@@ -3,7 +3,7 @@ import textwrap
 
 import llm_utils
 
-from . import functions
+from . import explain_functions
 
 
 def get_truncated_error_message(args: argparse.Namespace, diagnostic: str) -> str:
@@ -34,7 +34,7 @@ def get_truncated_error_message(args: argparse.Namespace, diagnostic: str) -> st
 
 
 def converse(client, args, diagnostic):
-    fns = functions.Functions(args, diagnostic)
+    fns = explain_functions.ExplainFunctions(args, diagnostic)
     available_functions_names = [fn["function"]["name"] for fn in fns.as_tools()]
     system_message = textwrap.dedent(
         f"""
