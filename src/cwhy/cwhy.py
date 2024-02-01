@@ -35,43 +35,53 @@ def evaluate_diff(client, args, stdin):
         client,
         args,
         prompt,
-        functions=[
+        tools=[
             {
-                "name": "fix_error",
-                "description": "Returns all modifications needed for the provided code to compile.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "diff": {
-                            "type": "object",
-                            "properties": {
-                                "modifications": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "filename": {"type": "string"},
-                                            "start-line-number": {"type": "integer"},
-                                            "number-lines-remove": {"type": "integer"},
-                                            "replacement": {"type": "string"},
+                "type": "function",
+                "function": {
+                    "name": "fix_error",
+                    "description": "Returns all modifications needed for the provided code to compile.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "diff": {
+                                "type": "object",
+                                "properties": {
+                                    "modifications": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "filename": {"type": "string"},
+                                                "start-line-number": {
+                                                    "type": "integer"
+                                                },
+                                                "number-lines-remove": {
+                                                    "type": "integer"
+                                                },
+                                                "replacement": {"type": "string"},
+                                            },
+                                            "required": [
+                                                "filename",
+                                                "start-line-number",
+                                                "number-lines-remove",
+                                                "replacement",
+                                            ],
                                         },
-                                        "required": [
-                                            "filename",
-                                            "start-line-number",
-                                            "number-lines-remove",
-                                            "replacement",
-                                        ],
                                     },
                                 },
-                            },
-                            "required": ["modifications"],
-                        }
+                                "required": ["modifications"],
+                            }
+                        },
+                        "required": ["diff"],
                     },
-                    "required": ["diff"],
                 },
             }
         ],
-        function_call={"name": "fix_error"},
+        tool_choice={
+            "type": "function",
+            "function": {"name": "fix_error"},
+        },
     )
 
     return completion
@@ -98,11 +108,10 @@ def evaluate(client, args, stdin):
     if args.subcommand == "explain":
         return evaluate_text_prompt(client, args, prompts.explain_prompt(args, stdin))
     elif args.subcommand == "diff":
-        return (
-            evaluate_diff(client, args, stdin)
-            .choices[0]
-            .message.function_call.arguments
-        )
+        completion = evaluate_diff(client, args, stdin)
+        tool_calls = completion.choices[0].message.tool_calls
+        assert len(tool_calls) == 1
+        return tool_calls[0].function.arguments
     elif args.subcommand == "converse":
         return conversation.converse(client, args, stdin)
     else:
