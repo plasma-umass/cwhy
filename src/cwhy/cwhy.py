@@ -39,48 +39,38 @@ def evaluate_diff(client, args, stdin):
             {
                 "type": "function",
                 "function": {
-                    "name": "fix_error",
-                    "description": "Returns all modifications needed for the provided code to compile.",
+                    "name": "apply_modifications",
+                    "description": "Applies the given modifications to the source file with the goal of fixing any existing compilation errors.",
                     "parameters": {
                         "type": "object",
                         "properties": {
-                            "diff": {
-                                "type": "object",
-                                "properties": {
-                                    "modifications": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "filename": {"type": "string"},
-                                                "start-line-number": {
-                                                    "type": "integer"
-                                                },
-                                                "number-lines-remove": {
-                                                    "type": "integer"
-                                                },
-                                                "replacement": {"type": "string"},
-                                            },
-                                            "required": [
-                                                "filename",
-                                                "start-line-number",
-                                                "number-lines-remove",
-                                                "replacement",
-                                            ],
-                                        },
+                            "modifications": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "filename": {"type": "string"},
+                                        "start-line-number": {"type": "integer"},
+                                        "number-lines-remove": {"type": "integer"},
+                                        "replacement": {"type": "string"},
                                     },
+                                    "required": [
+                                        "filename",
+                                        "start-line-number",
+                                        "number-lines-remove",
+                                        "replacement",
+                                    ],
                                 },
-                                "required": ["modifications"],
-                            }
+                            },
                         },
-                        "required": ["diff"],
+                        "required": ["modifications"],
                     },
                 },
             }
         ],
         tool_choice={
             "type": "function",
-            "function": {"name": "fix_error"},
+            "function": {"name": "apply_modifications"},
         },
     )
 
