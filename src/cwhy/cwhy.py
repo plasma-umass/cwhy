@@ -161,6 +161,7 @@ def main(args: argparse.Namespace) -> None:
     if not service:
         print_key_info()
         sys.exit(1)
+
     process = subprocess.run(
         args.command,
         stdout=subprocess.PIPE,
@@ -203,7 +204,7 @@ def main(args: argparse.Namespace) -> None:
 def evaluate_text_prompt(client, args, prompt, wrap=True, **kwargs):
     completion = complete(client, args, prompt, **kwargs)
 
-    msg = f"Analysis from {AI_service}:"
+    msg = f"Analysis from {service}:"
     print(msg)
     print("-" * len(msg))
     text = completion.choices[0].message.content
