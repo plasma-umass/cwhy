@@ -11,7 +11,7 @@ authors = [
   { name="Bryce Adelstein Lelbach", email="brycelelbach@gmail.com" }
 ]
 
-dependencies = [ "openai>=1.3.6", "PyYAML>=6.0.1", "rich>=13.7.0", "litellm>=1.22.3", "tiktoken>=0.5.2", "llm-utils>=0.2.5"]
+dependencies = [ "openai>=1.3.6", "PyYAML>=6.0.1", "rich>=13.7.0", "litellm>=1.22.3", "tiktoken>=0.5.2", "llm-utils>=0.2.5", "setuptools>=68.2.2"]
 description = "Explains and proposes fixes for compile-time errors for many programming languages."
 readme = "README.md"
 requires-python = ">=3.7"
