@@ -3,6 +3,9 @@ name: Regression | Generate
 on:
   workflow_dispatch:
 
+env:
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
 jobs:
   remove-existing-branch:
     runs-on: ubuntu-latest
