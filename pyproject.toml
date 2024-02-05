@@ -16,7 +16,7 @@ dependencies = [
   "PyYAML>=6.0.1",
   "rich>=13.7.0",
   "litellm>=1.22.3",
-  "llm-utils>=0.2.6"
+  "llm-utils>=0.2.6",
 ]
 description = "Explains and proposes fixes for compile-time errors for many programming languages."
 readme = "README.md"
