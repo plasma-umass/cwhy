@@ -110,6 +110,9 @@ class _Context:
             if count > self.args.max_error_tokens:
                 list.pop()
                 break
+
+        if len(front) + len(back) == n:
+            return "```\n" + "\n".join(self.diagnostic_lines) + "\n```\n"
         return build_diagnostic_string()
 
     def get_code(self) -> Optional[str]:
