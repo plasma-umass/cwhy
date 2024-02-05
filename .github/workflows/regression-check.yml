@@ -39,6 +39,7 @@ jobs:
     - name: Install CWhy
       run: |
         python3 -m pip install --upgrade pip
+        pip install --upgrade setuptools # https://stackoverflow.com/questions/7446187
         python3 -m pip install .
 
     - name: Check prompts
