@@ -18,8 +18,8 @@ Go, Java, LaTeX, PHP, Python, Ruby, Rust, Swift, and TypeScript.
  >  **Note**
  >
  >  CWhy needs to be connected to an [OpenAI account](https://openai.com/api/) or an Amazon Web Services account.
- >  _Your account will need to have a
- >  positive balance for this to work_ ([check your OpenAI balance](https://platform.openai.com/usage)).
+ >  _Your account will need to have a positive balance for this to work_
+ >  ([check your OpenAI balance](https://platform.openai.com/usage)).
  >  [Get an OpenAI key here](https://platform.openai.com/api-keys).
  > 
  >  CWhy currently defaults to GPT-4, and falls back to GPT-3.5-turbo if a request error occurs. For the newest and best
@@ -46,8 +46,8 @@ Go, Java, LaTeX, PHP, Python, Ruby, Rust, Swift, and TypeScript.
  >  export AWS_REGION_NAME=us-west-2
  >  ```
  >
- >   CWhy will automatically select which AI service to use (OpenAI or AWS Bedrock)
- >   when it detects that the appropriate environment variables have been set.
+ >  CWhy will automatically select which AI service to use (OpenAI or AWS Bedrock) when it detects that the appropriate
+ >  environment variables have been set.
  
 ```
 python3 -m pip install cwhy

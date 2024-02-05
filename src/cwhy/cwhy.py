@@ -3,19 +3,25 @@ import contextlib
 import os
 import subprocess
 import sys
+import logging
 
-import litellm # type: ignore
+import litellm  # type: ignore
 import llm_utils
-
-litellm.set_verbose=False
-
-# Turn off most logging
-from llm_utils import logging
-logging.getLogger().setLevel(logging.ERROR)
-
-from openai import NotFoundError, RateLimitError, APITimeoutError, OpenAIError, BadRequestError
+from openai import (
+    NotFoundError,
+    RateLimitError,
+    APITimeoutError,
+    OpenAIError,
+    BadRequestError,
+)
 
 from . import conversation, prompts
+
+
+# Turn off most logging
+litellm.set_verbose = False
+logging.getLogger().setLevel(logging.ERROR)
+
 
 def print_key_info():
     print("You need a key (or keys) from an AI service to use CWhy.")
@@ -32,25 +38,26 @@ def print_key_info():
     print("    export AWS_SECRET_ACCESS_KEY=<your secret key>")
     print("    export AWS_REGION_NAME=us-west-2")
 
+
 # If keys are defined in the environment, we use the appropriate service.
-AI_service = None
+service = None
 _DEFAULT_FALLBACK_MODELS = []
 
 with contextlib.suppress(KeyError):
     if os.environ["OPENAI_API_KEY"]:
-        AI_service = "OpenAI"
+        service = "OpenAI"
         _DEFAULT_FALLBACK_MODELS = ["openai/gpt-4", "openai/gpt-3.5-turbo"]
 with contextlib.suppress(KeyError):
     if not _DEFAULT_FALLBACK_MODELS:
-        if os.environ["AWS_ACCESS_KEY_ID"] and os.environ["AWS_SECRET_ACCESS_KEY"] and os.environ["AWS_REGION_NAME"]:
-            AI_service = "Bedrock"
+        if {
+            "AWS_ACCESS_KEY_ID",
+            "AWS_SECRET_ACCESS_KEY",
+            "AWS_REGION_NAME",
+        } <= os.environ.keys():
+            service = "Bedrock"
             _DEFAULT_FALLBACK_MODELS = ["bedrock/anthropic.claude-v2:1"]
 
-# If no AI service was available given the environment variables, print key info and exit.
-if not AI_service:
-    print_key_info()
-    sys.exit(1)
-       
+
 def complete(client, args, user_prompt, **kwargs):
     try:
         completion = litellm.completion(
@@ -151,6 +158,9 @@ def evaluate(client, args, stdin):
 
 
 def main(args: argparse.Namespace) -> None:
+    if not service:
+        print_key_info()
+        sys.exit(1)
     process = subprocess.run(
         args.command,
         stdout=subprocess.PIPE,
@@ -178,7 +188,9 @@ def main(args: argparse.Namespace) -> None:
     print("CWhy")
     print("==================================================")
     try:
-        result = evaluate(None, args, process.stderr if process.stderr else process.stdout)
+        result = evaluate(
+            None, args, process.stderr if process.stderr else process.stdout
+        )
         print(result)
     except OpenAIError:
         print_key_info()
@@ -189,7 +201,6 @@ def main(args: argparse.Namespace) -> None:
 
 
 def evaluate_text_prompt(client, args, prompt, wrap=True, **kwargs):
-
     completion = complete(client, args, prompt, **kwargs)
 
     msg = f"Analysis from {AI_service}:"
@@ -201,10 +212,6 @@ def evaluate_text_prompt(client, args, prompt, wrap=True, **kwargs):
         text = llm_utils.word_wrap_except_code_blocks(text)
 
     cost = litellm.completion_cost(completion_response=completion)
-    # llm_utils.calculate_cost(
-    #    completion.usage.prompt_tokens, completion.usage.completion_tokens, args.llm
-    # )
-    
     text += "\n\n"
     text += f"(Total cost: approximately ${cost:.2f} USD.)"
 
