@@ -4,7 +4,7 @@ import os
 import subprocess
 import sys
 
-import litellm
+import litellm # type: ignore
 import llm_utils
 
 litellm.set_verbose=False
