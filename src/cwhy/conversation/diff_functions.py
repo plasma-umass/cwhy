@@ -44,7 +44,7 @@ class DiffFunctions:
             traceback.print_exc()
             return None
 
-    def apply_modification_schema(self) -> str:
+    def apply_modification_schema(self):
         return {
             "name": "apply_modification",
             "description": "Applies a single modification to the source file with the goal of fixing any existing compilation errors.",
