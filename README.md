@@ -17,9 +17,10 @@ Go, Java, LaTeX, PHP, Python, Ruby, Rust, Swift, and TypeScript.
 
  >  **Note**
  >
- >  CWhy needs to be connected to an [OpenAI account](https://openai.com/api/). _Your account will need to have a
- >  positive balance for this to work_ ([check your balance](https://platform.openai.com/usage)).
- >  [Get a key here](https://platform.openai.com/api-keys).
+ >  CWhy needs to be connected to an [OpenAI account](https://openai.com/api/) or an Amazon Web Services account.
+ >  _Your account will need to have a
+ >  positive balance for this to work_ ([check your OpenAI balance](https://platform.openai.com/usage)).
+ >  [Get an OpenAI key here](https://platform.openai.com/api-keys).
  > 
  >  CWhy currently defaults to GPT-4, and falls back to GPT-3.5-turbo if a request error occurs. For the newest and best
  >  model (GPT-4) to work, you need to have purchased  at least $1 in credits (if your API account was created before
@@ -28,13 +29,26 @@ Go, Java, LaTeX, PHP, Python, Ruby, Rust, Swift, and TypeScript.
  >  Once you have an API key, set it as an environment variable called `OPENAI_API_KEY`.
  > 
  >  ```bash
- >  # On Linux/MacOs.
+ >  # On Linux/MacOS:
  >  export OPENAI_API_KEY=<your-api-key>
  >  
- >  # On Windows.
+ >  # On Windows:
  >  $env:OPENAI_API_KEY=<your-api-key>
  >  ```
-
+ >
+ >  **New**: CWhy now has alpha support for Amazon Bedrock, using the Claude model.
+ >  To use Bedrock, you need to set three environment variables.
+ >
+ >  ```bash
+ >  # On Linux/MacOS:
+ >  export AWS_ACCESS_KEY_ID=<your-access-key>
+>   export AWS_SECRET_ACCESS_KEY=<your-secret-key>
+>   export AWS_REGION_NAME=us-west-2
+>   ```
+>
+>   CWhy will automatically select which AI service to use (OpenAI or AWS Bedrock)
+>   when it detects that the appropriate environment variables have been set.
+ 
 ```
 python3 -m pip install cwhy
 ```
