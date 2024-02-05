@@ -1,7 +1,7 @@
 import json
 import textwrap
 
-import litellm
+import litellm  # type: ignore
 import llm_utils
 
 from . import utils
