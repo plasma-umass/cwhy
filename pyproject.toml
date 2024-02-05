@@ -17,6 +17,7 @@ dependencies = [
   "rich>=13.7.0",
   "litellm>=1.22.3",
   "llm-utils>=0.2.6",
+  "boto3>=1.34.35",
 ]
 description = "Explains and proposes fixes for compile-time errors for many programming languages."
 readme = "README.md"
