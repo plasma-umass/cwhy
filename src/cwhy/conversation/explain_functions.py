@@ -6,7 +6,7 @@ from typing import Optional
 import llm_utils
 
 
-class Functions:
+class ExplainFunctions:
     def __init__(self, args: argparse.Namespace):
         self.args = args
 
@@ -45,7 +45,9 @@ class Functions:
         }
 
     def get_compile_or_run_command(self) -> str:
-        return " ".join(self.args.command)
+        result = " ".join(self.args.command)
+        print(result)
+        return result
 
     def get_code_surrounding_schema(self):
         return {
@@ -69,7 +71,9 @@ class Functions:
 
     def get_code_surrounding(self, filename: str, lineno: int) -> str:
         (lines, first) = llm_utils.read_lines(filename, lineno - 7, lineno + 3)
-        return llm_utils.number_group_of_lines(lines, first)
+        result = llm_utils.number_group_of_lines(lines, first)
+        print(result)
+        return result
 
     def list_directory_schema(self):
         return {
