@@ -2,7 +2,7 @@ import argparse
 import collections
 import re
 import sys
-from typing import Optional
+from typing import Dict, List, Optional
 
 import llm_utils
 
@@ -49,7 +49,7 @@ class _Context:
         self.diagnostic_lines = diagnostic.splitlines()
 
         # We group by source file.
-        self.code_locations: dict[str, dict[int, str]] = collections.defaultdict(dict)
+        self.code_locations: Dict[str, Dict[int, str]] = collections.defaultdict(dict)
 
         # Go through the diagnostic and build up a list of code locations.
         for line in self.diagnostic_lines:
@@ -85,8 +85,8 @@ class _Context:
         """
         Alternate taking front and back lines until the maximum number of tokens.
         """
-        front: list[str] = []
-        back: list[str] = []
+        front: List[str] = []
+        back: List[str] = []
         n = len(self.diagnostic_lines)
 
         def build_diagnostic_string() -> str:
@@ -116,7 +116,7 @@ class _Context:
         if not self.code_locations:
             return None
 
-        def format_file_locations(filename: str, lines: dict[int, str]) -> str:
+        def format_file_locations(filename: str, lines: Dict[int, str]) -> str:
             """
             Format all the lines from a single file as a code block.
             There may be multiple groups: lines 1-10 and 100-110 for example.
