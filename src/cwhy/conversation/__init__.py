@@ -1,6 +1,7 @@
 import json
 import textwrap
 
+import litellm
 import llm_utils
 
 from . import utils
@@ -8,7 +9,7 @@ from .diff_functions import DiffFunctions
 from .explain_functions import ExplainFunctions
 
 
-def converse(client, args, diagnostic):
+def converse(args, diagnostic):
     fns = ExplainFunctions(args)
     available_functions_names = [fn["function"]["name"] for fn in fns.as_tools()]
     system_message = textwrap.dedent(
@@ -26,7 +27,7 @@ def converse(client, args, diagnostic):
     ]
 
     while True:
-        completion = client.chat.completions.create(
+        completion = litellm.completion(
             model=args.llm,
             messages=conversation,
             tools=fns.as_tools(),
@@ -54,7 +55,7 @@ def converse(client, args, diagnostic):
             print(f"Not found: {choice.finish_reason}.")
 
 
-def diff_converse(client, args, diagnostic):
+def diff_converse(args, diagnostic):
     fns = DiffFunctions(args)
     tools = fns.as_tools()
     tool_names = [fn["function"]["name"] for fn in tools]
@@ -88,7 +89,7 @@ def diff_converse(client, args, diagnostic):
 
     while True:
         # 1. Pick an action.
-        completion = client.chat.completions.create(
+        completion = litellm.completion(
             model=args.llm,
             messages=conversation,
             tools=[{"type": "function", "function": pick_action_schema}],
@@ -103,7 +104,7 @@ def diff_converse(client, args, diagnostic):
         action = arguments["action"]
 
         tool = [t for t in tools if t["function"]["name"] == action][0]
-        completion = client.chat.completions.create(
+        completion = litellm.completion(
             model=args.llm,
             messages=conversation,
             tools=[tool],

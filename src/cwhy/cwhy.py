@@ -58,7 +58,7 @@ with contextlib.suppress(KeyError):
             _DEFAULT_FALLBACK_MODELS = ["bedrock/anthropic.claude-v2:1"]
 
 
-def complete(client, args, user_prompt, **kwargs):
+def complete(args, user_prompt, **kwargs):
     try:
         completion = litellm.completion(
             model=args.llm,
@@ -81,10 +81,9 @@ def complete(client, args, user_prompt, **kwargs):
         raise e
 
 
-def evaluate_diff(client, args, stdin):
+def evaluate_diff(args, stdin):
     prompt = prompts.diff_prompt(args, stdin)
     completion = complete(
-        client,
         args,
         prompt,
         tools=[
@@ -129,32 +128,32 @@ def evaluate_diff(client, args, stdin):
     return completion
 
 
-def evaluate_with_fallback(client, args, stdin):
+def evaluate_with_fallback(args, stdin):
     for i, model in enumerate(_DEFAULT_FALLBACK_MODELS):
         if i != 0:
             print(f"Falling back to {model}...")
         args.llm = model
         try:
-            return evaluate(client, args, stdin)
+            return evaluate(args, stdin)
         except NotFoundError:
             continue
 
 
-def evaluate(client, args, stdin):
+def evaluate(args, stdin):
     if args.llm == "default":
-        return evaluate_with_fallback(client, args, stdin)
+        return evaluate_with_fallback(args, stdin)
 
     if args.subcommand == "explain":
-        return evaluate_text_prompt(client, args, prompts.explain_prompt(args, stdin))
+        return evaluate_text_prompt(args, prompts.explain_prompt(args, stdin))
     elif args.subcommand == "diff":
-        completion = evaluate_diff(client, args, stdin)
+        completion = evaluate_diff(args, stdin)
         tool_calls = completion.choices[0].message.tool_calls
         assert len(tool_calls) == 1
         return tool_calls[0].function.arguments
     elif args.subcommand == "converse":
-        return conversation.converse(client, args, stdin)
+        return conversation.converse(args, stdin)
     elif args.subcommand == "diff-converse":
-        return conversation.diff_converse(client, args, stdin)
+        return conversation.diff_converse(args, stdin)
     else:
         raise Exception(f"unknown subcommand: {args.subcommand}")
 
@@ -191,9 +190,7 @@ def main(args: argparse.Namespace) -> None:
     print("CWhy")
     print("==================================================")
     try:
-        result = evaluate(
-            None, args, process.stderr if process.stderr else process.stdout
-        )
+        result = evaluate(args, process.stderr if process.stderr else process.stdout)
         print(result)
     except OpenAIError:
         print_key_info()
@@ -203,8 +200,8 @@ def main(args: argparse.Namespace) -> None:
     sys.exit(process.returncode)
 
 
-def evaluate_text_prompt(client, args, prompt, wrap=True, **kwargs):
-    completion = complete(client, args, prompt, **kwargs)
+def evaluate_text_prompt(args, prompt, wrap=True, **kwargs):
+    completion = complete(args, prompt, **kwargs)
 
     msg = f"Analysis from {service}:"
     print(msg)
