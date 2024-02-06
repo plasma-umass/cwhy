@@ -65,9 +65,6 @@ In file included from /Users/runner/work/cwhy/cwhy/tests/c++/template-recursion.
                                ^
 /Users/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:20:48: note: in instantiation of member function 'Matrix<4294966374, 10>::lowestRowSum' requested here
         return std::min(firstRowSum, subMatrix.lowestRowSum());
-
-[...]
-
                                                ^
 /Users/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:20:48: note: in instantiation of member function 'Matrix<4294966375, 10>::lowestRowSum' requested here
 /Users/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:20:48: note: in instantiation of member function 'Matrix<4294966376, 10>::lowestRowSum' requested here

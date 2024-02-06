@@ -26,9 +26,6 @@ This is my error:
    38 | int f(int x, int y) {
       |     ^
 /home/runner/work/cwhy/cwhy/tests/c++/redefined-function.cpp:34:5: note: previous definition is here
-
-[...]
-
    34 | int f(int x, int y) {
       |     ^
 1 error generated.

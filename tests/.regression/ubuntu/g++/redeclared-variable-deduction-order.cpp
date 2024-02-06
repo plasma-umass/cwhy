@@ -23,9 +23,6 @@ This is my error:
 /home/runner/work/cwhy/cwhy/tests/c++/redeclared-variable-deduction-order.cpp:12:16: error: conflicting declaration ‘double g’
    12 | decltype(f(0)) g = {};
       |                ^
-
-[...]
-
 /home/runner/work/cwhy/cwhy/tests/c++/redeclared-variable-deduction-order.cpp:6:23: note: previous declaration as ‘int g’
     6 | extern decltype(f(0)) g;
       |                       ^

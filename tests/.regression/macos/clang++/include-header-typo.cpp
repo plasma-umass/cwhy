@@ -14,9 +14,6 @@ This is my error:
 ```
 /Users/runner/work/cwhy/cwhy/tests/c++/include-header-typo.cpp:1:10: fatal error: 'blank-header.hp' file not found
 #include "blank-header.hp"
-
-[...]
-
          ^~~~~~~~~~~~~~~~~
 1 error generated.
 ```
