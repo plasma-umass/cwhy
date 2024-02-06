@@ -1,4 +1,5 @@
 import argparse
+from typing import List
 
 import llm_utils
 
@@ -7,8 +8,8 @@ def get_truncated_error_message(args: argparse.Namespace, diagnostic: str) -> st
     """
     Alternate taking front and back lines until the maximum number of tokens.
     """
-    front: list[str] = []
-    back: list[str] = []
+    front: List[str] = []
+    back: List[str] = []
     diagnostic_lines = diagnostic.splitlines()
     n = len(diagnostic_lines)
 
