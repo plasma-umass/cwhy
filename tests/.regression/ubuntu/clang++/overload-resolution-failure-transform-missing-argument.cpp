@@ -80,9 +80,6 @@ This is my error:
       |     ^         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  4337 |               _InputIterator2 __first2, _OutputIterator __result,
       |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-[...]
-
  4338 |               _BinaryOperation __binary_op)
       |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/pstl/glue_algorithm_defs.h:156:1: note: candidate function template not viable: requires 5 arguments, but 3 were provided

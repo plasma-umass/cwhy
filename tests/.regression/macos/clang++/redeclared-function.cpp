@@ -22,9 +22,6 @@ This is my error:
 void f() {}
 ~~~~ ^
 /Users/runner/work/cwhy/cwhy/tests/c++/redeclared-function.cpp:30:5: note: previous declaration is here
-
-[...]
-
 int f();
 ~~~ ^
 1 error generated.

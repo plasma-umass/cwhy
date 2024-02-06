@@ -21,9 +21,6 @@ This is my error:
 ```
 /home/runner/work/cwhy/cwhy/tests/c++/missing-struct-semicolon.cpp:13:2: error: expected ‘;’ after struct definition
    13 | }
-
-[...]
-
       |  ^
       |  ;
 ```

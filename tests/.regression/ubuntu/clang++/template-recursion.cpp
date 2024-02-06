@@ -49,9 +49,6 @@ fatal error: recursive template instantiation exceeded maximum depth of 1024
    20 |         return std::min(firstRowSum, subMatrix.lowestRowSum());
       |                                                ^
 /home/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:20:48: note: in instantiation of member function 'Matrix<4294966375, 10>::lowestRowSum' requested here
-
-[...]
-
 /home/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:20:48: note: in instantiation of member function 'Matrix<4294966376, 10>::lowestRowSum' requested here
 /home/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:20:48: note: (skipping 1015 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
 /home/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:20:48: note: in instantiation of member function 'Matrix<96, 10>::lowestRowSum' requested here

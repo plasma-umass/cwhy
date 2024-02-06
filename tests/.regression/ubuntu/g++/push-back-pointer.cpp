@@ -58,9 +58,6 @@ In file included from /usr/include/c++/12/vector:64,
 /usr/include/c++/12/bits/stl_vector.h:1276:7: note:   conversion of argument 1 would be ill-formed:
 /home/runner/work/cwhy/cwhy/tests/c++/push-back-pointer.cpp:24:17: error: invalid conversion from ‘int*’ to ‘std::vector<int>::value_type’ {aka ‘int’} [-fpermissive]
    24 |     v.push_back(pointer);
-
-[...]
-
       |                 ^~~~~~~
       |                 |
       |                 int*

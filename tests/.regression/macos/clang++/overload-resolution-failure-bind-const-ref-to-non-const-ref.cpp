@@ -28,9 +28,6 @@ This is my error:
     ^
 /Users/runner/work/cwhy/cwhy/tests/c++/overload-resolution-failure-bind-const-ref-to-non-const-ref.cpp:26:6: note: candidate function not viable: no known conversion from 'const float' to 'char *' for 1st argument
 void f(char*) {}
-
-[...]
-
      ^
 /Users/runner/work/cwhy/cwhy/tests/c++/overload-resolution-failure-bind-const-ref-to-non-const-ref.cpp:28:6: note: candidate function not viable: 1st argument ('const float') would lose const qualifier
 void f(float&) {}

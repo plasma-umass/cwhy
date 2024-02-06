@@ -24,9 +24,6 @@ This is my error:
    12 | decltype(f(0)) g = {};
       |                ^
 /home/runner/work/cwhy/cwhy/tests/c++/redeclared-variable-deduction-order.cpp:6:23: note: previous declaration is here
-
-[...]
-
     6 | extern decltype(f(0)) g;
       |                       ^
 1 error generated.

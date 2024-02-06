@@ -89,9 +89,6 @@ template <CTRE_REGEX_INPUT_TYPE input, typename... Modifiers> static constexpr i
                        ^
 /Users/runner/work/cwhy/cwhy/tests/_deps/c++/ctre-test.cpp/install/include/ctre/wrapper.hpp:277:26: note: template is declared here
 template <size_t> struct problem_at_position; // do not define!
-
-[...]
-
                          ^
 /Users/runner/work/cwhy/cwhy/tests/c++/ctre-test.cpp:56:18: error: no matching member function for call to 'get'
         return m.get<1>().to_view();

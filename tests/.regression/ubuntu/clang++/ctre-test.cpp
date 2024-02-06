@@ -89,9 +89,6 @@ In file included from /home/runner/work/cwhy/cwhy/tests/_deps/c++/ctre-test.cpp/
       |                        ^
 /home/runner/work/cwhy/cwhy/tests/_deps/c++/ctre-test.cpp/install/include/ctre/wrapper.hpp:277:26: note: template is declared here
   277 | template <size_t> struct problem_at_position; // do not define!
-
-[...]
-
       |                          ^
 /home/runner/work/cwhy/cwhy/tests/c++/ctre-test.cpp:56:18: error: no matching member function for call to 'get'
    56 |         return m.get<1>().to_view();

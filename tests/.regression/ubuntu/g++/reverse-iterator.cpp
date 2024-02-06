@@ -72,9 +72,6 @@ In file included from /usr/include/c++/12/string:53,
       |       ^~~~~
 /usr/include/c++/12/bits/basic_string.h:2040:23: note:   no known conversion for argument 1 from ‘std::reverse_iterator<__gnu_cxx::__normal_iterator<char*, std::__cxx11::basic_string<char> > >’ to ‘std::__cxx11::basic_string<char>::size_type’ {aka ‘long unsigned int’}
  2040 |       erase(size_type __pos = 0, size_type __n = npos)
-
-[...]
-
       |             ~~~~~~~~~~^~~~~~~~~
 /usr/include/c++/12/bits/basic_string.h:2060:7: note: candidate: ‘constexpr std::__cxx11::basic_string<_CharT, _Traits, _Alloc>::iterator std::__cxx11::basic_string<_CharT, _Traits, _Alloc>::erase(__const_iterator) [with _CharT = char; _Traits = std::char_traits<char>; _Alloc = std::allocator<char>; iterator = std::__cxx11::basic_string<char>::iterator; __const_iterator = std::__cxx11::basic_string<char>::const_iterator]’
  2060 |       erase(__const_iterator __position)

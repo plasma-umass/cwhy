@@ -85,9 +85,6 @@ In file included from /usr/include/c++/12/algorithm:61,
       |     ^~~~~~~~~
 /usr/include/c++/12/bits/stl_algo.h:4290:5: note:   template argument deduction/substitution failed:
 /home/runner/work/cwhy/cwhy/tests/c++/overload-resolution-failure-transform-missing-argument.cpp:41:19: note:   candidate expects 5 arguments, 3 provided
-
-[...]
-
    41 |     std::transform(v.begin(), v.end(), [](int i) { return i * i; });
       |     ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from /usr/include/c++/12/algorithm:73:

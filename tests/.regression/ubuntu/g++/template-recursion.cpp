@@ -42,9 +42,6 @@ This is my error:
 /home/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:20:60:   recursively required from ‘uint64_t Matrix<M, N>::lowestRowSum() const [with unsigned int M = 99; unsigned int N = 10]’
 /home/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:20:60:   required from ‘uint64_t Matrix<M, N>::lowestRowSum() const [with unsigned int M = 100; unsigned int N = 10]’
 /home/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:36:59:   required from here
-
-[...]
-
 /home/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:12:51: fatal error: template instantiation depth exceeds maximum of 900 (use ‘-ftemplate-depth=’ to increase the maximum)
    12 |     Matrix(std::span<std::uint64_t> underlying) : underlying(underlying) {
       |                                                   ^~~~~~~~~~~~~~~~~~~~~~

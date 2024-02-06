@@ -25,9 +25,6 @@ This is my error:
 /home/runner/work/cwhy/cwhy/tests/c++/overload-resolution-failure-bind-const-ref-to-non-const-ref.cpp:32:7: error: binding reference of type ‘float&’ to ‘const float’ discards qualifiers
    32 |     f(i);
       |       ^
-
-[...]
-
 /home/runner/work/cwhy/cwhy/tests/c++/overload-resolution-failure-bind-const-ref-to-non-const-ref.cpp:28:8: note:   initializing argument 1 of ‘void f(float&)’
    28 | void f(float&) {}
       |        ^~~~~~

@@ -51,9 +51,6 @@ This is my error:
       |     ~~^~~~~~~~~
 /usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/stl_vector.h:1278:7: note: candidate function not viable: no known conversion from 'int *' to 'const value_type' (aka 'const int') for 1st argument; dereference the argument with *
  1278 |       push_back(const value_type& __x)
-
-[...]
-
       |       ^         ~~~~~~~~~~~~~~~~~~~~~
 /usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/stl_vector.h:1295:7: note: candidate function not viable: no known conversion from 'int *' to 'value_type' (aka 'int') for 1st argument; dereference the argument with *
  1295 |       push_back(value_type&& __x)

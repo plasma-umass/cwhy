@@ -25,9 +25,6 @@ This is my error:
     g(17);
     ^
 /Users/runner/work/cwhy/cwhy/tests/c++/sfinae-trailing-return-type-conditional-noexcept.cpp:7:6: note: candidate template ignored: substitution failure [with T = int]: no matching function for call to 'f'
-
-[...]
-
 auto g(T t) noexcept(noexcept(f(t))) -> decltype(f(t)) {
      ^                                           ~
 1 error generated.
