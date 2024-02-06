@@ -6,6 +6,8 @@ from typing import Dict, List, Optional
 
 import llm_utils
 
+from .print_debug import dprint
+
 
 # Define error patterns with associated information. The numbers
 # correspond to the groups matching file name and line number.
@@ -72,7 +74,7 @@ class _Context:
                     file_name, line_number - 7, line_number + 3
                 )
             except FileNotFoundError:
-                print(
+                dprint(
                     f"Cwhy warning: file not found: {file_name.lstrip()}",
                     file=sys.stderr,
                 )

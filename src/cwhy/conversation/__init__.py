@@ -7,6 +7,7 @@ import llm_utils
 from . import utils
 from .diff_functions import DiffFunctions
 from .explain_functions import ExplainFunctions
+from ..print_debug import dprint
 
 
 def converse(args, diagnostic):
@@ -47,12 +48,12 @@ def converse(args, diagnostic):
                             "content": function_response,
                         }
                     )
-            print()
+            dprint()
         elif choice.finish_reason == "stop":
             text = completion.choices[0].message.content
             return llm_utils.word_wrap_except_code_blocks(text)
         else:
-            print(f"Not found: {choice.finish_reason}.")
+            dprint(f"Not found: {choice.finish_reason}.")
 
 
 def diff_converse(args, diagnostic):
@@ -128,4 +129,4 @@ def diff_converse(args, diagnostic):
                 }
             )
 
-        print()
+        dprint()

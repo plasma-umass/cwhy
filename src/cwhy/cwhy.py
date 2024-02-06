@@ -15,6 +15,7 @@ from openai import (
 )
 
 from . import conversation, prompts
+from .print_debug import dprint, enable_debug_printing
 
 
 # Turn off most logging
@@ -23,21 +24,23 @@ logging.getLogger().setLevel(logging.ERROR)
 
 
 def print_key_info():
-    print("You need a key (or keys) from an AI service to use CWhy.")
-    print()
-    print("OpenAI:")
-    print("  You can get a key here: https://platform.openai.com/api-keys")
-    print("  Set the environment variable OPENAI_API_KEY to your key value:")
-    print("    export OPENAI_API_KEY=<your key>")
-    print()
-    print("Bedrock:")
-    print("  To use Bedrock, you need an AWS account.")
-    print("  Set the following environment variables:")
-    print("    export AWS_ACCESS_KEY_ID=<your key id>")
-    print("    export AWS_SECRET_ACCESS_KEY=<your secret key>")
-    print("    export AWS_REGION_NAME=us-west-2")
-    print("  You also need to request access to Claude:")
-    print("   https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html#manage-model-access")
+    dprint("You need a key (or keys) from an AI service to use CWhy.")
+    dprint()
+    dprint("OpenAI:")
+    dprint("  You can get a key here: https://platform.openai.com/api-keys")
+    dprint("  Set the environment variable OPENAI_API_KEY to your key value:")
+    dprint("    export OPENAI_API_KEY=<your key>")
+    dprint()
+    dprint("Bedrock:")
+    dprint("  To use Bedrock, you need an AWS account.")
+    dprint("  Set the following environment variables:")
+    dprint("    export AWS_ACCESS_KEY_ID=<your key id>")
+    dprint("    export AWS_SECRET_ACCESS_KEY=<your secret key>")
+    dprint("    export AWS_REGION_NAME=us-west-2")
+    dprint("  You also need to request access to Claude:")
+    dprint(
+        "   https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html#manage-model-access"
+    )
 
 
 _DEFAULT_FALLBACK_MODELS = []
@@ -64,17 +67,17 @@ def complete(args, user_prompt, **kwargs):
         )
         return completion
     except NotFoundError as e:
-        print(f"'{args.llm}' either does not exist or you do not have access to it.")
+        dprint(f"'{args.llm}' either does not exist or you do not have access to it.")
         raise e
     except BadRequestError as e:
-        print("Something is wrong with your prompt.")
+        dprint("Something is wrong with your prompt.")
         raise e
     except RateLimitError as e:
-        print("You have exceeded a rate limit or have no remaining funds.")
+        dprint("You have exceeded a rate limit or have no remaining funds.")
         raise e
     except APITimeoutError as e:
-        print("The API timed out.")
-        print("You can increase the timeout with the --timeout option.")
+        dprint("The API timed out.")
+        dprint("You can increase the timeout with the --timeout option.")
         raise e
 
 
@@ -128,7 +131,7 @@ def evaluate_diff(args, stdin):
 def evaluate_with_fallback(args, stdin):
     for i, model in enumerate(_DEFAULT_FALLBACK_MODELS):
         if i != 0:
-            print(f"Falling back to {model}...")
+            dprint(f"Falling back to {model}...")
         args.llm = model
         try:
             return evaluate(args, stdin)
@@ -166,29 +169,32 @@ def main(args: argparse.Namespace) -> None:
     if process.returncode == 0:
         return
 
+    if args.debug:
+        enable_debug_printing()
+
     if args.show_prompt:
-        print("===================== Prompt =====================")
+        dprint("===================== Prompt =====================")
         if args.llm == "default":
             args.llm = _DEFAULT_FALLBACK_MODELS[0]
         if args.subcommand == "explain":
-            print(prompts.explain_prompt(args, process.stderr))
+            dprint(prompts.explain_prompt(args, process.stderr))
         elif args.subcommand == "diff":
-            print(prompts.diff_prompt(args, process.stderr))
-        print("==================================================")
+            dprint(prompts.diff_prompt(args, process.stderr))
+        dprint("==================================================")
         sys.exit(0)
 
-    print(process.stdout, end="")
-    print(process.stderr, file=sys.stderr, end="")
-    print("==================================================")
-    print("CWhy")
-    print("==================================================")
+    dprint(process.stdout)
+    dprint(process.stderr, file=sys.stderr)
+    dprint("==================================================")
+    dprint("CWhy")
+    dprint("==================================================")
     try:
         result = evaluate(args, process.stderr if process.stderr else process.stdout)
-        print(result)
+        dprint(result)
     except OpenAIError:
         print_key_info()
         sys.exit(1)
-    print("==================================================")
+    dprint("==================================================")
 
     sys.exit(process.returncode)
 
@@ -197,8 +203,8 @@ def evaluate_text_prompt(args, prompt, wrap=True, **kwargs):
     completion = complete(args, prompt, **kwargs)
 
     msg = f"Analysis from {args.llm}:"
-    print(msg)
-    print("-" * len(msg))
+    dprint(msg)
+    dprint("-" * len(msg))
     text = completion.choices[0].message.content
 
     if wrap:

@@ -164,6 +164,11 @@ def main() -> None:
         help="when enabled, only print prompt and exit (for debugging purposes)",
     )
     parser.add_argument(
+        "--debug",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
         "--wrapper",
         action="store_true",
         help="generate a temporary executable used to wrap to compiler command",

@@ -8,6 +8,7 @@ from typing import Optional
 
 from . import utils
 from .explain_functions import ExplainFunctions
+from ..print_debug import dprint
 
 
 class DiffFunctions:
@@ -28,7 +29,7 @@ class DiffFunctions:
         arguments = json.loads(function_call.arguments)
         try:
             if function_call.name == "apply_modification":
-                print("Calling: apply_modification(...)")
+                dprint("Calling: apply_modification(...)")
                 return self.apply_modification(
                     arguments["filename"],
                     arguments["start-line-number"],
@@ -36,7 +37,7 @@ class DiffFunctions:
                     arguments["replacement"],
                 )
             elif function_call.name == "try_compiling":
-                print("Calling: try_compiling()")
+                dprint("Calling: try_compiling()")
                 return self.try_compiling()
             else:
                 return self.explain_functions.dispatch(function_call)
@@ -106,9 +107,9 @@ class DiffFunctions:
             whitespace = replaced_line[:n]
             replacement_lines[0] = whitespace + replacement_lines[0]
 
-        print("CWhy wants to do the following modification:")
+        dprint("CWhy wants to do the following modification:")
         for line in difflib.unified_diff(replaced_lines, replacement_lines):
-            print(line)
+            dprint(line)
         if not input("Is this modification okay? (y/n) ") == "y":
             return "The user declined this modification, it is probably wrong."
 
@@ -132,7 +133,7 @@ class DiffFunctions:
         )
 
         if process.returncode == 0:
-            print("Compilation successful!")
+            dprint("Compilation successful!")
             sys.exit(0)
 
         return utils.get_truncated_error_message(self.args, process.stderr)
