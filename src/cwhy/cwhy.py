@@ -36,6 +36,8 @@ def print_key_info():
     print("    export AWS_ACCESS_KEY_ID=<your key id>")
     print("    export AWS_SECRET_ACCESS_KEY=<your secret key>")
     print("    export AWS_REGION_NAME=us-west-2")
+    print("  You also need to request access to Claude:")
+    print("   https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html#manage-model-access")
 
 
 _DEFAULT_FALLBACK_MODELS = []
