@@ -43,7 +43,7 @@ Go, Java, LaTeX, PHP, Python, Ruby, Rust, Swift, and TypeScript.
  >  # On Linux/MacOS:
  >  export AWS_ACCESS_KEY_ID=<your-access-key>
  >  export AWS_SECRET_ACCESS_KEY=<your-secret-key>
- >  export AWS_REGION_NAME=us-west-2
+ >  export AWS_REGION_NAME=<your-region>
  >  ```
  >
  >  CWhy will automatically select which AI service to use (OpenAI or AWS Bedrock) when it detects that the appropriate
