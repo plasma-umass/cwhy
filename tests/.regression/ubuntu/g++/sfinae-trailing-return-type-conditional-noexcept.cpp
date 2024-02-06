@@ -31,9 +31,6 @@ This is my error:
 /home/runner/work/cwhy/cwhy/tests/c++/sfinae-trailing-return-type-conditional-noexcept.cpp:7:6: note:   template argument deduction/substitution failed:
 /home/runner/work/cwhy/cwhy/tests/c++/sfinae-trailing-return-type-conditional-noexcept.cpp: In substitution of ‘template<class T> decltype (f(t)) g(T) [with T = int]’:
 /home/runner/work/cwhy/cwhy/tests/c++/sfinae-trailing-return-type-conditional-noexcept.cpp:12:6:   required from here
-
-[...]
-
 /home/runner/work/cwhy/cwhy/tests/c++/sfinae-trailing-return-type-conditional-noexcept.cpp:7:51: error: no matching function for call to ‘f(int&)’
     7 | auto g(T t) noexcept(noexcept(f(t))) -> decltype(f(t)) {
       |                                                  ~^~~

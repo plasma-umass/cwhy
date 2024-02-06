@@ -21,9 +21,6 @@ This is my error:
 /home/runner/work/cwhy/cwhy/tests/c++/redeclared-function.cpp:32:6: error: ambiguating new declaration of ‘void f()’
    32 | void f() {}
       |      ^
-
-[...]
-
 /home/runner/work/cwhy/cwhy/tests/c++/redeclared-function.cpp:30:5: note: old declaration ‘int f()’
    30 | int f();
       |     ^

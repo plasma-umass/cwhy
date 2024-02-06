@@ -68,9 +68,6 @@ This is my error:
  2097 |       erase(__const_iterator __first, __const_iterator __last)
       |       ^     ~~~~~~~~~~~~~~~~~~~~~~~~
 /usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/basic_string.h:2057:7: note: candidate function not viable: no known conversion from 'std::reverse_iterator<__gnu_cxx::__normal_iterator<char *, std::basic_string<char>>>' to 'size_type' (aka 'unsigned long') for 1st argument
-
-[...]
-
  2057 |       erase(size_type __pos = 0, size_type __n = npos)
       |       ^     ~~~~~~~~~~~~~~~~~~~
 /usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/basic_string.h:2077:7: note: candidate function not viable: requires single argument '__position', but 2 arguments were provided

@@ -25,9 +25,6 @@ This is my error:
 /home/runner/work/cwhy/cwhy/tests/c++/redefined-function.cpp:38:5: error: redefinition of ‘int f(int, int)’
    38 | int f(int x, int y) {
       |     ^
-
-[...]
-
 /home/runner/work/cwhy/cwhy/tests/c++/redefined-function.cpp:34:5: note: ‘int f(int, int)’ previously defined here
    34 | int f(int x, int y) {
       |     ^

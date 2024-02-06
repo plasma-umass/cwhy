@@ -25,9 +25,6 @@ This is my error:
    12 |     g(17);
       |     ^
 /home/runner/work/cwhy/cwhy/tests/c++/sfinae-trailing-return-type.cpp:7:6: note: candidate template ignored: substitution failure [with T = int]: no matching function for call to 'f'
-
-[...]
-
     7 | auto g(T t) -> decltype(f(t)) {
       |      ^                  ~
 1 error generated.

@@ -23,9 +23,6 @@ This is my error:
    10 |     g(nullptr);
       |     ^
 /home/runner/work/cwhy/cwhy/tests/c++/sfinae-ambiguous.cpp:5:6: note: candidate template ignored: substitution failure [with T = std::nullptr_t]: call to 'f' is ambiguous
-
-[...]
-
     5 | auto g(T t) -> decltype(f(t)) {
       |      ^                  ~
 1 error generated.
