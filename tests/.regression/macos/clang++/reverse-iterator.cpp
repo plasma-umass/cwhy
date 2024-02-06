@@ -44,9 +44,6 @@ This is my error:
     iterator      erase(const_iterator __first, const_iterator __last);
                   ^
 /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1188:19: note: candidate function not viable: no known conversion from 'std::reverse_iterator<std::__wrap_iter<char *>>' to 'std::basic_string<char>::size_type' (aka 'unsigned long') for 1st argument
-
-[...]
-
     basic_string& erase(size_type __pos = 0, size_type __n = npos);
                   ^
 /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1190:19: note: candidate function not viable: requires single argument '__pos', but 2 arguments were provided

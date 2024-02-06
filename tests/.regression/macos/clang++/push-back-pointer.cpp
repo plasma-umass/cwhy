@@ -40,9 +40,6 @@ This is my error:
     ~~^~~~~~~~~
 /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/vector:735:36: note: candidate function not viable: no known conversion from 'int *' to 'const std::__vector_base<int, std::allocator<int>>::value_type' (aka 'const int') for 1st argument; dereference the argument with *
     _LIBCPP_INLINE_VISIBILITY void push_back(const_reference __x);
-
-[...]
-
                                    ^
 /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/vector:738:36: note: candidate function not viable: no known conversion from 'int *' to 'std::vector<int>::value_type' (aka 'int') for 1st argument; dereference the argument with *
     _LIBCPP_INLINE_VISIBILITY void push_back(value_type&& __x);
