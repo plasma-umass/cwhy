@@ -36,11 +36,11 @@ def converse(args, diagnostic):
 
         choice = completion.choices[0]
         if choice.finish_reason == "tool_calls":
+            responses = []
             for tool_call in choice.message.tool_calls:
                 function_response = fns.dispatch(tool_call.function)
                 if function_response:
-                    conversation.append(choice.message)
-                    conversation.append(
+                    responses.append(
                         {
                             "tool_call_id": tool_call.id,
                             "role": "tool",
@@ -48,6 +48,8 @@ def converse(args, diagnostic):
                             "content": function_response,
                         }
                     )
+            conversation.append(choice.message)
+            conversation.extend(responses)
             dprint()
         elif choice.finish_reason == "stop":
             text = completion.choices[0].message.content
