@@ -72,13 +72,12 @@ by creating a short executable script wrapping the compiler command.
 % CXX=`cwhy --llm=gpt-3.5-turbo --wrapper --- c++` make
 
 # Invoking with CMake, using GPT-4 and clang++.
-% cmake -DCMAKE_CXX_COMPILER=`cwhy --llm=gpt-4 --wrapper --- clang++` ...
+% CWHY_DISABLE=1 cmake -DCMAKE_CXX_COMPILER=`cwhy --llm=gpt-4 --wrapper --- clang++` ...
 ```
 
-When running a configuration tool such as CMake or Autoconf, this may greatly increase configuration time, as these
-tools will occasionally invoke the compiler to check for features, which will fail and invoke CWhy unnecessarily if not
-available on the machine. To circumvent this, `CWHY_DISABLE` can be set in the environment to disable CWhy at
-configuration time.
+Configuration tools such as CMake or Autoconf will occasionally invoke the compiler to check for features, which will
+fail and invoke CWhy unnecessarily if not available on the machine. To circumvent this, `CWHY_DISABLE` can be set in
+the environment to disable CWhy at configuration time.
 
 ```bash
 % CWHY_DISABLE='ON' cmake -DCMAKE_CXX_COMPILER=`cwhy --wrapper --- c++` ...
