@@ -32,6 +32,7 @@ def converse(args, diagnostic):
             model=args.llm,
             messages=conversation,
             tools=fns.as_tools(),
+            timeout=args.timeout,
         )
 
         choice = completion.choices[0]
@@ -100,6 +101,7 @@ def diff_converse(args, diagnostic):
                 "type": "function",
                 "function": {"name": "pick_action"},
             },
+            timeout=args.timeout,
         )
 
         fn = completion.choices[0].message.tool_calls[0].function
@@ -115,6 +117,7 @@ def diff_converse(args, diagnostic):
                 "type": "function",
                 "function": {"name": tool["function"]["name"]},
             },
+            timeout=args.timeout,
         )
 
         choice = completion.choices[0]
