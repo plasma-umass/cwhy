@@ -63,6 +63,7 @@ def complete(args, user_prompt, **kwargs):
         completion = litellm.completion(
             model=args.llm,
             messages=[{"role": "user", "content": user_prompt}],
+            timeout=args.timeout,
             **kwargs,
         )
         return completion
