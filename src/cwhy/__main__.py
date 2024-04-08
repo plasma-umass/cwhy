@@ -118,9 +118,9 @@ def main() -> None:
         help=textwrap.dedent(
             """
                 explain:       explain the diagnostic (default)
-                diff:          \[experimental] generate a diff to fix the diagnostic
-                converse:      \[experimental] interactively converse with CWhy
-                diff-converse: \[experimental] interactively fix errors with CWhy
+                diff:          \\[experimental] generate a diff to fix the diagnostic
+                converse:      \\[experimental] interactively converse with CWhy
+                diff-converse: \\[experimental] interactively fix errors with CWhy
             """
         ).strip(),
     )
