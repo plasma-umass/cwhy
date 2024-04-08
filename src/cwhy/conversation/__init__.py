@@ -1,7 +1,11 @@
 import json
 import textwrap
+import warnings
 
-import litellm  # type: ignore
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    import litellm  # type: ignore
+
 import llm_utils
 
 from . import utils

@@ -2,9 +2,12 @@ import argparse
 import os
 import subprocess
 import sys
-import logging
+import warnings
 
-import litellm  # type: ignore
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    import litellm  # type: ignore
+
 import llm_utils
 from openai import (
     NotFoundError,
@@ -16,11 +19,6 @@ from openai import (
 
 from . import conversation, prompts
 from .print_debug import dprint, enable_debug_printing
-
-
-# Turn off most logging
-litellm.set_verbose = False
-logging.getLogger().setLevel(logging.ERROR)
 
 
 def print_key_info():
