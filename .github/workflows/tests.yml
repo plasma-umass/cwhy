@@ -38,5 +38,5 @@ jobs:
       - name: Install test dependencies
         run: python3 -m pip install pytest pytest-asyncio pytest-forked hypothesis pytest-mock
 
-      - name: run tests
+      - name: Run tests
         run: python3 -m pytest --forked
