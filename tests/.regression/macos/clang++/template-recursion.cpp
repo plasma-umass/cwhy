@@ -1,21 +1,6 @@
 ===================== Prompt =====================
 This is my code:
 
-File `/Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/span`:
-```
-418               enable_if_t<is_convertible_v<const _OtherElementType(*)[], element_type (*)[]>, nullptr_t> = nullptr>
-419     _LIBCPP_INLINE_VISIBILITY
-420     constexpr span(const array<_OtherElementType, _Sz>& __arr) noexcept : __data{__arr.data()}, __size{_Sz} {}
-421 
-422     template <class _Container>
-423     _LIBCPP_INLINE_VISIBILITY
-424         constexpr span(      _Container& __c,
-425             enable_if_t<__is_span_compatible_container<_Container, _Tp>::value, nullptr_t> = nullptr)
-426         : __data{_VSTD::data(__c)}, __size{(size_type) _VSTD::size(__c)} {}
-427 
-428     template <class _Container>
-```
-
 File `/Users/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp`:
 ```
  5 #include <iterator>
@@ -53,11 +38,8 @@ File `/Users/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp`:
 
 This is my error:
 ```
-In file included from /Users/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:7:
-/Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/span:425:71: fatal error: recursive template instantiation exceeded maximum depth of 1024
-            enable_if_t<__is_span_compatible_container<_Container, _Tp>::value, nullptr_t> = nullptr)
-                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-/Users/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:12:51: note: while substituting deduced template arguments into function template 'span' [with _Container = std::span<unsigned long long, 18446744073709551615>]
+fatal error: recursive template instantiation exceeded maximum depth of 1024
+/Users/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:12:51: note: while substituting deduced template arguments into function template 'span' [with _Range = std::span<std::uint64_t> &]
     Matrix(std::span<std::uint64_t> underlying) : underlying(underlying) {
                                                   ^
 /Users/runner/work/cwhy/cwhy/tests/c++/template-recursion.cpp:19:32: note: in instantiation of member function 'Matrix<4294966373, 10>::Matrix' requested here

@@ -15,23 +15,22 @@ File `/Users/runner/work/cwhy/cwhy/tests/c++/reverse-iterator.cpp`:
 34 }
 ```
 
-File `/Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string`:
+File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string`:
 ```
-1181         insert(const_iterator __pos, _ForwardIterator __first, _ForwardIterator __last);
-1182 #ifndef _LIBCPP_CXX03_LANG
-1183     _LIBCPP_INLINE_VISIBILITY
-1184     iterator insert(const_iterator __pos, initializer_list<value_type> __il)
-1185                     {return insert(__pos, __il.begin(), __il.end());}
-1186 #endif // _LIBCPP_CXX03_LANG
-1187 
-1188     basic_string& erase(size_type __pos = 0, size_type __n = npos);
-1189     _LIBCPP_INLINE_VISIBILITY
-1190     iterator      erase(const_iterator __pos);
-1191     _LIBCPP_INLINE_VISIBILITY
-1192     iterator      erase(const_iterator __first, const_iterator __last);
-1193 
-1194     _LIBCPP_INLINE_VISIBILITY
-1195     basic_string& replace(size_type __pos1, size_type __n1, const basic_string& __str);
+1442 #ifndef _LIBCPP_CXX03_LANG
+1443     _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX20
+1444     iterator insert(const_iterator __pos, initializer_list<value_type> __il)
+1445                     {return insert(__pos, __il.begin(), __il.end());}
+1446 #endif // _LIBCPP_CXX03_LANG
+1447 
+1448     _LIBCPP_CONSTEXPR_SINCE_CXX20 basic_string& erase(size_type __pos = 0, size_type __n = npos);
+1449     _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX20
+1450     iterator      erase(const_iterator __pos);
+1451     _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX20
+1452     iterator      erase(const_iterator __first, const_iterator __last);
+1453 
+1454   _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX20 basic_string&
+1455   replace(size_type __pos1, size_type __n1, const basic_string& __str) {
 ```
 
 
@@ -40,13 +39,13 @@ This is my error:
 /Users/runner/work/cwhy/cwhy/tests/c++/reverse-iterator.cpp:32:7: error: no matching member function for call to 'erase'
     s.erase(std::find_if(s.rbegin(), s.rend(), isNotSpace), s.end());
     ~~^~~~~
-/Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1192:19: note: candidate function not viable: no known conversion from 'std::reverse_iterator<std::__wrap_iter<char *>>' to 'std::basic_string<char>::const_iterator' (aka '__wrap_iter<const char *>') for 1st argument
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1452:19: note: candidate function not viable: no known conversion from 'std::reverse_iterator<std::__wrap_iter<char *>>' to 'const_iterator' (aka '__wrap_iter<const char *>') for 1st argument
     iterator      erase(const_iterator __first, const_iterator __last);
                   ^
-/Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1188:19: note: candidate function not viable: no known conversion from 'std::reverse_iterator<std::__wrap_iter<char *>>' to 'std::basic_string<char>::size_type' (aka 'unsigned long') for 1st argument
-    basic_string& erase(size_type __pos = 0, size_type __n = npos);
-                  ^
-/Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1190:19: note: candidate function not viable: requires single argument '__pos', but 2 arguments were provided
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1448:49: note: candidate function not viable: no known conversion from 'std::reverse_iterator<std::__wrap_iter<char *>>' to 'size_type' (aka 'unsigned long') for 1st argument
+    _LIBCPP_CONSTEXPR_SINCE_CXX20 basic_string& erase(size_type __pos = 0, size_type __n = npos);
+                                                ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1450:19: note: candidate function not viable: requires single argument '__pos', but 2 arguments were provided
     iterator      erase(const_iterator __pos);
                   ^
 1 error generated.
