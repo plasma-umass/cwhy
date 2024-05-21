@@ -14,47 +14,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y gcc-12
-        curl -sSf https://apt.llvm.org/llvm.sh | sudo bash -s -- 17 all
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y gcc-12
+          curl -sSf https://apt.llvm.org/llvm.sh | sudo bash -s -- 17 all
 
-    - name: Install CWhy
-      run: |
-        python3 -m pip install --upgrade pip
-        python3 -m pip install .
+      - name: Install CWhy
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install .
 
-    - name: Check prompts
-      run: python3 -m tests.regression --platform ubuntu --check
+      - name: Check prompts
+        run: python3 -m tests.regression --platform ubuntu --check
 
   check-macos:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install CWhy
-      run: |
-        python3 -m pip install --upgrade pip
-        pip install --upgrade setuptools # https://stackoverflow.com/questions/7446187
-        python3 -m pip install .
+      - name: Install CWhy
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install --upgrade setuptools # https://stackoverflow.com/questions/7446187
+          python3 -m pip install .
 
-    - name: Check prompts
-      run: python3 -m tests.regression --platform macos --check
+      - name: Check prompts
+        run: python3 -m tests.regression --platform macos --check
 
   check-windows:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install CWhy
-      run: |
-        python3 -m pip install --upgrade pip
-        python3 -m pip install .
+      - name: Install CWhy
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install .
 
-    - name: Check prompts
-      run: python3 -m tests.regression --platform windows --check
+      - name: Check prompts
+        run: python3 -m tests.regression --platform windows --check
