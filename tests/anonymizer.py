@@ -2,12 +2,12 @@
 
 import argparse
 import tempfile
-from typing import Tuple
+from typing import Optional, Tuple
 
 
-def anonymize(path: str) -> Tuple[str, str]:
-    with open(path) as file:
-        content = file.read()
+def anonymize(path: str) -> Tuple[str, Optional[str]]:
+    with open(path) as original_file:
+        content = original_file.read()
 
         code = content
         answer = None
@@ -21,11 +21,11 @@ def anonymize(path: str) -> Tuple[str, str]:
         except ValueError:
             pass
 
-    file = tempfile.NamedTemporaryFile(delete=False)
-    file.write(code.encode("utf-8"))
-    file.close()
+    temporary_file = tempfile.NamedTemporaryFile(delete=False)
+    temporary_file.write(code.encode("utf-8"))
+    temporary_file.close()
 
-    return file.name, answer
+    return temporary_file.name, answer
 
 
 if __name__ == "__main__":
