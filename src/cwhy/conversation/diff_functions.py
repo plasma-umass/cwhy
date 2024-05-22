@@ -18,10 +18,10 @@ class DiffFunctions:
 
     def as_tools(self):
         return self.explain_functions.as_tools() + [
-            {"type": "function", "function": schema}
-            for schema in [
-                self.apply_modification_schema(),
-                self.try_compiling_schema(),
+            {"type": "function", "function": json.loads(f.__doc__)}
+            for f in [
+                self.apply_modification,
+                self.try_compiling,
             ]
         ]
 
@@ -45,8 +45,15 @@ class DiffFunctions:
             traceback.print_exc()
             return None
 
-    def apply_modification_schema(self):
-        return {
+    def apply_modification(
+        self,
+        filename: str,
+        start_line_number: int,
+        number_lines_remove: int,
+        replacement: str,
+    ) -> Optional[str]:
+        """
+        {
             "name": "apply_modification",
             "description": "Applies a single modification to the source file with the goal of fixing any existing compilation errors.",
             "parameters": {
@@ -77,14 +84,7 @@ class DiffFunctions:
                 ],
             },
         }
-
-    def apply_modification(
-        self,
-        filename: str,
-        start_line_number: int,
-        number_lines_remove: int,
-        replacement: str,
-    ) -> Optional[str]:
+        """
         with open(filename, "r") as f:
             lines = [line.rstrip() for line in f.readlines()]
 
@@ -118,13 +118,13 @@ class DiffFunctions:
             f.write("\n".join(lines))
         return "Modification applied."
 
-    def try_compiling_schema(self):
-        return {
+    def try_compiling(self) -> Optional[str]:
+        """
+        {
             "name": "try_compiling",
             "description": "Attempts to compile the code again after the user has made changes. Returns the new error message if there is one.",
         }
-
-    def try_compiling(self) -> Optional[str]:
+        """
         process = subprocess.run(
             self.args.command,
             stdout=subprocess.PIPE,

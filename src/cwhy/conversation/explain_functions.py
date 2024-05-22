@@ -14,11 +14,11 @@ class ExplainFunctions:
 
     def as_tools(self):
         return [
-            {"type": "function", "function": schema}
-            for schema in [
-                self.get_compile_or_run_command_schema(),
-                self.get_code_surrounding_schema(),
-                self.list_directory_schema(),
+            {"type": "function", "function": json.loads(f.__doc__)}
+            for f in [
+                self.get_compile_or_run_command,
+                self.get_code_surrounding,
+                self.list_directory,
             ]
         ]
 
@@ -40,19 +40,20 @@ class ExplainFunctions:
             dprint(e)
         return None
 
-    def get_compile_or_run_command_schema(self):
-        return {
+    def get_compile_or_run_command(self) -> str:
+        """
+        {
             "name": "get_compile_or_run_command",
             "description": "Returns the command used to compile or run the code. This will include any flags and options used.",
         }
-
-    def get_compile_or_run_command(self) -> str:
+        """
         result = " ".join(self.args.command)
         dprint(result)
         return result
 
-    def get_code_surrounding_schema(self):
-        return {
+    def get_code_surrounding(self, filename: str, lineno: int) -> str:
+        """
+        {
             "name": "get_code_surrounding",
             "description": "Returns the code in the given file surrounding and including the provided line number.",
             "parameters": {
@@ -70,15 +71,15 @@ class ExplainFunctions:
                 "required": ["filename", "lineno"],
             },
         }
-
-    def get_code_surrounding(self, filename: str, lineno: int) -> str:
+        """
         (lines, first) = llm_utils.read_lines(filename, lineno - 7, lineno + 3)
         result = llm_utils.number_group_of_lines(lines, first)
         dprint(result)
         return result
 
-    def list_directory_schema(self):
-        return {
+    def list_directory(self, path: str) -> str:
+        """
+        {
             "name": "list_directory",
             "description": "Returns a list of all files and directories in the given directory.",
             "parameters": {
@@ -92,8 +93,7 @@ class ExplainFunctions:
                 "required": ["path"],
             },
         }
-
-    def list_directory(self, path: str) -> str:
+        """
         entries = os.listdir(path)
         for i in range(len(entries)):
             if os.path.isdir(os.path.join(path, entries[i])):
