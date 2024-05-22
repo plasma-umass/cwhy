@@ -21,7 +21,7 @@ from . import conversation, prompts
 from .print_debug import dprint, enable_debug_printing
 
 
-def print_key_info():
+def print_key_info() -> None:
     dprint("You need a key (or keys) from an AI service to use CWhy.")
     dprint()
     dprint("OpenAI:")

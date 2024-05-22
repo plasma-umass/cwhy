@@ -4,7 +4,7 @@ import json
 import sys
 
 
-def apply(data):
+def apply(data) -> None:
     # Sort modifications by reverse start line number to apply them in that order.
     data["modifications"].sort(key=lambda m: m["start-line-number"], reverse=True)
 

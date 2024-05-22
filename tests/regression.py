@@ -10,7 +10,7 @@ from . import prepare
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
-def get_cwhy_prompt(invocation):
+def get_cwhy_prompt(invocation) -> str:
     process = subprocess.run(
         f"cwhy --show-prompt --- {invocation}",
         text=True,
@@ -28,7 +28,7 @@ def get_cwhy_prompt(invocation):
     return stdout
 
 
-def main(args):
+def main(args) -> None:
     prepare.clean()
     prepare.prepare_all()
 

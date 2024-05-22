@@ -2,9 +2,10 @@
 
 import argparse
 import tempfile
+from typing import Tuple
 
 
-def anonymize(path):
+def anonymize(path: str) -> Tuple[str, str]:
     with open(path) as file:
         content = file.read()
 

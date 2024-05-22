@@ -7,7 +7,7 @@ import yaml
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
-def prepare(language):
+def prepare(language) -> None:
     try:
         with open(os.path.join(ROOT, language, "manifest.yml"), "r") as stream:
             manifest = yaml.load(stream, yaml.Loader)
@@ -26,11 +26,11 @@ def prepare(language):
             subprocess.run(command, shell=True).check_returncode()
 
 
-def prepare_all():
+def prepare_all() -> None:
     for directory in os.listdir(ROOT):
         if os.path.isdir(os.path.join(ROOT, directory)):
             prepare(directory)
 
 
-def clean():
+def clean() -> None:
     shutil.rmtree(os.path.join(ROOT, "_deps"), ignore_errors=True)

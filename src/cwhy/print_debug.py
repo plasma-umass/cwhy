@@ -5,7 +5,10 @@ _debug = False
 _INFO_WIDTH = 30
 
 
-def dprint(*objects, sep=" ", end="\n", file=None, flush=False):
+def dprint(
+    *objects, sep: str = " ", end: str = "\n", file=None, flush: bool = False
+) -> None:
+    global _debug
     if not _debug:
         return print(*objects, sep=sep, end=end, file=file, flush=flush)
 
@@ -25,6 +28,6 @@ def dprint(*objects, sep=" ", end="\n", file=None, flush=False):
         print(info, line, file=file, flush=flush)
 
 
-def enable_debug_printing():
+def enable_debug_printing() -> None:
     global _debug
     _debug = True
