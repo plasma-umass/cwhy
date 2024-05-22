@@ -81,7 +81,7 @@ class CWhyArgumentFormatter(argparse.HelpFormatter):
 
 def main() -> None:
     description = textwrap.dedent(
-        rf"""
+        r"""
             [b]CWhy[/b]: Explains and proposes fixes for compile-time errors for many programming languages.
             [blue][link=https://github.com/plasma-umass/cwhy]https://github.com/plasma-umass/cwhy[/link][/blue]
 
