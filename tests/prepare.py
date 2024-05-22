@@ -7,7 +7,7 @@ import yaml
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
-def prepare(language) -> None:
+def prepare(language: str) -> None:
     try:
         with open(os.path.join(ROOT, language, "manifest.yml"), "r") as stream:
             manifest = yaml.load(stream, yaml.Loader)

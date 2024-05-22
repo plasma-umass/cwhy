@@ -2,6 +2,7 @@ import argparse
 import os
 import subprocess
 import sys
+from typing import Any
 import warnings
 
 with warnings.catch_warnings():
@@ -56,7 +57,7 @@ else:
     sys.exit(1)
 
 
-def complete(args, user_prompt, **kwargs):
+def complete(args: argparse.Namespace, user_prompt: str, **kwargs: Any):
     try:
         completion = litellm.completion(
             model=args.llm,
@@ -198,13 +199,15 @@ def main(args: argparse.Namespace) -> None:
     sys.exit(process.returncode)
 
 
-def evaluate_text_prompt(args, prompt, wrap=True, **kwargs):
+def evaluate_text_prompt(
+    args: argparse.Namespace, prompt: str, wrap: bool = True, **kwargs: Any
+) -> str:
     completion = complete(args, prompt, **kwargs)
 
     msg = f"Analysis from {args.llm}:"
     dprint(msg)
     dprint("-" * len(msg))
-    text = completion.choices[0].message.content
+    text: str = completion.choices[0].message.content
 
     if wrap:
         text = llm_utils.word_wrap_except_code_blocks(text)

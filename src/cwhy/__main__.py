@@ -60,16 +60,16 @@ class RichArgParser(argparse.ArgumentParser):
 
 class CWhyArgumentFormatter(argparse.HelpFormatter):
     # RawDescriptionHelpFormatter.
-    def _fill_text(self, text, width, indent):
+    def _fill_text(self, text, width, indent):  # type: ignore
         return "".join(indent + line for line in text.splitlines(keepends=True))
 
     # RawTextHelpFormatter.
-    def _split_lines(self, text, width):
+    def _split_lines(self, text, width):  # type: ignore
         return text.splitlines()
 
     # ArgumentDefaultsHelpFormatter.
     # Ignore if help message is multiline.
-    def _get_help_string(self, action):
+    def _get_help_string(self, action):  # type: ignore
         help = action.help
         if "\n" not in help and "%(default)" not in action.help:
             if action.default is not argparse.SUPPRESS:
