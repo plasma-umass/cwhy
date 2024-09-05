@@ -1,7 +1,7 @@
 ===================== Prompt =====================
 This is my code:
 
-File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/compressed_pair.h`:
+File `/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/compressed_pair.h`:
 ```
 71 struct __compressed_pair_elem<_Tp, _Idx, true> : private _Tp {
 72   using _ParamT = _Tp;
@@ -16,7 +16,7 @@ File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__m
 81   template <class _Up, class = __enable_if_t<!is_same<__compressed_pair_elem, __decay_t<_Up> >::value> >
 ```
 
-File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/compressed_pair.h`:
+File `/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/compressed_pair.h`:
 ```
 116   >
 117   _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR
@@ -30,7 +30,7 @@ File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__m
 125   template <class... _Args1, class... _Args2>
 ```
 
-File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
+File `/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
 ```
 690     using __hash_node_destructor<_Alloc>::__hash_node_destructor;
 691 };
@@ -45,7 +45,7 @@ File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__h
 700     "the specified comparator is required to be copy constructible");
 ```
 
-File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
+File `/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
 ```
 706 #ifndef _LIBCPP_CXX03_LANG
 707     _LIBCPP_DIAGNOSE_WARNING(!__invokable<_Equal const&, _Key const&, _Key const&>::value,
@@ -59,7 +59,7 @@ File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__h
 715 // This dummy overload is used so that the compiler won't emit a spurious
 ```
 
-File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
+File `/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
 ```
 897     _LIBCPP_INLINE_VISIBILITY
 898     pair<iterator, bool> __emplace_unique_impl(_Args&&... __args);
@@ -72,7 +72,7 @@ File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__h
 905     }
 ```
 
-File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
+File `/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
 ```
 919     }
 920 
@@ -86,7 +86,7 @@ File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__h
 928     _LIBCPP_INLINE_VISIBILITY
 ```
 
-File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
+File `/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
 ```
 1202     _NOEXCEPT_(
 1203         is_nothrow_default_constructible<__bucket_list>::value &&
@@ -100,7 +100,7 @@ File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__h
 1211 }
 ```
 
-File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
+File `/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
 ```
 1674 }
 1675 
@@ -113,7 +113,7 @@ File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__h
 1682         __node_insert_unique_prepare(__nd->__hash(), __nd->__value_);
 ```
 
-File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
+File `/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
 ```
 1882 template <class _Tp, class _Hash, class _Equal, class _Alloc>
 1883 template <class... _Args>
@@ -127,7 +127,7 @@ File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__h
 1891     return __r;
 ```
 
-File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
+File `/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table`:
 ```
 2191     static_assert(!__is_hash_value_type<_Args...>::value,
 2192                   "Construct cannot be called with a hash value type");
@@ -145,65 +145,57 @@ File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__h
 This is my error:
 ```
 In file included from /Users/runner/work/cwhy/cwhy/tests/c++/missing-hash.cpp:31:
-In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/functional:526:
-In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/boyer_moore_searcher.h:22:
-In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/shared_ptr.h:27:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/compressed_pair.h:78:52: error: call to implicitly-deleted default constructor of 'std::hash<std::pair<int, int>>'
+In file included from /Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/functional:526:
+In file included from /Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/boyer_moore_searcher.h:22:
+In file included from /Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/shared_ptr.h:27:
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/compressed_pair.h:78:52: error: call to implicitly-deleted default constructor of 'std::hash<std::pair<int, int>>'
   _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR explicit __compressed_pair_elem(__default_init_tag) {}
                                                    ^
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/compressed_pair.h:122:89: note: in instantiation of member function 'std::__compressed_pair_elem<std::hash<std::pair<int, int>>, 1>::__compressed_pair_elem' requested here
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/compressed_pair.h:122:89: note: in instantiation of member function 'std::__compressed_pair_elem<std::hash<std::pair<int, int>>, 1>::__compressed_pair_elem' requested here
   explicit __compressed_pair(_U1&& __t1, _U2&& __t2) : _Base1(std::forward<_U1>(__t1)), _Base2(std::forward<_U2>(__t2)) {}
                                                                                         ^
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:1208:7: note: in instantiation of function template specialization 'std::__compressed_pair<unsigned long, std::hash<std::pair<int, int>>>::__compressed_pair<int, std::__default_init_tag>' requested here
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:1208:7: note: in instantiation of function template specialization 'std::__compressed_pair<unsigned long, std::hash<std::pair<int, int>>>::__compressed_pair<int, std::__default_init_tag>' requested here
     : __p2_(0, __default_init_tag()),
       ^
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_set:621:5: note: in instantiation of member function 'std::__hash_table<std::pair<int, int>, std::hash<std::pair<int, int>>, std::equal_to<std::pair<int, int>>, std::allocator<std::pair<int, int>>>::__hash_table' requested here
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_set:621:5: note: in instantiation of member function 'std::__hash_table<std::pair<int, int>, std::hash<std::pair<int, int>>, std::equal_to<std::pair<int, int>>, std::allocator<std::pair<int, int>>>::__hash_table' requested here
     unordered_set()
     ^
 /Users/runner/work/cwhy/cwhy/tests/c++/missing-hash.cpp:43:45: note: in instantiation of member function 'std::unordered_set<std::pair<int, int>>::unordered_set' requested here
     std::unordered_set<std::pair<int, int>> visited;
                                             ^
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/hash.h:639:36: note: default constructor of 'hash<std::pair<int, int>>' is implicitly deleted because base class '__enum_hash<pair<int, int>>' has a deleted default constructor
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/hash.h:639:36: note: default constructor of 'hash<std::pair<int, int>>' is implicitly deleted because base class '__enum_hash<pair<int, int>>' has a deleted default constructor
 struct _LIBCPP_TEMPLATE_VIS hash : public __enum_hash<_Tp>
                                    ^
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/hash.h:633:5: note: '__enum_hash' has been explicitly marked deleted here
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/hash.h:633:5: note: '__enum_hash' has been explicitly marked deleted here
     __enum_hash() = delete;
     ^
 In file included from /Users/runner/work/cwhy/cwhy/tests/c++/missing-hash.cpp:31:
-In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/functional:526:
-In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/boyer_moore_searcher.h:26:
-In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_map:592:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:697:5: error: static assertion failed due to requirement 'integral_constant<bool, false>::value': the specified hash does not meet the Hash requirements
-    static_assert(__check_hash_requirements<_Key, _Hash>::value,
-    ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/functional:526:
+In file included from /Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/boyer_moore_searcher.h:26:
 
 [...]
 
-      return __emplace_unique_extract_key(_VSTD::forward<_Pp>(__x),
-             ^
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_set:760:30: note: in instantiation of function template specialization 'std::__hash_table<std::pair<int, int>, std::hash<std::pair<int, int>>, std::equal_to<std::pair<int, int>>, std::allocator<std::pair<int, int>>>::__emplace_unique<const std::pair<int, int> &>' requested here
-            {return __table_.__emplace_unique(_VSTD::forward<_Args>(__args)...);}
                              ^
 /Users/runner/work/cwhy/cwhy/tests/c++/missing-hash.cpp:50:44: note: in instantiation of function template specialization 'std::unordered_set<std::pair<int, int>>::emplace<const std::pair<int, int> &>' requested here
         const auto [_, inserted] = visited.emplace(n->position);
                                            ^
 In file included from /Users/runner/work/cwhy/cwhy/tests/c++/missing-hash.cpp:31:
-In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/functional:526:
-In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/boyer_moore_searcher.h:26:
-In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_map:592:
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:1680:21: error: type 'hasher' (aka 'std::hash<std::pair<int, int>>') does not provide a call operator
+In file included from /Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/functional:526:
+In file included from /Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/boyer_moore_searcher.h:26:
+In file included from /Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_map:592:
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:1680:21: error: type 'hasher' (aka 'std::hash<std::pair<int, int>>') does not provide a call operator
     __nd->__hash_ = hash_function()(__nd->__value_);
                     ^~~~~~~~~~~~~~~
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:1888:32: note: in instantiation of member function 'std::__hash_table<std::pair<int, int>, std::hash<std::pair<int, int>>, std::equal_to<std::pair<int, int>>, std::allocator<std::pair<int, int>>>::__node_insert_unique' requested here
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:1888:32: note: in instantiation of member function 'std::__hash_table<std::pair<int, int>, std::hash<std::pair<int, int>>, std::equal_to<std::pair<int, int>>, std::allocator<std::pair<int, int>>>::__node_insert_unique' requested here
     pair<iterator, bool> __r = __node_insert_unique(__h.get());
                                ^
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:925:14: note: in instantiation of function template specialization 'std::__hash_table<std::pair<int, int>, std::hash<std::pair<int, int>>, std::equal_to<std::pair<int, int>>, std::allocator<std::pair<int, int>>>::__emplace_unique_impl<const std::pair<int, int> &>' requested here
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:925:14: note: in instantiation of function template specialization 'std::__hash_table<std::pair<int, int>, std::hash<std::pair<int, int>>, std::equal_to<std::pair<int, int>>, std::allocator<std::pair<int, int>>>::__emplace_unique_impl<const std::pair<int, int> &>' requested here
       return __emplace_unique_impl(_VSTD::forward<_Pp>(__x));
              ^
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:903:14: note: in instantiation of function template specialization 'std::__hash_table<std::pair<int, int>, std::hash<std::pair<int, int>>, std::equal_to<std::pair<int, int>>, std::allocator<std::pair<int, int>>>::__emplace_unique_extract_key<const std::pair<int, int> &>' requested here
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:903:14: note: in instantiation of function template specialization 'std::__hash_table<std::pair<int, int>, std::hash<std::pair<int, int>>, std::equal_to<std::pair<int, int>>, std::allocator<std::pair<int, int>>>::__emplace_unique_extract_key<const std::pair<int, int> &>' requested here
       return __emplace_unique_extract_key(_VSTD::forward<_Pp>(__x),
              ^
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_set:760:30: note: in instantiation of function template specialization 'std::__hash_table<std::pair<int, int>, std::hash<std::pair<int, int>>, std::equal_to<std::pair<int, int>>, std::allocator<std::pair<int, int>>>::__emplace_unique<const std::pair<int, int> &>' requested here
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_set:760:30: note: in instantiation of function template specialization 'std::__hash_table<std::pair<int, int>, std::hash<std::pair<int, int>>, std::equal_to<std::pair<int, int>>, std::allocator<std::pair<int, int>>>::__emplace_unique<const std::pair<int, int> &>' requested here
             {return __table_.__emplace_unique(_VSTD::forward<_Args>(__args)...);}
                              ^
 /Users/runner/work/cwhy/cwhy/tests/c++/missing-hash.cpp:50:44: note: in instantiation of function template specialization 'std::unordered_set<std::pair<int, int>>::emplace<const std::pair<int, int> &>' requested here

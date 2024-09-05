@@ -14,7 +14,7 @@ File `/Users/runner/work/cwhy/cwhy/tests/c++/overload-resolution-failure-transfo
 42 }
 ```
 
-File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/transform.h`:
+File `/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/transform.h`:
 ```
 16 #endif
 17 
@@ -45,10 +45,10 @@ This is my error:
 /Users/runner/work/cwhy/cwhy/tests/c++/overload-resolution-failure-transform-missing-argument.cpp:41:5: error: no matching function for call to 'transform'
     std::transform(v.begin(), v.end(), [](int i) { return i * i; });
     ^~~~~~~~~~~~~~
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/transform.h:23:1: note: candidate function template not viable: requires 4 arguments, but 3 were provided
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/transform.h:23:1: note: candidate function template not viable: requires 4 arguments, but 3 were provided
 transform(_InputIterator __first, _InputIterator __last, _OutputIterator __result, _UnaryOperation __op)
 ^
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/transform.h:33:1: note: candidate function template not viable: requires 5 arguments, but 3 were provided
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/transform.h:33:1: note: candidate function template not viable: requires 5 arguments, but 3 were provided
 transform(_InputIterator1 __first1, _InputIterator1 __last1, _InputIterator2 __first2,
 ^
 1 error generated.
