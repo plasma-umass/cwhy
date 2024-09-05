@@ -15,7 +15,7 @@ File `/Users/runner/work/cwhy/cwhy/tests/c++/reverse-iterator.cpp`:
 34 }
 ```
 
-File `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string`:
+File `/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string`:
 ```
 1442 #ifndef _LIBCPP_CXX03_LANG
 1443     _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX20
@@ -39,13 +39,13 @@ This is my error:
 /Users/runner/work/cwhy/cwhy/tests/c++/reverse-iterator.cpp:32:7: error: no matching member function for call to 'erase'
     s.erase(std::find_if(s.rbegin(), s.rend(), isNotSpace), s.end());
     ~~^~~~~
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1452:19: note: candidate function not viable: no known conversion from 'std::reverse_iterator<std::__wrap_iter<char *>>' to 'const_iterator' (aka '__wrap_iter<const char *>') for 1st argument
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1452:19: note: candidate function not viable: no known conversion from 'std::reverse_iterator<std::__wrap_iter<char *>>' to 'const_iterator' (aka '__wrap_iter<const char *>') for 1st argument
     iterator      erase(const_iterator __first, const_iterator __last);
                   ^
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1448:49: note: candidate function not viable: no known conversion from 'std::reverse_iterator<std::__wrap_iter<char *>>' to 'size_type' (aka 'unsigned long') for 1st argument
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1448:49: note: candidate function not viable: no known conversion from 'std::reverse_iterator<std::__wrap_iter<char *>>' to 'size_type' (aka 'unsigned long') for 1st argument
     _LIBCPP_CONSTEXPR_SINCE_CXX20 basic_string& erase(size_type __pos = 0, size_type __n = npos);
                                                 ^
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1450:19: note: candidate function not viable: requires single argument '__pos', but 2 arguments were provided
+/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string:1450:19: note: candidate function not viable: requires single argument '__pos', but 2 arguments were provided
     iterator      erase(const_iterator __pos);
                   ^
 1 error generated.
