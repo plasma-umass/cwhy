@@ -147,13 +147,9 @@ This is my error:
 /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/bits/hashtable_policy.h:1261:7: note: explicitly defaulted function was implicitly deleted here
  1261 |       _Hash_code_base() = default;
       |       ^
-/usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/bits/hashtable_policy.h:1240:7: note: default constructor of '_Hash_code_base<std::pair<int, int>, std::pair<int, int>, std::__detail::_Identity, std::hash<std::pair<int, int>>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, true>' is implicitly deleted because base class '_Hashtable_ebo_helper<1, hash<pair<int, int>>>' has a deleted destructor
- 1240 |     : private _Hashtable_ebo_helper<1, _Hash>
 
 [...]
 
-In file included from /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/functional:61:
-In file included from /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/unordered_map:46:
 In file included from /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/bits/hashtable.h:35:
 /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/bits/hashtable_policy.h:1268:16: error: static assertion failed due to requirement 'std::__is_invocable<const std::hash<std::pair<int, int>> &, const std::pair<int, int> &>{}': hash function must be invocable with an argument of key type
  1268 |         static_assert(__is_invocable<const _Hash&, const _Key&>{},

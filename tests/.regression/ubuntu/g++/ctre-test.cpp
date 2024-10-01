@@ -174,7 +174,6 @@ In file included from /usr/include/c++/12/bits/stl_pair.h:60,
 
 [...]
 
-      |                ~~~~~~~~^~
 /home/runner/work/cwhy/cwhy/tests/_deps/c++/ctre-test.cpp/install/include/ctre/../ctll/fixed_string.hpp:44:28: note: candidate: ‘template<long unsigned int N> fixed_string(ctll::fixed_string<N>)-> ctll::fixed_string<N>’
    44 | template <size_t N> struct fixed_string {
       |                            ^~~~~~~~~~~~
