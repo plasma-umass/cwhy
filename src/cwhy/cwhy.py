@@ -104,8 +104,10 @@ def evaluate(args, stdin):
         assert len(tool_calls) == 1
         return tool_calls[0].function.arguments
     elif args.subcommand == "converse":
+        assert litellm.supports_function_calling(model=args.llm)
         return conversation.converse(args, stdin)
     elif args.subcommand == "diff-converse":
+        assert litellm.supports_function_calling(model=args.llm)
         return conversation.diff_converse(args, stdin)
     else:
         raise Exception(f"unknown subcommand: {args.subcommand}")
