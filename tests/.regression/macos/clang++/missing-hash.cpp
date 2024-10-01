@@ -171,7 +171,6 @@ struct _LIBCPP_TEMPLATE_VIS hash : public __enum_hash<_Tp>
     ^
 In file included from /Users/runner/work/cwhy/cwhy/tests/c++/missing-hash.cpp:31:
 In file included from /Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/functional:526:
-In file included from /Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/boyer_moore_searcher.h:26:
 
 [...]
 
