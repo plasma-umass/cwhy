@@ -48,7 +48,6 @@ In file included from /usr/include/c++/12/iostream:39,
   166 |       operator<<(long __n)
       |       ^~~~~~~~
 /usr/include/c++/12/ostream:166:23: note:   no known conversion for argument 1 from ‘Cat’ to ‘long int’
-  166 |       operator<<(long __n)
 
 [...]
 

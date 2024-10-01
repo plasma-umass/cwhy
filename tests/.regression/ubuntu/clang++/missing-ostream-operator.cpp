@@ -66,14 +66,9 @@ This is my error:
   615 |     operator<<(basic_ostream<char, _Traits>& __out, const char* __s)
       |     ^                                               ~~~~~~~~~~~~~~~
 /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/ostream:628:5: note: candidate function template not viable: no known conversion from 'Cat' to 'const signed char *' for 2nd argument
-  628 |     operator<<(basic_ostream<char, _Traits>& __out, const signed char* __s)
-      |     ^                                               ~~~~~~~~~~~~~~~~~~~~~~
 
 [...]
 
-  178 |       operator<<(short __n);
-      |       ^          ~~~~~~~~~
-/usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/ostream:181:7: note: candidate function not viable: no known conversion from 'Cat' to 'unsigned short' for 1st argument
   181 |       operator<<(unsigned short __n)
       |       ^          ~~~~~~~~~~~~~~~~~~
 /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/ostream:189:7: note: candidate function not viable: no known conversion from 'Cat' to 'int' for 1st argument
