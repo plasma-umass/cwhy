@@ -61,28 +61,28 @@ class DiffFunctions:
                 "properties": {
                     "filename": {
                         "type": "string",
-                        "description": "The filename to modify.",
+                        "description": "The filename to modify."
                     },
                     "start-line-number": {
                         "type": "integer",
-                        "description": "The line number to start replacing at.",
+                        "description": "The line number to start replacing at."
                     },
                     "number-lines-remove": {
                         "type": "integer",
-                        "description": "The number of lines to remove, which can be zero to only add new code.",
+                        "description": "The number of lines to remove, which can be zero to only add new code."
                     },
                     "replacement": {
                         "type": "string",
-                        "description": "The replacement code, which can be blank to simply remove lines.",
-                    },
+                        "description": "The replacement code, which can be blank to simply remove lines."
+                    }
                 },
                 "required": [
                     "filename",
                     "start-line-number",
                     "number-lines-remove",
-                    "replacement",
-                ],
-            },
+                    "replacement"
+                ]
+            }
         }
         """
         with open(filename, "r") as f:
@@ -122,7 +122,7 @@ class DiffFunctions:
         """
         {
             "name": "try_compiling",
-            "description": "Attempts to compile the code again after the user has made changes. Returns the new error message if there is one.",
+            "description": "Attempts to compile the code again after the user has made changes. Returns the new error message if there is one."
         }
         """
         process = subprocess.run(

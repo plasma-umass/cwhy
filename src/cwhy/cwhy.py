@@ -9,6 +9,8 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     import litellm  # type: ignore
 
+litellm.suppress_debug_info = True
+
 import llm_utils
 from openai import (
     NotFoundError,
@@ -20,41 +22,6 @@ from openai import (
 
 from . import conversation, prompts
 from .print_debug import dprint, enable_debug_printing
-
-
-def print_key_info() -> None:
-    dprint("You need a key (or keys) from an AI service to use CWhy.")
-    dprint()
-    dprint("OpenAI:")
-    dprint("  You can get a key here: https://platform.openai.com/api-keys")
-    dprint("  Set the environment variable OPENAI_API_KEY to your key value:")
-    dprint("    export OPENAI_API_KEY=<your key>")
-    dprint()
-    dprint("Bedrock:")
-    dprint("  To use Bedrock, you need an AWS account.")
-    dprint("  Set the following environment variables:")
-    dprint("    export AWS_ACCESS_KEY_ID=<your key id>")
-    dprint("    export AWS_SECRET_ACCESS_KEY=<your secret key>")
-    dprint("    export AWS_REGION_NAME=us-west-2")
-    dprint("  You also need to request access to Claude:")
-    dprint(
-        "   https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html#manage-model-access"
-    )
-
-
-_DEFAULT_FALLBACK_MODELS = []
-
-if "OPENAI_API_KEY" in os.environ:
-    _DEFAULT_FALLBACK_MODELS = ["openai/gpt-4", "openai/gpt-3.5-turbo"]
-elif {
-    "AWS_ACCESS_KEY_ID",
-    "AWS_SECRET_ACCESS_KEY",
-    "AWS_REGION_NAME",
-} <= os.environ.keys():
-    _DEFAULT_FALLBACK_MODELS = ["bedrock/anthropic.claude-v2:1"]
-else:
-    print_key_info()
-    sys.exit(1)
 
 
 def complete(args: argparse.Namespace, user_prompt: str, **kwargs: Any):
@@ -128,21 +95,7 @@ def evaluate_diff(args, stdin):
     return completion
 
 
-def evaluate_with_fallback(args, stdin):
-    for i, model in enumerate(_DEFAULT_FALLBACK_MODELS):
-        if i != 0:
-            dprint(f"Falling back to {model}...")
-        args.llm = model
-        try:
-            return evaluate(args, stdin)
-        except NotFoundError:
-            continue
-
-
 def evaluate(args, stdin):
-    if args.llm == "default":
-        return evaluate_with_fallback(args, stdin)
-
     if args.subcommand == "explain":
         return evaluate_text_prompt(args, prompts.explain_prompt(args, stdin))
     elif args.subcommand == "diff":
@@ -174,8 +127,6 @@ def main(args: argparse.Namespace) -> None:
 
     if args.show_prompt:
         dprint("===================== Prompt =====================")
-        if args.llm == "default":
-            args.llm = _DEFAULT_FALLBACK_MODELS[0]
         if args.subcommand == "explain":
             dprint(prompts.explain_prompt(args, process.stderr))
         elif args.subcommand == "diff":
@@ -191,9 +142,8 @@ def main(args: argparse.Namespace) -> None:
     try:
         result = evaluate(args, process.stderr if process.stderr else process.stdout)
         dprint(result)
-    except OpenAIError:
-        print_key_info()
-        sys.exit(1)
+    except OpenAIError as e:
+        dprint(str(e).strip())
     dprint("==================================================")
 
     sys.exit(process.returncode)

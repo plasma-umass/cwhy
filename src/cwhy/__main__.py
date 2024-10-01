@@ -128,13 +128,8 @@ def main() -> None:
     parser.add_argument(
         "--llm",
         type=str,
-        default="default",
-        help=textwrap.dedent(
-            """
-                the language model to use, e.g., 'gpt-3.5-turbo' or 'gpt-4'
-                the default mode tries gpt-4 and falls back to gpt-3.5-turbo
-            """
-        ).strip(),
+        default="openai/gpt-4o-mini",
+        help="the language model to use"
     )
     parser.add_argument(
         "--timeout",

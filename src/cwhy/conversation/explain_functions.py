@@ -44,7 +44,7 @@ class ExplainFunctions:
         """
         {
             "name": "get_compile_or_run_command",
-            "description": "Returns the command used to compile or run the code. This will include any flags and options used.",
+            "description": "Returns the command used to compile or run the code. This will include any flags and options used."
         }
         """
         result = " ".join(self.args.command)
@@ -61,15 +61,18 @@ class ExplainFunctions:
                 "properties": {
                     "filename": {
                         "type": "string",
-                        "description": "The filename to read from.",
+                        "description": "The filename to read from."
                     },
                     "lineno": {
                         "type": "integer",
-                        "description": "The line number to focus on. Some context before and after that line will be provided.",
-                    },
+                        "description": "The line number to focus on. Some context before and after that line will be provided."
+                    }
                 },
-                "required": ["filename", "lineno"],
-            },
+                "required": [
+                    "filename",
+                    "lineno"
+                ]
+            }
         }
         """
         (lines, first) = llm_utils.read_lines(filename, lineno - 7, lineno + 3)
@@ -87,11 +90,13 @@ class ExplainFunctions:
                 "properties": {
                     "path": {
                         "type": "string",
-                        "description": "The path of the directory of interest.",
-                    },
+                        "description": "The path of the directory of interest."
+                    }
                 },
-                "required": ["path"],
-            },
+                "required": [
+                    "path"
+                ]
+            }
         }
         """
         entries = os.listdir(path)
