@@ -1,12 +1,8 @@
 import json
 import textwrap
-import warnings
-
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-    import litellm  # type: ignore
 
 import llm_utils
+import openai
 
 from . import utils
 from .diff_functions import DiffFunctions
@@ -14,7 +10,7 @@ from .explain_functions import ExplainFunctions
 from ..print_debug import dprint
 
 
-def converse(args, diagnostic):
+def converse(client: openai.OpenAI, args, diagnostic):
     fns = ExplainFunctions(args)
     available_functions_names = [fn["function"]["name"] for fn in fns.as_tools()]
     system_message = textwrap.dedent(
@@ -32,7 +28,7 @@ def converse(args, diagnostic):
     ]
 
     while True:
-        completion = litellm.completion(
+        completion = client.chat.completions.create(
             model=args.llm,
             messages=conversation,
             tools=fns.as_tools(),
@@ -63,7 +59,7 @@ def converse(args, diagnostic):
             dprint(f"Not found: {choice.finish_reason}.")
 
 
-def diff_converse(args, diagnostic):
+def diff_converse(client: openai.OpenAI, args, diagnostic):
     fns = DiffFunctions(args)
     tools = fns.as_tools()
     tool_names = [fn["function"]["name"] for fn in tools]
@@ -97,7 +93,7 @@ def diff_converse(args, diagnostic):
 
     while True:
         # 1. Pick an action.
-        completion = litellm.completion(
+        completion = client.chat.completions.create(
             model=args.llm,
             messages=conversation,
             tools=[{"type": "function", "function": pick_action_schema}],
@@ -108,12 +104,13 @@ def diff_converse(args, diagnostic):
             timeout=args.timeout,
         )
 
+        print(completion)
         fn = completion.choices[0].message.tool_calls[0].function
         arguments = json.loads(fn.arguments)
         action = arguments["action"]
 
         tool = [t for t in tools if t["function"]["name"] == action][0]
-        completion = litellm.completion(
+        completion = client.chat.completions.create(
             model=args.llm,
             messages=conversation,
             tools=[tool],

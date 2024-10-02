@@ -1,56 +1,45 @@
 import argparse
-import os
 import subprocess
 import sys
 from typing import Any
-import warnings
-
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-    import litellm  # type: ignore
-
-litellm.suppress_debug_info = True
 
 import llm_utils
-from openai import (
-    NotFoundError,
-    RateLimitError,
-    APITimeoutError,
-    OpenAIError,
-    BadRequestError,
-)
+import openai
 
 from . import conversation, prompts
 from .print_debug import dprint, enable_debug_printing
 
 
-def complete(args: argparse.Namespace, user_prompt: str, **kwargs: Any):
+def complete(
+    client: openai.OpenAI, args: argparse.Namespace, user_prompt: str, **kwargs: Any
+):
     try:
-        completion = litellm.completion(
+        completion = client.chat.completions.create(
             model=args.llm,
             messages=[{"role": "user", "content": user_prompt}],
             timeout=args.timeout,
             **kwargs,
         )
         return completion
-    except NotFoundError as e:
+    except openai.NotFoundError as e:
         dprint(f"'{args.llm}' either does not exist or you do not have access to it.")
         raise e
-    except BadRequestError as e:
+    except openai.BadRequestError as e:
         dprint("Something is wrong with your prompt.")
         raise e
-    except RateLimitError as e:
+    except openai.RateLimitError as e:
         dprint("You have exceeded a rate limit or have no remaining funds.")
         raise e
-    except APITimeoutError as e:
+    except openai.APITimeoutError as e:
         dprint("The API timed out.")
         dprint("You can increase the timeout with the --timeout option.")
         raise e
 
 
-def evaluate_diff(args, stdin):
+def evaluate_diff(client: openai.OpenAI, args, stdin):
     prompt = prompts.diff_prompt(args, stdin)
     completion = complete(
+        client,
         args,
         prompt,
         tools=[
@@ -95,20 +84,18 @@ def evaluate_diff(args, stdin):
     return completion
 
 
-def evaluate(args, stdin):
+def evaluate(client: openai.OpenAI, args, stdin):
     if args.subcommand == "explain":
-        return evaluate_text_prompt(args, prompts.explain_prompt(args, stdin))
+        return evaluate_text_prompt(client, args, prompts.explain_prompt(args, stdin))
     elif args.subcommand == "diff":
-        completion = evaluate_diff(args, stdin)
+        completion = evaluate_diff(client, args, stdin)
         tool_calls = completion.choices[0].message.tool_calls
         assert len(tool_calls) == 1
         return tool_calls[0].function.arguments
     elif args.subcommand == "converse":
-        assert litellm.supports_function_calling(model=args.llm)
-        return conversation.converse(args, stdin)
+        return conversation.converse(client, args, stdin)
     elif args.subcommand == "diff-converse":
-        assert litellm.supports_function_calling(model=args.llm)
-        return conversation.diff_converse(args, stdin)
+        return conversation.diff_converse(client, args, stdin)
     else:
         raise Exception(f"unknown subcommand: {args.subcommand}")
 
@@ -142,9 +129,12 @@ def main(args: argparse.Namespace) -> None:
     dprint("CWhy")
     dprint("==================================================")
     try:
-        result = evaluate(args, process.stderr if process.stderr else process.stdout)
+        client = openai.OpenAI()
+        result = evaluate(
+            client, args, process.stderr if process.stderr else process.stdout
+        )
         dprint(result)
-    except OpenAIError as e:
+    except openai.OpenAIError as e:
         dprint(str(e).strip())
     dprint("==================================================")
 
@@ -152,9 +142,13 @@ def main(args: argparse.Namespace) -> None:
 
 
 def evaluate_text_prompt(
-    args: argparse.Namespace, prompt: str, wrap: bool = True, **kwargs: Any
+    client: openai.OpenAI,
+    args: argparse.Namespace,
+    prompt: str,
+    wrap: bool = True,
+    **kwargs: Any,
 ) -> str:
-    completion = complete(args, prompt, **kwargs)
+    completion = complete(client, args, prompt, **kwargs)
 
     msg = f"Analysis from {args.llm}:"
     dprint(msg)
@@ -164,8 +158,7 @@ def evaluate_text_prompt(
     if wrap:
         text = llm_utils.word_wrap_except_code_blocks(text)
 
-    cost = litellm.completion_cost(completion_response=completion)
     text += "\n\n"
-    text += f"(Total cost: approximately ${cost:.2f} USD.)"
+    text += f"(TODO seconds, $TODO USD.)"
 
     return text
