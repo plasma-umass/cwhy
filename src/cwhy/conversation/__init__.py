@@ -7,7 +7,6 @@ with warnings.catch_warnings():
     import litellm  # type: ignore
 
 import llm_utils
-litellm.set_verbose=True
 
 from . import utils
 from .diff_functions import DiffFunctions
