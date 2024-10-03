@@ -40,7 +40,7 @@ jobs:
         run: python3 -m mypy src/**/*.py tests/*.py
 
       - name: Run compileall
-        run: python3 -m compileall src tests
+        run: python3 -m compileall src/**/*.py tests/*.py
 
       - name: Check version through Python
         run: python3 -m cwhy --version
