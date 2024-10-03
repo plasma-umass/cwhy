@@ -126,7 +126,7 @@ def main() -> None:
     parser.add_argument(
         "--llm",
         type=str,
-        default="openai/gpt-4o-mini",
+        default="gpt-4o-mini",
         help="the language model to use",
     )
     parser.add_argument(
