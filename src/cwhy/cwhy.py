@@ -1,7 +1,6 @@
 import argparse
 import subprocess
 import sys
-from typing import Any
 
 import llm_utils
 import openai
@@ -9,15 +8,12 @@ import openai
 from . import conversation, prompts
 
 
-def complete(
-    client: openai.OpenAI, args: argparse.Namespace, user_prompt: str, **kwargs: Any
-):
+def complete(client: openai.OpenAI, args: argparse.Namespace, user_prompt: str):
     try:
         completion = client.chat.completions.create(
             model=args.llm,
             messages=[{"role": "user", "content": user_prompt}],
             timeout=args.timeout,
-            **kwargs,
         )
         return completion
     except openai.NotFoundError as e:
@@ -81,13 +77,9 @@ def main(args: argparse.Namespace) -> None:
 
 
 def evaluate_text_prompt(
-    client: openai.OpenAI,
-    args: argparse.Namespace,
-    prompt: str,
-    wrap: bool = True,
-    **kwargs: Any,
+    client: openai.OpenAI, args: argparse.Namespace, prompt: str, wrap: bool = True
 ) -> str:
-    completion = complete(client, args, prompt, **kwargs)
+    completion = complete(client, args, prompt)
 
     msg = f"Analysis from {args.llm}:"
     print(msg)
