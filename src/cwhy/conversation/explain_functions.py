@@ -5,8 +5,6 @@ from typing import Optional
 
 import llm_utils
 
-from ..print_debug import dprint
-
 
 class ExplainFunctions:
     def __init__(self, args: argparse.Namespace):
@@ -24,7 +22,7 @@ class ExplainFunctions:
 
     def dispatch(self, function_call) -> Optional[str]:
         arguments = json.loads(function_call.arguments)
-        dprint(
+        print(
             f"Calling: {function_call.name}({', '.join([f'{k}={v}' for k, v in arguments.items()])})"
         )
         try:
@@ -37,7 +35,7 @@ class ExplainFunctions:
             elif function_call.name == "list_directory":
                 return self.list_directory(arguments["path"])
         except Exception as e:
-            dprint(e)
+            print(e)
         return None
 
     def get_compile_or_run_command(self) -> str:
@@ -48,7 +46,7 @@ class ExplainFunctions:
         }
         """
         result = " ".join(self.args.command)
-        dprint(result)
+        print(result)
         return result
 
     def get_code_surrounding(self, filename: str, lineno: int) -> str:
@@ -77,7 +75,7 @@ class ExplainFunctions:
         """
         (lines, first) = llm_utils.read_lines(filename, lineno - 7, lineno + 3)
         result = llm_utils.number_group_of_lines(lines, first)
-        dprint(result)
+        print(result)
         return result
 
     def list_directory(self, path: str) -> str:

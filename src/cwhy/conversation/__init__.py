@@ -1,11 +1,10 @@
 import json
 import textwrap
 
-import openai  # type: ignore
+import openai
 
 from . import utils
 from .diff_functions import DiffFunctions
-from ..print_debug import dprint
 
 
 def diff_converse(client: openai.OpenAI, args, diagnostic):
@@ -87,4 +86,4 @@ def diff_converse(client: openai.OpenAI, args, diagnostic):
                 }
             )
 
-        dprint()
+        print()

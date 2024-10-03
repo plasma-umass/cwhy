@@ -7,7 +7,6 @@ import llm_utils
 import openai
 
 from . import conversation, prompts
-from .print_debug import dprint, enable_debug_printing
 
 
 def complete(
@@ -22,17 +21,17 @@ def complete(
         )
         return completion
     except openai.NotFoundError as e:
-        dprint(f"'{args.llm}' either does not exist or you do not have access to it.")
+        print(f"'{args.llm}' either does not exist or you do not have access to it.")
         raise e
     except openai.BadRequestError as e:
-        dprint("Something is wrong with your prompt.")
+        print("Something is wrong with your prompt.")
         raise e
     except openai.RateLimitError as e:
-        dprint("You have exceeded a rate limit or have no remaining funds.")
+        print("You have exceeded a rate limit or have no remaining funds.")
         raise e
     except openai.APITimeoutError as e:
-        dprint("The API timed out.")
-        dprint("You can increase the timeout with the --timeout option.")
+        print("The API timed out.")
+        print("You can increase the timeout with the --timeout option.")
         raise e
 
 
@@ -109,32 +108,29 @@ def main(args: argparse.Namespace) -> None:
     if process.returncode == 0:
         return
 
-    if args.debug:
-        enable_debug_printing()
-
     if args.show_prompt:
-        dprint("===================== Prompt =====================")
+        print("===================== Prompt =====================")
         if args.subcommand == "explain":
-            dprint(prompts.explain_prompt(args, process.stderr))
+            print(prompts.explain_prompt(args, process.stderr))
         elif args.subcommand == "diff":
-            dprint(prompts.diff_prompt(args, process.stderr))
-        dprint("==================================================")
+            print(prompts.diff_prompt(args, process.stderr))
+        print("==================================================")
         sys.exit(0)
 
-    dprint(process.stdout)
-    dprint(process.stderr, file=sys.stderr)
-    dprint("==================================================")
-    dprint("CWhy")
-    dprint("==================================================")
+    print(process.stdout)
+    print(process.stderr, file=sys.stderr)
+    print("==================================================")
+    print("CWhy")
+    print("==================================================")
     try:
         client = openai.OpenAI()
         result = evaluate(
             client, args, process.stderr if process.stderr else process.stdout
         )
-        dprint(result)
+        print(result)
     except openai.OpenAIError as e:
-        dprint(str(e).strip())
-    dprint("==================================================")
+        print(str(e).strip())
+    print("==================================================")
 
     sys.exit(process.returncode)
 
@@ -149,8 +145,8 @@ def evaluate_text_prompt(
     completion = complete(client, args, prompt, **kwargs)
 
     msg = f"Analysis from {args.llm}:"
-    dprint(msg)
-    dprint("-" * len(msg))
+    print(msg)
+    print("-" * len(msg))
     text: str = completion.choices[0].message.content
 
     if wrap:
