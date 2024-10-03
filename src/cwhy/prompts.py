@@ -194,10 +194,3 @@ def explain_prompt(args: argparse.Namespace, diagnostic: str) -> str:
         _base_prompt(args, diagnostic)
         + "What's the problem? If you can, suggest code to fix the issue."
     )
-
-
-def diff_prompt(args: argparse.Namespace, diagnostic: str) -> str:
-    return (
-        _base_prompt(args, diagnostic)
-        + "Help fix this issue by providing a diff in JSON format."
-    )

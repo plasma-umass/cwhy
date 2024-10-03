@@ -35,62 +35,9 @@ def complete(
         raise e
 
 
-def evaluate_diff(client: openai.OpenAI, args, stdin):
-    prompt = prompts.diff_prompt(args, stdin)
-    completion = complete(
-        client,
-        args,
-        prompt,
-        tools=[
-            {
-                "type": "function",
-                "function": {
-                    "name": "apply_modifications",
-                    "description": "Applies the given modifications to the source file with the goal of fixing any existing compilation errors.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "modifications": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "filename": {"type": "string"},
-                                        "start-line-number": {"type": "integer"},
-                                        "number-lines-remove": {"type": "integer"},
-                                        "replacement": {"type": "string"},
-                                    },
-                                    "required": [
-                                        "filename",
-                                        "start-line-number",
-                                        "number-lines-remove",
-                                        "replacement",
-                                    ],
-                                },
-                            },
-                        },
-                        "required": ["modifications"],
-                    },
-                },
-            }
-        ],
-        tool_choice={
-            "type": "function",
-            "function": {"name": "apply_modifications"},
-        },
-    )
-
-    return completion
-
-
-def evaluate(client: openai.OpenAI, args, stdin):
+def evaluate(client: openai.OpenAI, args: argparse.Name, stdin: str) -> str:
     if args.subcommand == "explain":
         return evaluate_text_prompt(client, args, prompts.explain_prompt(args, stdin))
-    elif args.subcommand == "diff":
-        completion = evaluate_diff(client, args, stdin)
-        tool_calls = completion.choices[0].message.tool_calls
-        assert len(tool_calls) == 1
-        return tool_calls[0].function.arguments
     elif args.subcommand == "diff-converse":
         return conversation.diff_converse(client, args, stdin)
     else:
@@ -112,8 +59,6 @@ def main(args: argparse.Namespace) -> None:
         print("===================== Prompt =====================")
         if args.subcommand == "explain":
             print(prompts.explain_prompt(args, process.stderr))
-        elif args.subcommand == "diff":
-            print(prompts.diff_prompt(args, process.stderr))
         print("==================================================")
         sys.exit(0)
 
