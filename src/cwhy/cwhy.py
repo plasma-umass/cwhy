@@ -31,7 +31,7 @@ def complete(client: openai.OpenAI, args: argparse.Namespace, user_prompt: str):
         raise e
 
 
-def evaluate(client: openai.OpenAI, args: argparse.Name, stdin: str) -> str:
+def evaluate(client: openai.OpenAI, args: argparse.Namespace, stdin: str) -> str:
     if args.subcommand == "explain":
         return evaluate_text_prompt(client, args, prompts.explain_prompt(args, stdin))
     elif args.subcommand == "diff-converse":
