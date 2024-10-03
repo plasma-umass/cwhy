@@ -6,7 +6,7 @@ _INFO_WIDTH = 30
 
 
 def dprint(
-    *objects, sep: str = " ", end: str = "\n", file=None, flush: bool = False
+    *objects: object, sep: str = " ", end: str = "\n", file=None, flush: bool = False
 ) -> None:
     global _debug
     if not _debug:

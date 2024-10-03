@@ -92,8 +92,6 @@ def evaluate(client: openai.OpenAI, args, stdin):
         tool_calls = completion.choices[0].message.tool_calls
         assert len(tool_calls) == 1
         return tool_calls[0].function.arguments
-    elif args.subcommand == "converse":
-        return conversation.converse(client, args, stdin)
     elif args.subcommand == "diff-converse":
         return conversation.diff_converse(client, args, stdin)
     else:
