@@ -63,6 +63,19 @@ def main(args: argparse.Namespace) -> None:
     print("==================================================")
     print("CWhy")
     print("==================================================")
+
+    # TODO: Remove this after issuing next release.
+    if "/" in args.llm:
+        print(
+            "[CWHY WARNING] CWhy went back to using the OpenAI API only (not LiteLLM).",
+            "[CWHY WARNING] Please specify the model name directly without any prefix.",
+            f"[CWHY WARNING] e.g. {args.llm[args.llm.index('/') + 1:]}.",
+            "[CWHY WARNING] If you were using AWS, you can specify OPENAI_BASE_URL instead.",
+            file=sys.stderr,
+            sep="\n",
+        )
+        args.llm = args.llm[args.llm.index("/") + 1 :]
+
     try:
         client = openai.OpenAI()
         result = evaluate(

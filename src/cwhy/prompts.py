@@ -73,7 +73,7 @@ class _Context:
                 )
             except FileNotFoundError:
                 print(
-                    f"Cwhy warning: file not found: {file_name.lstrip()}",
+                    f"[CWHY WARNING] file not found: {file_name.lstrip()}",
                     file=sys.stderr,
                 )
                 continue
