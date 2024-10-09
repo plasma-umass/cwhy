@@ -94,14 +94,9 @@ def evaluate_text_prompt(
 ) -> str:
     completion = complete(client, args, prompt)
 
-    msg = f"Analysis from {args.llm}:"
-    print(msg)
-    print("-" * len(msg))
     text: str = completion.choices[0].message.content
-
     if wrap:
         text = llm_utils.word_wrap_except_code_blocks(text)
-
     text += "\n\n"
     text += f"(TODO seconds, $TODO USD.)"
 

@@ -15,16 +15,14 @@ Go, Java, LaTeX, PHP, Python, Ruby, Rust, Swift, and TypeScript.
 
 ## Installation
 
- >  **Note**
+ >  [!NOTE]
  >
- >  CWhy needs to be connected to an [OpenAI account](https://openai.com/api/) or an Amazon Web Services account.
+ >  CWhy needs to be connected to an [OpenAI account](https://openai.com/api/).
  >  _Your account will need to have a positive balance for this to work_
  >  ([check your OpenAI balance](https://platform.openai.com/usage)).
  >  [Get an OpenAI key here](https://platform.openai.com/api-keys).
  > 
- >  CWhy currently defaults to GPT-4, and falls back to GPT-3.5-turbo if a request error occurs. For the newest and best
- >  model (GPT-4) to work, you need to have purchased  at least $1 in credits (if your API account was created before
- >  August 13, 2023) or $0.50 (if you have a newer API account).
+ >  You may need to purchase $0.50 - $1 in OpenAI credits depending on when your API account was created.
  > 
  >  Once you have an API key, set it as an environment variable called `OPENAI_API_KEY`.
  > 
@@ -35,23 +33,41 @@ Go, Java, LaTeX, PHP, Python, Ruby, Rust, Swift, and TypeScript.
  >  # On Windows:
  >  $env:OPENAI_API_KEY=<your-api-key>
  >  ```
- >
- >  **New**: CWhy now has alpha support for Amazon Bedrock, using the Claude model.
- >  To use Bedrock, you need to set three environment variables.
- >
- >  ```bash
- >  # On Linux/MacOS:
- >  export AWS_ACCESS_KEY_ID=<your-access-key>
- >  export AWS_SECRET_ACCESS_KEY=<your-secret-key>
- >  export AWS_REGION_NAME=<your-region>
- >  ```
- >
- >  CWhy will automatically select which AI service to use (OpenAI or AWS Bedrock) when it detects that the appropriate
- >  environment variables have been set.
  
-```
+```bash
 python3 -m pip install cwhy
 ```
+
+### Other LLMs
+
+We mostly test with OpenAI, but other LLMs can be made to work with CWhy. Please report any bug you may encounter.
+
+#### OpenAI API Compatible
+
+If your provider supports OpenAI style API calls, you can simply specify the `OPENAI_BASE_URL` environment variable to
+select a different URL to send requests to. For example, this will work great with [Ollama](https://ollama.com/):
+
+```bash
+docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --rm --name ollama ollama/ollama
+docker exec -it ollama ollama pull llama3.1:70b
+export OPENAI_BASE_URL=http://localhost:11434/v1
+cwhy --llm llama3.1:70b --- clang++ tests/c++/missing-hash.cpp
+```
+
+#### LiteLLM Proxy
+
+If your provider does not support OpenAI style API calls, such as AWS Bedrock which we used to support, we recommend
+using the [LiteLLM Proxy Server](https://docs.litellm.ai/docs/simple_proxy).
+
+```bash
+pip install 'litellm[proxy]'
+# Set AWS_ACCESS_KEY_ID, AWS_REGION_NAME, and AWS_SECRET_ACCESS_KEY.
+litellm --model bedrock/anthropic.claude-v2
+export OPENAI_BASE_URL=http://0.0.0.0:4000
+cwhy --- clang++ tests/c++/missing-hash.cpp
+```
+
+Note that when using the LiteLLM Proxy, CWhy's `--llm` argument will be ignored completely.
 
 ## Usage 
 
@@ -63,16 +79,16 @@ by creating a short executable script wrapping the compiler command.
 
 ```bash
 # Invoking the compiler directly.
-% cwhy --- g++ mycode.cpp
+cwhy --- g++ mycode.cpp
 
 # Using CWhy with Java and an increased timeout.
-% cwhy --timeout 180 --- javac MyCode.java
+cwhy --timeout 180 --- javac MyCode.java
 
 # Invoking with GNU Make, using GPT-3.5.
-% CXX=`cwhy --llm=gpt-3.5-turbo --wrapper --- c++` make
+CXX=`cwhy --llm=gpt-3.5-turbo --wrapper --- c++` make
 
 # Invoking with CMake, using GPT-4 and clang++.
-% CWHY_DISABLE=1 cmake -DCMAKE_CXX_COMPILER=`cwhy --llm=gpt-4 --wrapper --- clang++` ...
+CWHY_DISABLE=1 cmake -DCMAKE_CXX_COMPILER=`cwhy --llm=gpt-4 --wrapper --- clang++` ...
 ```
 
 Configuration tools such as CMake or Autoconf will occasionally invoke the compiler to check for features, which will
@@ -80,7 +96,7 @@ fail and invoke CWhy unnecessarily if not available on the machine. To circumven
 the environment to disable CWhy at configuration time.
 
 ```bash
-% CWHY_DISABLE='ON' cmake -DCMAKE_CXX_COMPILER=`cwhy --wrapper --- c++` ...
+CWHY_DISABLE='ON' cmake -DCMAKE_CXX_COMPILER=`cwhy --wrapper --- c++` ...
 ```
 
 ### Windows
@@ -89,9 +105,9 @@ Windows support has been tested using Powershell. On the command line, using Nin
 will override any option set.
 
 ```bash
-% $env:CWHY_DISABLE='ON'
-% cmake -G Ninja -DCMAKE_CXX_COMPILER="$(python -m cwhy --wrapper --- cl)"  ...
-% $env:CWHY_DISABLE=''
+$env:CWHY_DISABLE='ON'
+cmake -G Ninja -DCMAKE_CXX_COMPILER="$(python -m cwhy --wrapper --- cl)"  ...
+$env:CWHY_DISABLE=''
 ```
 
 ### Continuous Integration
