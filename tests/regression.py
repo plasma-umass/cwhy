@@ -67,7 +67,7 @@ def main(args: argparse.Namespace) -> None:
                 elif args.check:
                     if not os.path.isfile(savefile):
                         print(
-                            f"::warning file={args.platform}/{compiler[0]}/{path}/{test}::Save file does not exist."
+                            f"::warning title={args.platform}/{compiler[0]}/{path}/{test}::Save file does not exist."
                         )
                         continue
 
