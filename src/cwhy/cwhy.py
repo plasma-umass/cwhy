@@ -1,6 +1,7 @@
 import argparse
 import subprocess
 import sys
+import time
 
 import llm_utils
 import openai
@@ -92,12 +93,18 @@ def main(args: argparse.Namespace) -> None:
 def evaluate_text_prompt(
     client: openai.OpenAI, args: argparse.Namespace, prompt: str, wrap: bool = True
 ) -> str:
+    start = time.time()
     completion = complete(client, args, prompt)
+    end = time.time()
+
 
     text: str = completion.choices[0].message.content
     if wrap:
         text = llm_utils.word_wrap_except_code_blocks(text)
+
     text += "\n\n"
-    text += f"(TODO seconds, $TODO USD.)"
+    text += f"({end - start:.1f} seconds, "
+    text += f"{completion.usage.prompt_tokens} prompt tokens, "
+    text += f"{completion.usage.completion_tokens} completion tokens.)"
 
     return text
