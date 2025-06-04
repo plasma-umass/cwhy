@@ -13,7 +13,6 @@ authors = [
 
 dependencies = [
   "openai>=1.30.1",
-  "PyYAML>=6.0.1",
   "rich>=13.7.1",
   "llm-utils>=0.2.8",
 ]
@@ -32,6 +31,3 @@ cwhy = "cwhy.__main__:main"
 [project.urls]
 "Homepage" = "https://github.com/plasma-umass/cwhy"
 "Bug Tracker" = "https://github.com/plasma-umass/cwhy/issues"
-
-[project.optional-dependencies]
-dev = ["types-PyYAML>=6.0.1"]
