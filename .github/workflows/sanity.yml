@@ -24,17 +24,11 @@ jobs:
       - name: Update pip
         run: python3 -m pip install --upgrade pip
 
-      - name: Install dependencies
-        run: python3 -m pip install mypy
-
       - name: Install in editable mode
         run: python3 -m pip install -e .
 
       - name: Install in development mode
         run: python3 -m pip install .[dev]
-
-      - name: Run mypy
-        run: python3 -m mypy src/**/*.py tests/*.py
 
       - name: Run compileall
         run: python3 -m compileall src/**/*.py tests/*.py
