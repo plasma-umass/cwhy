@@ -11,7 +11,9 @@ from .functions import Functions
 def complete(client: openai.OpenAI, args: argparse.Namespace, prompt: str) -> None:
     fns = Functions(args)
     try:
-        conversation: openai.types.responses.ResponseInputParam = [{"role": "user", "content": prompt}]
+        conversation: openai.types.responses.ResponseInputParam = [
+            {"role": "user", "content": prompt}
+        ]
         while True:
             completion = client.responses.create(
                 model=args.llm,
@@ -69,9 +71,12 @@ def evaluate(client: openai.OpenAI, args: argparse.Namespace, stdin: str) -> Non
 def explain(args: argparse.Namespace, stdin: str) -> None:
     try:
         client = openai.OpenAI()
-        evaluate(client, args, stdin)
     except openai.OpenAIError as e:
-        print(str(e).strip())
+        print("Please set the OPENAI_API_KEY environment variable.")
+        print("You can get an API key at https://platform.openai.com/account/api-keys.")
+        return
+
+    evaluate(client, args, stdin)
 
 
 def evaluate_text_prompt(
