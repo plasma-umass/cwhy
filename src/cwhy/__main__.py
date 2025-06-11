@@ -18,19 +18,19 @@ def py_wrapper(args: argparse.Namespace) -> str:
     return (
         textwrap.dedent(
             f"""
-            #! {sys.executable}
-            import os
-            import sys
-            if "CWHY_DISABLE" in os.environ:
-                import subprocess
-                sys.exit(subprocess.run([*{args.command}, *sys.argv[1:]]).returncode)
-            else:
-                import argparse
-                from cwhy import cwhy
-                args = argparse.Namespace(**{vars(args)})
-                args.command.extend(sys.argv[1:])
-                cwhy.main(args)
-        """
+                #! {sys.executable}
+                import os
+                import sys
+                if "CWHY_DISABLE" in os.environ:
+                    import subprocess
+                    sys.exit(subprocess.run([*{args.command}, *sys.argv[1:]]).returncode)
+                else:
+                    import argparse
+                    from cwhy import cwhy
+                    args = argparse.Namespace(**{vars(args)})
+                    args.command.extend(sys.argv[1:])
+                    cwhy.main(args)
+            """
         ).strip()
         + "\n"
     )
@@ -86,7 +86,7 @@ def main() -> None:
             [blue][link=https://github.com/plasma-umass/cwhy]https://github.com/plasma-umass/cwhy[/link][/blue]
 
             usage:
-                [b]cwhy [SUBCOMMAND] \[OPTIONS...] --- COMMAND...[/b]
+                [b]cwhy \[OPTIONS...] --- COMMAND...[/b]
             usage (GNU Make):
                 [b]CXX=`cwhy --wrapper \[OPTIONS...] --- c++` make[/b]
             usage (CMake):
@@ -107,20 +107,6 @@ def main() -> None:
         version=f"%(prog)s v{importlib.metadata.metadata('cwhy')['Version']}",
         default=argparse.SUPPRESS,
         help="print the version of CWhy and exit",
-    )
-
-    parser.add_argument(
-        "subcommand",
-        nargs="?",
-        default="explain",
-        choices=["explain", "diff-converse"],
-        metavar="subcommand",
-        help=textwrap.dedent(
-            r"""
-                explain:       explain the diagnostic (default)
-                diff-converse: \[experimental] interactively fix errors with CWhy
-            """
-        ).strip(),
     )
 
     parser.add_argument(

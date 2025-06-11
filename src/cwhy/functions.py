@@ -4,23 +4,33 @@ import os
 from typing import Optional
 
 import llm_utils
+import openai
 
 
-class ExplainFunctions:
+class Functions:
     def __init__(self, args: argparse.Namespace):
         self.args = args
 
-    def as_tools(self):
-        return [
-            {"type": "function", "function": json.loads(f.__doc__)}
-            for f in [
-                self.get_compile_or_run_command,
-                self.get_code_surrounding,
-                self.list_directory,
-            ]
-        ]
+    def as_tools(self) -> list[openai.types.responses.FunctionToolParam]:
+        tools: list[openai.types.responses.FunctionToolParam] = []
+        for f in [
+            self.get_compile_or_run_command,
+            self.get_code_surrounding,
+            self.list_directory,
+        ]:
+            assert f.__doc__
+            tools.append(
+                {
+                    "type": "function",
+                    "name": f.__name__,
+                    **json.loads(f.__doc__),
+                }
+            )
+        return tools
 
-    def dispatch(self, function_call) -> Optional[str]:
+    def dispatch(
+        self, function_call: openai.types.responses.ResponseFunctionToolCall
+    ) -> Optional[str]:
         arguments = json.loads(function_call.arguments)
         print(
             f"Calling: {function_call.name}({', '.join([f'{k}={v}' for k, v in arguments.items()])})"
@@ -41,7 +51,6 @@ class ExplainFunctions:
     def get_compile_or_run_command(self) -> str:
         """
         {
-            "name": "get_compile_or_run_command",
             "description": "Returns the command used to compile or run the code. This will include any flags and options used."
         }
         """
@@ -52,8 +61,8 @@ class ExplainFunctions:
     def get_code_surrounding(self, filename: str, lineno: int) -> str:
         """
         {
-            "name": "get_code_surrounding",
             "description": "Returns the code in the given file surrounding and including the provided line number.",
+            "strict": true,
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -66,10 +75,8 @@ class ExplainFunctions:
                         "description": "The line number to focus on. Some context before and after that line will be provided."
                     }
                 },
-                "required": [
-                    "filename",
-                    "lineno"
-                ]
+                "required": ["filename", "lineno"],
+                "additionalProperties": false
             }
         }
         """
@@ -81,19 +88,18 @@ class ExplainFunctions:
     def list_directory(self, path: str) -> str:
         """
         {
-            "name": "list_directory",
             "description": "Returns a list of all files and directories in the given directory.",
+            "strict": true,
             "parameters": {
                 "type": "object",
                 "properties": {
                     "path": {
                         "type": "string",
-                        "description": "The path of the directory of interest."
+                        "description": "The path of the directory to list."
                     }
                 },
-                "required": [
-                    "path"
-                ]
+                "required": ["path"],
+                "additionalProperties": false
             }
         }
         """
