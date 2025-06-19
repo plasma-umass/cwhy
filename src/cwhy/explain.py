@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 
 import llm_utils
@@ -69,12 +70,37 @@ def evaluate(client: openai.OpenAI, args: argparse.Namespace, stdin: str) -> Non
 
 
 def explain(args: argparse.Namespace, stdin: str) -> None:
-    try:
-        client = openai.OpenAI()
-    except openai.OpenAIError as e:
-        print("Please set the OPENAI_API_KEY environment variable.")
+    if (
+        "OPENAI_BASE_URL" in os.environ
+        and "api.openai.com" not in os.environ["OPENAI_BASE_URL"]
+    ):
+        # Pass a dummy API key on purpose:
+        # None would make the OpenAI client throw an error.
+        # A blank string will cause an invalid HTTP header error.
+        client = openai.OpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY", "OPENAI_API_KEY")
+        )
+    elif "OPENAI_API_KEY" not in os.environ:
+        print("The OPENAI_API_KEY environment variable is not set.")
         print("You can get an API key at https://platform.openai.com/account/api-keys.")
+        if all(
+            k in os.environ
+            for k in ("AWS_ACCESS_KEY_ID", "AWS_REGION_NAME", "AWS_SECRET_ACCESS_KEY")
+        ):
+            print()
+            print(
+                "Found AWS credentials. To use Amazon Bedrock, run the following commands:"
+            )
+            print("```")
+            print("pip install --upgrade 'litellm[proxy]'")
+            print(
+                "litellm --model bedrock/anthropic.claude-opus-4-20250514-v1:0 --port 4000"
+            )
+            print("export OPENAI_BASE_URL=http://0.0.0.0:4000")
+            print("```")
         return
+    else:
+        client = openai.OpenAI()
 
     evaluate(client, args, stdin)
 
