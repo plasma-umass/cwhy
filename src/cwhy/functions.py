@@ -6,6 +6,8 @@ from typing import Optional
 import llm_utils
 import openai
 
+from . import clangd_lsp_integration
+
 
 class Functions:
     def __init__(self, args: argparse.Namespace):
@@ -13,11 +15,16 @@ class Functions:
 
     def as_tools(self) -> list[openai.types.responses.FunctionToolParam]:
         tools: list[openai.types.responses.FunctionToolParam] = []
-        for f in [
+        fns = [
             self.get_compile_or_run_command,
             self.get_code_surrounding,
             self.list_directory,
-        ]:
+        ]
+
+        if clangd_lsp_integration.is_available():
+            fns.append(self.find_definition)
+
+        for f in fns:
             assert f.__doc__
             tools.append(
                 {
@@ -44,6 +51,10 @@ class Functions:
                 )
             elif function_call.name == "list_directory":
                 return self.list_directory(arguments["path"])
+            elif function_call.name == "find_definition":
+                return self.find_definition(
+                    arguments["filename"], arguments["line_number"], arguments["symbol"]
+                )
         except Exception as e:
             print(e)
         return None
@@ -107,4 +118,36 @@ class Functions:
         for i in range(len(entries)):
             if os.path.isdir(os.path.join(path, entries[i])):
                 entries[i] += "/"
-        return "\n".join(entries)
+        result = "\n".join(entries)
+        print(result)
+        return result
+    
+    def find_definition(self, filename: str, line_number: int, symbol: str) -> str:
+        """
+        {
+            "description": "Returns the source code for the definition for the given symbol at the given source line number.",
+            "strict": true,
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "filename": {
+                        "type": "string",
+                        "description": "The filename the symbol is from."
+                    },
+                    "line_number": {
+                        "type": "integer",
+                        "description": "The line number where the symbol is present."
+                    },
+                    "symbol": {
+                        "type": "string",
+                        "description": "The symbol to lookup."
+                    }
+                },
+                "required": ["filename", "line_number", "symbol"],
+                "additionalProperties": false
+            }
+        }
+        """
+        result = clangd_lsp_integration.definition_plus_heuristics(filename, line_number, symbol)
+        print(result)
+        return result
