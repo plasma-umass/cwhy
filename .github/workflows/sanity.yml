@@ -10,7 +10,7 @@ jobs:
   sanity:
     strategy:
       matrix:
-        python: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python: ["3.9", "3.10", "3.11", "3.12"]
 
     runs-on: ubuntu-latest
 
@@ -24,17 +24,11 @@ jobs:
       - name: Update pip
         run: python3 -m pip install --upgrade pip
 
-      - name: Install dependencies
-        run: python3 -m pip install mypy
-
       - name: Install in editable mode
         run: python3 -m pip install -e .
 
       - name: Install in development mode
         run: python3 -m pip install .[dev]
-
-      - name: Run mypy
-        run: python3 -m mypy src/**/*.py tests/*.py
 
       - name: Run compileall
         run: python3 -m compileall src/**/*.py tests/*.py

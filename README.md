@@ -15,25 +15,25 @@ Go, Java, LaTeX, PHP, Python, Ruby, Rust, Swift, and TypeScript.
 
 ## Installation
 
- >  [!NOTE]
- >
- >  CWhy needs to be connected to an [OpenAI account](https://openai.com/api/).
- >  _Your account will need to have a positive balance for this to work_
- >  ([check your OpenAI balance](https://platform.openai.com/usage)).
- >  [Get an OpenAI key here](https://platform.openai.com/api-keys).
- > 
- >  You may need to purchase $0.50 - $1 in OpenAI credits depending on when your API account was created.
- > 
- >  Once you have an API key, set it as an environment variable called `OPENAI_API_KEY`.
- > 
- >  ```bash
- >  # On Linux/MacOS:
- >  export OPENAI_API_KEY=<your-api-key>
- >  
- >  # On Windows:
- >  $env:OPENAI_API_KEY=<your-api-key>
- >  ```
- 
+> [!NOTE]
+>
+> CWhy needs to be connected to an [OpenAI account](https://openai.com/api/).
+> _Your account will need to have a positive balance for this to work_
+> ([check your OpenAI balance](https://platform.openai.com/usage)).
+> [Get an OpenAI key here](https://platform.openai.com/api-keys).
+>
+> You may need to purchase $0.50 - $1 in OpenAI credits depending on when your API account was created.
+>
+> Once you have an API key, set it as an environment variable called `OPENAI_API_KEY`.
+>
+> ```bash
+> # On Linux/MacOS:
+> export OPENAI_API_KEY=<your-api-key>
+>
+> # On Windows:
+> $env:OPENAI_API_KEY=<your-api-key>
+> ```
+
 ```bash
 python3 -m pip install cwhy
 ```
@@ -60,16 +60,19 @@ If your provider does not support OpenAI style API calls, such as AWS Bedrock wh
 using the [LiteLLM Proxy Server](https://docs.litellm.ai/docs/simple_proxy).
 
 ```bash
-pip install 'litellm[proxy]'
+# In a separate terminal:
 # Set AWS_ACCESS_KEY_ID, AWS_REGION_NAME, and AWS_SECRET_ACCESS_KEY.
-litellm --model bedrock/anthropic.claude-v2
+pip install --upgrade 'litellm[proxy]'
+litellm --model bedrock/anthropic.claude-3-5-sonnet-20240620-v1:0 --port 4000
+
+# Back in the debugging terminal:
 export OPENAI_BASE_URL=http://0.0.0.0:4000
 cwhy --- clang++ tests/c++/missing-hash.cpp
 ```
 
 Note that when using the LiteLLM Proxy, CWhy's `--llm` argument will be ignored completely.
 
-## Usage 
+## Usage
 
 ### Linux/MacOS
 
@@ -125,9 +128,9 @@ An example action YAML file covering all three platforms
 
 These options can be displayed with `cwhy --help`.
 
- -  `--llm`: pick a specific OpenAI LLM. CWhy has been tested with `gpt-3.5-turbo` and `gpt-4`.
- -  `--timeout`: pick a different timeout than the default for API calls.
- -  `--show-prompt` (debug): print prompts before calling the API.
+- `--llm`: pick a specific OpenAI LLM. CWhy has been tested with `gpt-3.5-turbo` and `gpt-4`.
+- `--timeout`: pick a different timeout than the default for API calls.
+- `--show-prompt` (debug): print prompts before calling the API.
 
 ## Examples
 
@@ -207,6 +210,7 @@ In file included from /usr/lib/gcc/x86_64-linux-gnu/10/../../../../include/c++/1
                ^~~~~~~
 3 errors generated.
 ```
+
 </details>
 
 And here's the English-language explanation from `cwhy`:
@@ -242,7 +246,6 @@ std::unordered_set<std::pair<int, int>, PairHash> visited;
 
 With this change, the code should now compile and work as expected.
 ````
-
 
 ### Rust
 
