@@ -109,7 +109,7 @@ def evaluate_text_prompt(
     client: openai.OpenAI, args: argparse.Namespace, prompt: str, wrap: bool = True
 ) -> None:
     usage = complete(client, args, prompt)
-    print(usage)
+    # print(usage)
     # text += "\n\n"
     # text += f"({completion.usage.prompt_tokens} prompt tokens, "
     # text += f"{completion.usage.completion_tokens} completion tokens.)"
