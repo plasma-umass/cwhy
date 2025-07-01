@@ -4,7 +4,6 @@ by [Nicolas van Kempen](https://nvankempen.com/) and [Emery Berger](https://emer
 
 [![PyPI](https://img.shields.io/pypi/v/cwhy.svg)](https://pypi.org/project/cwhy/)
 [![downloads](https://static.pepy.tech/badge/cwhy)](https://pepy.tech/project/cwhy)
-[![downloads/month](https://static.pepy.tech/badge/cwhy/month)](https://pepy.tech/project/cwhy)
 
 ("See why")
 
