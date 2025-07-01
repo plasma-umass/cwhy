@@ -1,8 +1,6 @@
 # CWhy
 
-by [Emery Berger](https://emeryberger.com),
-[Nicolas van Kempen](https://nvankempen.com/),
-and [Bryce Adelstein Lelbach](https://twitter.com/blelbach).
+by [Nicolas van Kempen](https://nvankempen.com/) and [Emery Berger](https://emeryberger.com).
 
 [![PyPI](https://img.shields.io/pypi/v/cwhy.svg)](https://pypi.org/project/cwhy/)
 [![downloads](https://static.pepy.tech/badge/cwhy)](https://pepy.tech/project/cwhy)
