@@ -198,6 +198,9 @@ def _base_prompt(args: argparse.Namespace, diagnostic: str) -> str:
         for file in ctx.code_locations.keys():
             path = os.path.abspath(file)
             if path in git_paths:
+                diff = git_integration.get_git_diff(file)
+                if len(diff) > 1024:  # Arbitrary limit.
+                    diff = diff[:1024] + "\n[...]\n"
                 prompt += f"File `{file}` has been changed:\n"
                 prompt += "```diff\n"
                 prompt += git_integration.get_git_diff(file)
