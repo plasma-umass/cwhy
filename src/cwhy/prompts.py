@@ -1,10 +1,13 @@
 import argparse
 import collections
+import os
 import re
 import sys
 from typing import Dict, List, Optional
 
 import llm_utils
+
+from . import git_integration
 
 
 # Define error patterns with associated information. The numbers
@@ -66,6 +69,12 @@ class _Context:
 
             if not file_name or not line_number:
                 continue
+
+            # If we have git integration available, check if the file is new or changed.
+            if git_integration.is_available():
+                git_paths = git_integration.get_git_status_absolute_paths()
+                if os.path.abspath(file_name) not in git_paths:
+                    continue
 
             try:
                 (abridged_code, line_start) = llm_utils.read_lines(
@@ -177,11 +186,23 @@ def _base_prompt(args: argparse.Namespace, diagnostic: str) -> str:
     ctx = _Context(args, diagnostic)
 
     prompt = ""
+
     code = ctx.get_code()
     if code:
         prompt += "This is my code:\n\n"
         prompt += code
         prompt += "\n"
+
+    if git_integration.is_available():
+        git_paths = git_integration.get_git_status_absolute_paths()
+        for file in ctx.code_locations.keys():
+            path = os.path.abspath(file)
+            if path in git_paths:
+                prompt += f"File `{file}` has been changed:\n"
+                prompt += "```diff\n"
+                prompt += git_integration.get_git_diff(file)
+                prompt += "\n```\n\n"
+
     prompt += "This is my error:\n"
     prompt += ctx.get_diagnostic()
     prompt += "\n\n"

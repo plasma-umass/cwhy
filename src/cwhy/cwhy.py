@@ -7,14 +7,14 @@ def main(args: argparse.Namespace) -> None:
     process = subprocess.run(
         args.command,
         stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
         text=True,
     )
 
     if process.returncode == 0:
         return
 
-    stdin = process.stderr if process.stderr else process.stdout
+    stdin = process.stdout
 
     if args.show_prompt:
         from . import prompts
@@ -25,7 +25,6 @@ def main(args: argparse.Namespace) -> None:
         sys.exit(0)
 
     print(process.stdout)
-    print(process.stderr, file=sys.stderr)
     print("==================================================")
     print(f"CWhy ({args.llm})")
     print("==================================================")
