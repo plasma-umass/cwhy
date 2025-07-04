@@ -22,7 +22,7 @@ def get_git_status_porcelain() -> str:
         stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
         text=True,
-    ).stdout.strip()
+    ).stdout
 
 
 def get_git_status_absolute_paths() -> list[str]:
