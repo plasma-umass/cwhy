@@ -8,7 +8,6 @@ version = "0.6"
 authors = [
   { name="Emery Berger", email="emery.berger@gmail.com" },
   { name="Nicolas van Kempen", email="nvankemp@gmail.com" },
-  { name="Bryce Adelstein Lelbach", email="brycelelbach@gmail.com" }
 ]
 
 dependencies = [
