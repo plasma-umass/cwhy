@@ -35,40 +35,6 @@ Go, Java, LaTeX, PHP, Python, Ruby, Rust, Swift, and TypeScript.
 python3 -m pip install cwhy
 ```
 
-### Other LLMs
-
-We mostly test with OpenAI, but other LLMs can be made to work with CWhy. Please report any bug you may encounter.
-
-#### OpenAI API Compatible
-
-If your provider supports OpenAI style API calls, you can simply specify the `OPENAI_BASE_URL` environment variable to
-select a different URL to send requests to. For example, this will work great with [Ollama](https://ollama.com/):
-
-```bash
-docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --rm --name ollama ollama/ollama
-docker exec -it ollama ollama pull llama3.1:70b
-export OPENAI_BASE_URL=http://localhost:11434/v1
-cwhy --llm llama3.1:70b --- clang++ tests/c++/missing-hash.cpp
-```
-
-#### LiteLLM Proxy
-
-If your provider does not support OpenAI style API calls, such as AWS Bedrock which we used to support, we recommend
-using the [LiteLLM Proxy Server](https://docs.litellm.ai/docs/simple_proxy).
-
-```bash
-# In a separate terminal:
-# Set AWS_ACCESS_KEY_ID, AWS_REGION_NAME, and AWS_SECRET_ACCESS_KEY.
-pip install --upgrade 'litellm[proxy]'
-litellm --model bedrock/anthropic.claude-3-5-sonnet-20240620-v1:0 --port 4000
-
-# Back in the debugging terminal:
-export OPENAI_BASE_URL=http://0.0.0.0:4000
-cwhy --- clang++ tests/c++/missing-hash.cpp
-```
-
-Note that when using the LiteLLM Proxy, CWhy's `--llm` argument will be ignored completely.
-
 ## Usage
 
 ### Linux/MacOS
