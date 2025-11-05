@@ -65,18 +65,14 @@ def complete(client: openai.OpenAI, args: argparse.Namespace, prompt: str) -> No
         raise e
 
 
-def evaluate(client: openai.OpenAI, args: argparse.Namespace, stdin: str) -> None:
-    evaluate_text_prompt(client, args, prompts.explain_prompt(args, stdin))
-
-
 def explain(args: argparse.Namespace, stdin: str) -> None:
     if (
         "OPENAI_BASE_URL" in os.environ
         and "api.openai.com" not in os.environ["OPENAI_BASE_URL"]
     ):
-        # Pass a dummy API key on purpose:
-        # None would make the OpenAI client throw an error.
-        # A blank string will cause an invalid HTTP header error.
+        # Pass a dummy API key in the default case on purpose:
+        # 'None' will make the OpenAI client throw an error.
+        # '""' will cause an invalid HTTP header error.
         client = openai.OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY", "OPENAI_API_KEY")
         )
@@ -102,14 +98,4 @@ def explain(args: argparse.Namespace, stdin: str) -> None:
     else:
         client = openai.OpenAI()
 
-    evaluate(client, args, stdin)
-
-
-def evaluate_text_prompt(
-    client: openai.OpenAI, args: argparse.Namespace, prompt: str, wrap: bool = True
-) -> None:
-    usage = complete(client, args, prompt)
-    # print(usage)
-    # text += "\n\n"
-    # text += f"({completion.usage.prompt_tokens} prompt tokens, "
-    # text += f"{completion.usage.completion_tokens} completion tokens.)"
+    complete(client, args, prompts.explain_prompt(args, stdin))
