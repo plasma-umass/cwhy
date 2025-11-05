@@ -1,4 +1,3 @@
-import io
 import json
 import os
 import subprocess
@@ -65,7 +64,7 @@ def uri_to_path(uri: str) -> str:
     return urllib.parse.unquote(path)  # clangd seems to escape paths.
 
 
-def is_available(executable:str="clangd") -> bool:
+def is_available(executable: str = "clangd") -> bool:
     try:
         clangd = subprocess.run(
             [executable, "--version"],
@@ -80,8 +79,8 @@ def is_available(executable:str="clangd") -> bool:
 class clangd:
     def __init__(
         self,
-        executable: str="clangd",
-        working_directory: str=os.getcwd(),
+        executable: str = "clangd",
+        working_directory: str = os.getcwd(),
     ) -> None:
         self.id = 0
         self.process = subprocess.Popen(
@@ -100,8 +99,8 @@ class clangd:
     def initialize(self) -> dict[str, Any]:
         self.id += 1
         request = _to_lsp_request(self.id, "initialize", {"processId": os.getpid()})
-        assert self.process.stdin
-        assert self.process.stdout
+        assert self.process.stdin is not None
+        assert self.process.stdout is not None
         self.process.stdin.write(request)
         self.process.stdin.flush()
         return _parse_lsp_response(self.id, self.process.stdout)
@@ -122,7 +121,7 @@ class clangd:
                 }
             },
         )
-        assert self.process.stdin
+        assert self.process.stdin is not None
         self.process.stdin.write(notification)
         self.process.stdin.flush()
 
@@ -130,7 +129,7 @@ class clangd:
         notification = _to_lsp_notification(
             "textDocument/didClose", {"textDocument": {"uri": _path_to_uri(filename)}}
         )
-        assert self.process.stdin
+        assert self.process.stdin is not None
         self.process.stdin.write(notification)
         self.process.stdin.flush()
 
@@ -148,8 +147,23 @@ class clangd:
                 },
             },
         )
-        assert self.process.stdin
-        assert self.process.stdout
+        assert self.process.stdin is not None
+        assert self.process.stdout is not None
+        self.process.stdin.write(request)
+        self.process.stdin.flush()
+        return _parse_lsp_response(self.id, self.process.stdout)
+
+    def documentSymbol(self, filename: str) -> dict[str, Any]:
+        self.id += 1
+        request = _to_lsp_request(
+            self.id,
+            "textDocument/documentSymbol",
+            {
+                "textDocument": {"uri": _path_to_uri(filename)},
+            },
+        )
+        assert self.process.stdin is not None
+        assert self.process.stdout is not None
         self.process.stdin.write(request)
         self.process.stdin.flush()
         return _parse_lsp_response(self.id, self.process.stdout)
@@ -164,7 +178,7 @@ def definition_plus_heuristics(filename: str, lineno: int, symbol: str) -> str:
 
     if lineno - 1 >= len(lines):
         return "symbol not found at that location."
-    
+
     # We care about the end symbol, not namespaces.
     symbol = symbol.split("::")[-1]
 
@@ -208,3 +222,16 @@ def definition_plus_heuristics(filename: str, lineno: int, symbol: str) -> str:
         else f"lines {start_lineno}-{end_lineno}"
     )
     return f"""File '{path}' at {line_string}:\n```\n{content}\n```"""
+
+
+def main():
+    filename = "tmp.cpp"
+    _clangd = clangd(executable="clangd-21")
+    _clangd.didOpen(filename, "c" if filename.endswith(".c") else "cpp")
+    data = _clangd.documentSymbol(filename)
+    print(data)
+    _clangd.didClose(filename)
+
+
+if __name__ == "__main__":
+    main()
