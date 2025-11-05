@@ -27,7 +27,7 @@ def complete(client: openai.OpenAI, args: argparse.Namespace, prompt: str) -> No
                 if message.type == "message":
                     if len(message.content) != 1:
                         print(
-                            "[WARNING] Unexpected number of message entries: {len(message.content)}"
+                            f"[WARNING] Unexpected number of message entries: {len(message.content)}"
                         )
                         print("[WARNING] Please report this issue.")
                     for entry in message.content:
