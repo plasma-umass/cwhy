@@ -295,6 +295,3 @@ def source_for_symbol(filename: str, symbol: str) -> str:
             return f"""File '{path}':\n```\n{content}\n```"""
 
     return f"Symbol '{symbol}' not found."
-
-
-print(source_for_symbol("tests/c++/missing-hash.cpp", "bfs"))
