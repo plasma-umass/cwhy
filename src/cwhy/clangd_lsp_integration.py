@@ -268,7 +268,6 @@ def document_symbols(filename: str) -> str:
             8,  # Field
         }
 
-    print(data)
     path = uri_to_path(data["result"][0]["location"]["uri"])
     output = f"Replaceable symbols for '{path}':"
     for symbol in data["result"]:
