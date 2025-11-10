@@ -294,4 +294,4 @@ def source_for_symbol(filename: str, symbol: str) -> str:
             content = llm_utils.number_group_of_lines(lines, first)
             return f"""File '{path}':\n```\n{content}\n```"""
 
-    return f"Symbol '{symbol}' not found."
+    return f"Symbol '{symbol}' is not replaceable.\n" + document_symbols(filename)

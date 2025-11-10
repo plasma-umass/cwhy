@@ -15,7 +15,13 @@ class TestSymbols(unittest.TestCase):
         result = clangd_lsp_integration.source_for_symbol(
             os.path.join(CPP_TEST_ROOT, "missing-hash.cpp"), "random_symbol_name"
         )
-        self.assertEqual(result, "Symbol 'random_symbol_name' not found.")
+        self.assertEqual(
+            result,
+            "Symbol 'random_symbol_name' is not replaceable.\n"
+            "Replaceable symbols for 'tests/c++/missing-hash.cpp':\n"
+            " -  Node (Class)\n"
+            " -  bfs (Function)",
+        )
 
     def test_list_symbols(self):
         self.assertTrue(clangd_lsp_integration.is_available())
