@@ -203,7 +203,7 @@ def definition_plus_heuristics(filename: str, lineno: int, symbol: str) -> str:
     if character == -1:
         return "symbol not found at that location."
 
-    _clangd = clangd()
+    _clangd = clangd(executable=os.environ.get("CWHY_LSP", "clangd"))
     _clangd.didOpen(filename, "c" if filename.endswith(".c") else "cpp")
     definition = _clangd.definition(filename, lineno, character + 1)
     _clangd.didClose(filename)
@@ -224,14 +224,77 @@ def definition_plus_heuristics(filename: str, lineno: int, symbol: str) -> str:
     return f"""File '{path}' at {line_string}:\n```\n{content}\n```"""
 
 
-def main():
-    filename = "tmp.cpp"
-    _clangd = clangd(executable="clangd-21")
+def document_symbols(filename: str) -> str:
+    _clangd = clangd(executable=os.environ.get("CWHY_LSP", "clangd"))
     _clangd.didOpen(filename, "c" if filename.endswith(".c") else "cpp")
     data = _clangd.documentSymbol(filename)
-    print(data)
     _clangd.didClose(filename)
+    if "result" not in data or not data["result"]:
+        return "No symbols found."
+
+    def kind_to_string(kind: int) -> str:
+        kinds = {
+            1: "File",
+            2: "Module",
+            3: "Namespace",
+            4: "Package",
+            5: "Class",
+            6: "Method",
+            7: "Property",
+            8: "Field",
+            9: "Constructor",
+            10: "Enum",
+            11: "Interface",
+            12: "Function",
+            13: "Variable",
+            14: "Constant",
+            15: "String",
+            16: "Number",
+            17: "Boolean",
+            18: "Array",
+            19: "Object",
+            20: "Key",
+            21: "Null",
+            22: "EnumMember",
+            23: "Struct",
+            24: "Event",
+            25: "Operator",
+            26: "TypeParameter",
+        }
+        return kinds.get(kind, f"Unknown({kind})")
+
+    def should_include_symbol(kind: int) -> bool:
+        return kind not in {
+            8,  # Field
+        }
+
+    output = "Replaceable Document Symbols:"
+    for symbol in data["result"]:
+        if not should_include_symbol(symbol["kind"]):
+            continue
+        output += f"\n -  {symbol['name']} ({kind_to_string(symbol['kind'])})"
+    return output
 
 
-if __name__ == "__main__":
-    main()
+def source_for_symbol(filename: str, symbol: str) -> str:
+    print(os.environ.get("CWHY_LSP", "clangd"))
+    _clangd = clangd(executable=os.environ.get("CWHY_LSP", "clangd"))
+    _clangd.didOpen(filename, "c" if filename.endswith(".c") else "cpp")
+    data = _clangd.documentSymbol(filename)
+    _clangd.didClose(filename)
+    if "result" not in data or not data["result"]:
+        return "No symbols found."
+
+    for sym in data["result"]:
+        if sym["name"] == symbol:
+            path = uri_to_path(sym["location"]["uri"])
+            start_lineno = sym["location"]["range"]["start"]["line"] + 1
+            end_lineno = sym["location"]["range"]["end"]["line"] + 1
+            lines, first = llm_utils.read_lines(path, start_lineno, end_lineno)
+            content = llm_utils.number_group_of_lines(lines, first)
+            return f"""File '{path}':\n```\n{content}\n```"""
+
+    return f"Symbol '{symbol}' not found."
+
+
+print(source_for_symbol("tests/c++/missing-hash.cpp", "bfs"))
