@@ -64,7 +64,7 @@ def uri_to_path(uri: str) -> str:
     return urllib.parse.unquote(path)  # clangd seems to escape paths.
 
 
-def is_available(executable: str = "clangd") -> bool:
+def is_available(executable: str = os.environ.get("CWHY_LSP", "clangd")) -> bool:
     try:
         clangd = subprocess.run(
             [executable, "--version"],
@@ -79,7 +79,7 @@ def is_available(executable: str = "clangd") -> bool:
 class clangd:
     def __init__(
         self,
-        executable: str = "clangd",
+        executable: str = os.environ.get("CWHY_LSP", "clangd"),
         working_directory: str = os.getcwd(),
     ) -> None:
         self.id = 0
@@ -203,7 +203,7 @@ def definition_plus_heuristics(filename: str, lineno: int, symbol: str) -> str:
     if character == -1:
         return "symbol not found at that location."
 
-    _clangd = clangd(executable=os.environ.get("CWHY_LSP", "clangd"))
+    _clangd = clangd()
     _clangd.didOpen(filename, "c" if filename.endswith(".c") else "cpp")
     definition = _clangd.definition(filename, lineno, character + 1)
     _clangd.didClose(filename)
@@ -225,7 +225,7 @@ def definition_plus_heuristics(filename: str, lineno: int, symbol: str) -> str:
 
 
 def document_symbols(filename: str) -> str:
-    _clangd = clangd(executable=os.environ.get("CWHY_LSP", "clangd"))
+    _clangd = clangd()
     _clangd.didOpen(filename, "c" if filename.endswith(".c") else "cpp")
     data = _clangd.documentSymbol(filename)
     _clangd.didClose(filename)
@@ -277,8 +277,7 @@ def document_symbols(filename: str) -> str:
 
 
 def source_for_symbol(filename: str, symbol: str) -> str:
-    print(os.environ.get("CWHY_LSP", "clangd"))
-    _clangd = clangd(executable=os.environ.get("CWHY_LSP", "clangd"))
+    _clangd = clangd()
     _clangd.didOpen(filename, "c" if filename.endswith(".c") else "cpp")
     data = _clangd.documentSymbol(filename)
     _clangd.didClose(filename)
