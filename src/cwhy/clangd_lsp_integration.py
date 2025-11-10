@@ -268,7 +268,9 @@ def document_symbols(filename: str) -> str:
             8,  # Field
         }
 
-    output = "Replaceable Document Symbols:"
+    print(data)
+    path = uri_to_path(data["result"][0]["location"]["uri"])
+    output = f"Replaceable symbols for '{path}':"
     for symbol in data["result"]:
         if not should_include_symbol(symbol["kind"]):
             continue
